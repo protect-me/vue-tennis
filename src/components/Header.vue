@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar dark dense max-height="48px" style="border: 1px solid red;">
+    <v-app-bar dark dense max-height="48px">
       <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon> -->
 
       <v-toolbar-title>
@@ -11,17 +11,22 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-
-      <v-btn icon>
+      <!-- <v-btn icon>
         <v-icon>mdi-filter</v-icon>
+      </v-btn> -->
+      <v-btn icon>
+        <router-link
+          to="CourtList"
+          class="white--text"
+          style="text-decoration: none;"
+        >
+          <v-icon>mdi-magnify</v-icon>
+        </router-link>
       </v-btn>
 
       <v-btn icon>
         <router-link
-          to="/about"
+          to="/Court"
           class="white--text"
           style="text-decoration: none;"
         >

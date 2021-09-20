@@ -1,8 +1,7 @@
 <template>
   <v-app>
     <Header></Header>
-
-    <v-main style="border: 1px solid red;">
+    <v-main>
       <router-view />
     </v-main>
     <!-- </v-sheet> -->

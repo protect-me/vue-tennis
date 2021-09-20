@@ -11,9 +11,19 @@ const routes = [
     component: Map,
   },
   {
-    path: '/about',
-    name: 'About',
-    component: () => import('../views/About.vue'),
+    path: '/courtlist',
+    name: 'CourtList',
+    component: () => import('../views/admin/CourtList.vue'),
+  },
+  {
+    path: '/courtregist',
+    name: 'CourtRegist',
+    component: () => import('../views/admin/CourtRegist.vue'),
+  },
+  {
+    path: '/court',
+    name: 'Court',
+    component: () => import('../views/Court.vue'),
   },
   // {
   //   path: '/about',
