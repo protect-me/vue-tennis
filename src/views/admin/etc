@@ -1,0 +1,67 @@
+        <!-- <v-card flat class="type-section pa-4">
+          <div v-for="(type, index) of types" :key="index" class="mr-4">
+            <v-btn
+              fab
+              large
+              :color="type.color"
+              :class="{
+                'selected-type': type.selected,
+              }"
+            >
+              <div style="display: flex; flex-direction: column;">
+                <div class="mb-1">
+                  {{ type.eng }}
+                </div>
+                <div style="font-size: 12px;">
+                  {{ type.kor }}
+                </div>
+              </div>
+            </v-btn>
+          </div>
+        </v-card> -->
+        
+        
+        
+        
+              types: [
+        {
+          eng: 'Clay',
+          kor: '클레이',
+          selected: false,
+          color: 'green',
+        },
+        {
+          eng: 'Hard',
+          kor: '하드',
+          selected: false,
+          color: 'green',
+        },
+        {
+          eng: 'Indoor',
+          kor: '실내',
+          selected: false,
+          color: 'green',
+        },
+        {
+          eng: 'grass',
+          kor: '잔디',
+          selected: false,
+          color: 'green',
+        },
+        {
+          eng: 'Small',
+          kor: '소형',
+          selected: false,
+          color: 'green',
+        },
+      ],
+
+
+      
+
+        .type-section {
+    display: flex;
+    overflow-x: scroll;
+    border: 1px solid red;
+  }
+

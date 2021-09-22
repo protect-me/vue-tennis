@@ -16,6 +16,16 @@
       </v-btn> -->
       <v-btn icon>
         <router-link
+          to="FindCourt"
+          class="white--text"
+          style="text-decoration: none;"
+        >
+          <v-icon>mdi-account-group-outline</v-icon>
+        </router-link>
+      </v-btn>
+
+      <v-btn icon>
+        <router-link
           to="CourtList"
           class="white--text"
           style="text-decoration: none;"
