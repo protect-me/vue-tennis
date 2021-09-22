@@ -1,0 +1,291 @@
+<template>
+  <v-container class="court-regist-container pa-5">
+    <v-card flat>
+      <div class="court-regist-header">
+        <div class="title font-weight-black">신규 코트 등록</div>
+        <v-spacer></v-spacer>
+        <v-btn small text color="error">
+          <v-icon>
+            mdi-trash-can-outline
+          </v-icon>
+        </v-btn>
+      </div>
+      <v-divider class="my-3"></v-divider>
+      <v-form>
+        <div class="subtitle mb-3">
+          <span>
+            타입 선택
+          </span>
+          <span style="font-size: 12px; color: gray;">
+            *복수 선택 가능
+          </span>
+        </div>
+        <v-btn-toggle
+          class="type-section"
+          v-model="form.types"
+          group
+          multiple
+          color="primary"
+        >
+          <v-btn
+            v-for="(type, index) of typeGroup"
+            :key="index"
+            :value="type.value"
+            class="mr-4"
+          >
+            <div style="display: flex; flex-direction: column;">
+              <div class="mb-1">
+                {{ type.eng }}
+              </div>
+              <div style="font-size: 12px;">
+                {{ type.kor }}
+              </div>
+            </div>
+          </v-btn>
+        </v-btn-toggle>
+
+        <v-divider class="mt-2 mb-3"></v-divider>
+
+        <div class="subtitle mb-3">
+          <span>
+            코트 타입 선택
+          </span>
+          <span @click="openCourtTypeHelp">
+            <v-icon small>mdi-help-circle-outline</v-icon>
+          </span>
+        </div>
+        <v-combobox
+          v-model="form.courtTypes"
+          :items="courtTypesItems"
+          multiple
+          chips
+          outlined
+          hide-details
+        ></v-combobox>
+
+        <v-divider class="mt-3 mb-3"></v-divider>
+
+        <v-text-field
+          class="mb-3"
+          label="코트명"
+          v-model="form.name"
+          type="text"
+          outlined
+          hide-details
+        />
+        <v-text-field
+          class="mb-3"
+          label="주소"
+          v-model="form.address"
+          @click="openAddressDialog"
+          readonly
+          type="text"
+          outlined
+          hide-details
+        />
+        <v-textarea
+          class="mb-3"
+          label="메모"
+          v-model="form.memo"
+          type="text"
+          outlined
+          hide-details
+          no-resize
+        />
+      </v-form>
+    </v-card>
+    <v-spacer></v-spacer>
+    <v-btn class="regist-btn" block color="primary" @click="apply">
+      신규 등록
+    </v-btn>
+
+    <v-dialog v-if="addressDialogToggle" v-model="addressDialogToggle">
+      <VueDaumPostcode @complete="addressSelected($event)"></VueDaumPostcode>
+      <v-btn block color="error" @click="addressDialogToggle = false">
+        close
+      </v-btn>
+    </v-dialog>
+
+    <v-dialog v-if="courtTypeHelpToggle" v-model="courtTypeHelpToggle">
+      <v-card class="pa-2">
+        <div class="mb-2">
+          <v-chip class="mr-2">추가</v-chip>
+          <span>코트 타입 입력 후 Enter 키 입력</span>
+        </div>
+        <div class="mb-2">
+          <v-chip class="mr-2">삭제</v-chip>
+          <span>Backspace 키 입력</span>
+        </div>
+        <div class="mb-2">
+          <v-chip class="mr-2">선택</v-chip>
+          <span>▾ 버튼 선택 후 체크 및 체크 해제</span>
+        </div>
+        <v-btn block color="error" @click="courtTypeHelpToggle = false">
+          close
+        </v-btn>
+      </v-card>
+    </v-dialog>
+  </v-container>
+</template>
+
+<script>
+import { VueDaumPostcode } from 'vue-daum-postcode'
+import axios from 'axios'
+
+export default {
+  components: {
+    VueDaumPostcode,
+  },
+  data() {
+    return {
+      isProcessing: false,
+      addressDialogToggle: false,
+      courtTypeHelpToggle: false,
+      form: {
+        name: '',
+        address: '',
+        addressSigungu: '',
+        addressLocal: '',
+        addressJibun: '',
+        lat: 0,
+        lng: 0,
+        count: 0,
+        types: [],
+        courtTypes: ['1', '2', '3'],
+        memo: '',
+        createdAt: '',
+        updatedAt: '',
+      },
+      typeGroup: [
+        {
+          value: 'clay',
+          eng: 'Clay',
+          kor: '클레이',
+        },
+        {
+          value: 'hard',
+          eng: 'Hard',
+          kor: '하드',
+        },
+        {
+          value: 'indoor',
+          eng: 'Indoor',
+          kor: '실내',
+        },
+        {
+          value: 'grass',
+          eng: 'Grass',
+          kor: '잔디',
+        },
+        {
+          value: 'small',
+          eng: 'Small',
+          kor: '소형',
+        },
+      ],
+      courtTypesItems: ['1', '2', '3', '4', '5', 'A', 'B', 'C', 'D', 'E'],
+    }
+  },
+  methods: {
+    openAddressDialog() {
+      console.log('openAddressDialog')
+      this.addressDialogToggle = true
+    },
+    openCourtTypeHelp() {
+      console.log('openCourtTypeHelp')
+      this.courtTypeHelpToggle = true
+    },
+    addressSelected(selectedAddress) {
+      this.form.address = selectedAddress.roadAddress
+      this.form.addressSigungu = selectedAddress.sigungu
+      this.form.addressLocal = selectedAddress.bname
+      if (selectedAddress.autoJibunAddress) {
+        this.form.addressJibun = selectedAddress.autoJibunAddress
+      } else if (selectedAddress.jibunAddress) {
+        this.form.addressJibun = selectedAddress.jibunAddress
+      }
+      console.log('selectedAddress', selectedAddress)
+      this.addressDialogToggle = false
+    },
+    async getLatLng() {
+      console.log('getLatLng')
+      let queryString = this.form.address
+      let URL =
+        'https://dapi.kakao.com/v2/local/search/address.json?query=' +
+        queryString
+      axios.defaults.withCredentials = false
+      axios.defaults.headers.common['Authorization'] =
+        'KakaoAK ' + process.env.VUE_APP_KAKAO_ADDRESS_REST_API_KEY
+      axios.defaults.headers.post['Content-Type'] =
+        'application/x-www-form-urlencoded'
+      await axios
+        .get(URL)
+        .then((res) => {
+          this.form.lat = res.data.documents[0].y
+          this.form.lng = res.data.documents[0].x
+        })
+        .catch((err) => {
+          alert('위도/경도를 가져오는데 실패했습니다.', err)
+          console.log(err)
+        })
+    },
+    async apply() {
+      console.log('apply')
+      if (this.isProcessing) {
+        console.log('isProcessing!')
+        return
+      }
+      this.isProcessing = true
+      if (!this.form.name) {
+        alert('코트명을 확인해주세요')
+        this.isProcessing = false
+        return
+      }
+      await this.getLatLng() // 위도경도 확인
+      if (!this.form.address || !this.form.lat || !this.form.lng) {
+        alert('주소를 확인해주세요')
+        this.isProcessing = false
+        return
+      }
+      this.registNewCourt()
+    },
+    async registNewCourt() {
+      try {
+        this.form.createdAt = Date.now()
+        await this.$firebase.firestore().collection('courts').add(this.form)
+        console.log('등록 성공')
+      } catch (err) {
+        alert('등록에 실패했습니다.', err.message)
+        console.log('등록 실패', err.message)
+      } finally {
+        this.isProcessing = false
+      }
+      this.$router.push('CourtList')
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.court-regist-container {
+  width: 100%;
+  height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  .court-regist-header {
+    display: flex;
+  }
+  .regist-btn {
+    max-height: 36px;
+  }
+  .type-section {
+    display: flex;
+    overflow-x: scroll;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .type-section::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+  }
+}
+</style>
