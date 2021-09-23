@@ -321,7 +321,6 @@ export default {
   .regist-btn {
     max-height: 36px;
   }
-
   .divide-column {
     display: flex;
   }

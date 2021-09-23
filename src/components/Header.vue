@@ -45,11 +45,11 @@
 
       <v-btn icon>
         <router-link
-          to="/Court"
+          to="/Mypage"
           class="white--text"
           style="text-decoration: none;"
         >
-          <v-icon>mdi-dots-vertical</v-icon>
+          <v-icon>mdi-account-circle-outline</v-icon>
         </router-link>
       </v-btn>
     </v-app-bar>
