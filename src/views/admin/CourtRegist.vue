@@ -1,5 +1,5 @@
 <template>
-  <v-container class="court-regist-container pa-5">
+  <v-container class="court-regist-container">
     <v-card flat>
       <div class="court-regist-header">
         <div class="title font-weight-black">신규 코트 등록</div>
@@ -171,6 +171,11 @@ export default {
           value: 'indoor',
           eng: 'Indoor',
           kor: '실내',
+        },
+        {
+          value: 'outdoor',
+          eng: 'Outdoor',
+          kor: '실외',
         },
         {
           value: 'grass',

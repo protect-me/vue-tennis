@@ -1,25 +1,28 @@
 const functions = require('firebase-functions')
-
 var admin = require('firebase-admin')
-
 var serviceAccount = require('./vue-tennis-key.json')
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://vue-tennis-default-rtdb.firebaseio.com',
+  databaseURL: functions.config().admin.db_url, //'https://vue-tennis-default-rtdb.firebaseio.com'
 })
 
 const db = admin.database()
 const fdb = admin.firestore()
 
 exports.createUser = functions.auth.user().onCreate(async (user) => {
+  console.log('here functions')
   const { uid, email, displayName, photoURL } = user
   const time = new Date()
   const userInfo = {
     email,
     displayName,
     photoURL,
-    likeRequestList: [],
+    nickName: displayName,
+    sex: '',
+    birth: '',
+    location: '',
+    ntrp: 0,
     createdAt: time,
     level: email == functions.config().admin.email ? 0 : 5,
   }

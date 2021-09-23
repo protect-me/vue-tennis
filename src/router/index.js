@@ -21,9 +21,44 @@ const routes = [
     component: () => import('../views/admin/CourtRegist.vue'),
   },
   {
-    path: '/court',
-    name: 'Court',
-    component: () => import('../views/Court.vue'),
+    path: '/findpeoplehome',
+    name: 'FindPeopleHome',
+    component: () => import('../views/FindPeople/FindPeopleHome.vue'),
+  },
+  {
+    path: '/findpeopleregist',
+    name: 'FindPeopleRegist',
+    component: () => import('../views/FindPeople/FindPeopleRegist.vue'),
+  },
+  {
+    path: '/findcourt',
+    name: 'FindCourt',
+    component: () => import('../views/FindCourt.vue'),
+  },
+  {
+    path: '/mypage',
+    name: 'Mypage',
+    component: () => import('../views/Mypage/Mypage.vue'),
+  },
+  {
+    path: '/edituserinfo',
+    name: 'EditUserInfo',
+    component: () => import('../views/Mypage/EditUserInfo.vue'),
+  },
+  {
+    path: '/findpeoplerecord',
+    name: 'FindPeopleRecord',
+    component: () => import('../views/Mypage/FindPeopleRecord.vue'),
+  },
+  {
+    path: '/findcourtrecord',
+    name: 'FindCourtRecord',
+    component: () => import('../views/Mypage/FindCourtRecord.vue'),
+  },
+  {
+    path: '/operationpolicy',
+    name: 'OperationPolicy',
+    component: () => import('../views/Mypage/OperationPolicy.vue'),
   },
   // {
   //   path: '/about',
