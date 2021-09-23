@@ -21,6 +21,21 @@ const routes = [
     component: () => import('../views/admin/CourtRegist.vue'),
   },
   {
+    path: '/findpeoplehome',
+    name: 'FindPeopleHome',
+    component: () => import('../views/FindPeople/FindPeopleHome.vue'),
+  },
+  {
+    path: '/findpeopleregist',
+    name: 'FindPeopleRegist',
+    component: () => import('../views/FindPeople/FindPeopleRegist.vue'),
+  },
+  {
+    path: '/findcourt',
+    name: 'FindCourt',
+    component: () => import('../views/FindCourt.vue'),
+  },
+  {
     path: '/court',
     name: 'Court',
     component: () => import('../views/Court.vue'),
