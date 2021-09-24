@@ -135,10 +135,7 @@ export default {
   computed: {
     ...mapState(['fireUser', 'user']),
     userAge() {
-      return (
-        Math.floor((new Date().getFullYear() - this.user.birth) / 10) * 10 +
-        '대'
-      )
+      return Math.floor((new Date().getFullYear() - this.user.birth) / 10) * 10
     },
   },
   watch: {
@@ -191,13 +188,4 @@ export default {
     overflow: hidden;
   }
 }
-/* .container {
-  border: 2px solid red;
-  .row {
-    border: 2px solid green;
-    .col {
-      border: 2px solid blue;
-    }
-  }
-} */
 </style>

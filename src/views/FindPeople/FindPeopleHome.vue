@@ -1,19 +1,13 @@
 <template>
   <v-container class="find-people-container">
     <v-card flat>
-      <div class="find-people-header">
-        <div class="title font-weight-black">인력시장</div>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" small @click="moveToRegist">NEW</v-btn>
-      </div>
+      <TitleWithButton
+        titleText="인력 시장"
+        registNewButton
+        @registNewButtonClicked="moveToRegist"
+      />
       <v-divider class="my-3"></v-divider>
     </v-card>
-
-    <!-- <v-btn small text color="primary">
-          <v-icon>
-            mdi-filter-variant
-          </v-icon>
-        </v-btn> -->
 
     <v-tabs v-model="tab" grow>
       <v-tab v-for="item in items" :key="item.tab">
@@ -29,15 +23,6 @@
         </v-card>
       </v-tab-item>
     </v-tabs-items>
-
-    <!-- <v-tabs-items v-model="tab">
-      <v-tab-item v-for="item in items" :key="item">
-        <v-card color="basil" flat>
-          <v-card-text>{{ text }}</v-card-text>
-          
-        </v-card>
-      </v-tab-item>
-    </v-tabs-items> -->
   </v-container>
 </template>
 
@@ -45,12 +30,14 @@
 import FindPeopleOpen from './FindPeopleOpen'
 import FindPeopleClose from './FindPeopleClose'
 import FindPeopleComplete from './FindPeopleComplete'
+import TitleWithButton from '../../components/TitleWithButton'
 
 export default {
   components: {
     FindPeopleOpen,
     FindPeopleClose,
     FindPeopleComplete,
+    TitleWithButton,
   },
   data() {
     return {

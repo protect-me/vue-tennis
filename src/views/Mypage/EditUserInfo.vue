@@ -2,13 +2,7 @@
   <v-container class="edit-user-info-container">
     <v-card flat>
       <div class="edit-user-info-header">
-        <div class="title font-weight-black">회원 정보 수정</div>
-        <!-- <v-spacer></v-spacer>
-        <v-btn small text color="error">
-          <v-icon>
-            mdi-trash-can-outline
-          </v-icon>
-        </v-btn> -->
+        <TitleWithButton titleText="회원 정보 수정" goBackButton />
       </div>
       <v-divider class="my-3"></v-divider>
       <div></div>
@@ -84,8 +78,6 @@
               style="font-size: 12px;"
             ></v-slider>
           </div>
-          <!-- @click="openCourtDialog"
-            :rules="[rules.required]" -->
         </div>
       </v-form>
     </v-card>
@@ -110,10 +102,12 @@
 <script>
 import { mapState } from 'vuex'
 import HelpNtrp from '../../components/HelpNtrp'
+import TitleWithButton from '../../components/TitleWithButton'
 
 export default {
   components: {
     HelpNtrp,
+    TitleWithButton,
   },
   mounted() {
     this.$nextTick(function () {
@@ -233,7 +227,6 @@ export default {
   height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-  border: 1px solid green;
   .compelete-btn {
     max-height: 36px;
   }
