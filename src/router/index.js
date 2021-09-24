@@ -1,8 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Map from '../views/Map.vue'
+import store from '@/store'
 
 Vue.use(VueRouter)
+
+const onlyAuthUser = (to, from, next) => {
+  if (store.state.fireUser) {
+    next()
+  } else {
+    alert('로그인을 해주세요 🎾')
+    router.push('Mypage')
+  }
+}
 
 const routes = [
   {
@@ -18,6 +28,7 @@ const routes = [
   {
     path: '/courtregist',
     name: 'CourtRegist',
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/admin/CourtRegist.vue'),
   },
   {
@@ -28,6 +39,7 @@ const routes = [
   {
     path: '/findpeopleregist',
     name: 'FindPeopleRegist',
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/FindPeople/FindPeopleRegist.vue'),
   },
   {
@@ -43,6 +55,7 @@ const routes = [
   {
     path: '/edituserinfo',
     name: 'EditUserInfo',
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/EditUserInfo.vue'),
   },
   {
@@ -60,6 +73,12 @@ const routes = [
     name: 'OperationPolicy',
     component: () => import('../views/Mypage/OperationPolicy.vue'),
   },
+  {
+    path: '*',
+    name: 'Error',
+    component: () => import('../views/Error.vue'),
+  },
+
   // {
   //   path: '/about',
   //   name: 'About',

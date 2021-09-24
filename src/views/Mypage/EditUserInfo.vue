@@ -218,6 +218,16 @@ export default {
       this.helpNtrpToggle = false
     },
   },
+  beforeRouteLeave(to, from, next) {
+    const answer = window.confirm(
+      '저장되지 않은 작업이 있습니다! 정말 나갈까요?',
+    )
+    if (answer) {
+      next()
+    } else {
+      next(false)
+    }
+  },
 }
 </script>
 

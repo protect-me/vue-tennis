@@ -2,7 +2,7 @@
   <v-container class="find-people-regist-container">
     <v-card flat>
       <div class="find-people-regist-header">
-        <TitleWithButton titleText="신규 구인 등록" goBackButton/>
+        <TitleWithButton titleText="신규 구인 등록" goBackButton />
       </div>
       <v-divider class="my-3"></v-divider>
       <v-form ref="form" v-model="valid" lazy-validation>
@@ -150,10 +150,32 @@
 
         <div class="divide-column">
           <v-text-field
-            class="mb-3 mr-3"
-            label="총 인원(명)"
-            v-model="form.number"
+            class="mb-3 mr-2"
+            label="구하는 인원(명)"
+            v-model="form.vacant"
             type="number"
+            outlined
+            hide-details
+            :rules="[rules.required]"
+          />
+          <div class="title mr-2 mt-3">/</div>
+          <v-text-field
+            class="mb-3"
+            label="총 인원(명)"
+            v-model="form.total"
+            type="number"
+            outlined
+            hide-details
+            :rules="[rules.required]"
+          />
+        </div>
+
+        <div class="divide-column">
+          <v-text-field
+            class="mb-3 mr-6"
+            label="연락처 | 메신저"
+            v-model="form.contact"
+            type="text"
             outlined
             hide-details
             :rules="[rules.required]"
@@ -169,15 +191,6 @@
           />
         </div>
 
-        <v-text-field
-          class="mb-3"
-          label="연락처 | 메신저"
-          v-model="form.contact"
-          type="text"
-          outlined
-          hide-details
-          :rules="[rules.required]"
-        />
         <v-textarea
           class="mb-3"
           label="기타"
@@ -186,6 +199,7 @@
           outlined
           hide-details
           no-resize
+          :rules="[rules.counter]"
         />
       </v-form>
     </v-card>
@@ -241,9 +255,11 @@ export default {
         date: '',
         startTime: '',
         endTime: '',
-        ntrp: 0,
-        cost: '',
+        ntrp: '',
+        vacant: '',
+        total: '',
         contact: '',
+        cost: '',
         memo: '',
         createdAt: '',
         updatedAt: '',
@@ -302,6 +318,18 @@ export default {
     closeHelpNtrp() {
       this.helpNtrpToggle = false
     },
+  },
+  beforeRouteLeave(to, from, next) {
+    console.log('hell')
+
+    const answer = window.confirm(
+      '저장되지 않은 작업이 있습니다! 정말 나갈까요?',
+    )
+    if (answer) {
+      next()
+    } else {
+      next(false)
+    }
   },
 }
 </script>
