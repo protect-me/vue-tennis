@@ -95,7 +95,7 @@
       </v-form>
     </v-card>
     <v-spacer></v-spacer>
-    <v-btn class="regist-btn" block color="primary" @click="apply">
+    <v-btn class="compelete-btn" block color="primary" @click="apply">
       신규 등록
     </v-btn>
 
@@ -280,7 +280,7 @@ export default {
   .court-regist-header {
     display: flex;
   }
-  .regist-btn {
+  .compelete-btn {
     max-height: 36px;
   }
   .type-section {

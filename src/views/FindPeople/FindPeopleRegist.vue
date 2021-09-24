@@ -131,7 +131,7 @@
           class="mb-3"
           style="
             color: gray;
-            border: 1px solid gray;
+            border: 1px solid;
             border-radius: 5px;
             padding: 10px;
           "
@@ -196,7 +196,7 @@
       </v-form>
     </v-card>
     <v-spacer></v-spacer>
-    <v-btn class="regist-btn" block color="primary" @click="apply">
+    <v-btn class="compelete-btn" block color="primary" @click="apply">
       신규 등록
     </v-btn>
 
@@ -245,7 +245,7 @@ export default {
         date: '',
         startTime: '',
         endTime: '',
-        ntrp: 5,
+        ntrp: 0,
         cost: '',
         contact: '',
         memo: '',
@@ -283,8 +283,7 @@ export default {
         this.isProcessing = false
         return
       }
-      const n = this.selectedNtrp
-      this.form.ntrp = n - (n - 1) * 0.5
+      this.form.ntrp = (this.selectedNtrp + 1) / 2
       this.registNewFindPeople()
     },
     async registNewFindPeople() {
@@ -318,7 +317,7 @@ export default {
   display: flex;
   flex-direction: column;
   border: 1px solid green;
-  .regist-btn {
+  .compelete-btn {
     max-height: 36px;
   }
   .divide-column {

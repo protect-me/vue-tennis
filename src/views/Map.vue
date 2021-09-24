@@ -51,8 +51,5 @@ export default {
 #map {
   width: 100%;
   height: 100%;
-  /* background-color: gray;
-  min-width: 200px;
-  min-height: 200px; */
 }
 </style>
