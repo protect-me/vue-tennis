@@ -1,28 +1,39 @@
 <template>
   <v-container class="mypage-container">
-    <v-card v-if="fireUser">
-      <div class="d-flex flex-no-wrap justify-space-between">
+    <v-card v-if="user">
+      <div class="user-info-card d-flex flex-no-wrap justify-space-between">
         <v-avatar class="ma-3" size="125" tile>
-          <img :src="fireUser.photoURL" alt="photo" />
+          <img :src="user.photoURL" alt="photo" />
         </v-avatar>
         <div>
-          <v-card-title class="text-h5">
-            {{ fireUser.displayName }}
+          <v-card-title class="text-h6 pt-3 pl-0">
+            {{ user.nickName || user.displayName }}
           </v-card-title>
-          <v-card-subtitle class="pb-2">
-            {{ fireUser.email }}
+          <v-card-subtitle class="pb-2 pl-0">
+            {{ user.email }}
           </v-card-subtitle>
 
-          <v-card-text class="py-0">
+          <v-card-text class="py-0 pl-0">
             <div>
-              남 | 30 | 서울
+              <span v-if="user.sex">
+                {{ user.sex === 1 ? '남' : '여' }}
+              </span>
+              <span class="mx-1">|</span>
+              <span v-if="user.birth">
+                {{ userAge }}
+              </span>
+              <span class="mx-1">|</span>
+              <span v-if="user.location" v-text="user.location"></span>
             </div>
+
+            <div></div>
           </v-card-text>
 
-          <v-card-actions>
+          <v-card-actions class="pt-1 pb-0 pl-0">
             <v-spacer></v-spacer>
             <v-chip small class="mt-1">
-              NTRP 3.5
+              <span class="mr-1">NTRP</span>
+              <span v-if="user.ntrp" v-text="user.ntrp"></span>
             </v-chip>
           </v-card-actions>
         </div>
@@ -86,7 +97,7 @@ import { mapState } from 'vuex'
 
 export default {
   mounted() {
-    // this.checkAdditionalInfo()
+    this.checkAdditionalInfo()
   },
   data() {
     return {
@@ -123,6 +134,14 @@ export default {
   },
   computed: {
     ...mapState(['fireUser', 'user']),
+    userAge() {
+      return Math.floor((new Date().getFullYear() - this.user.birth) / 10) * 10
+    },
+  },
+  watch: {
+    user() {
+      this.checkAdditionalInfo()
+    },
   },
   methods: {
     async loginWithGoogle() {
@@ -139,16 +158,15 @@ export default {
         console.log(err)
       } finally {
         this.isProcessing = false
-        this.checkAdditionalInfo()
       }
     },
     checkAdditionalInfo() {
       if (
-        this.fireUser &&
-        (!this.fireUser.sex ||
-          !this.fireUser.birth ||
-          !this.fireUser.location ||
-          !this.fireUser.ntrp)
+        this.user &&
+        (!this.user.sex ||
+          !this.user.birth ||
+          !this.user.location ||
+          !this.user.ntrp)
       ) {
         this.$router.push('EditUserInfo')
       }
@@ -166,14 +184,8 @@ export default {
 .mypage-container {
   width: 100%;
   height: 100%;
-}
-.container {
-  border: 2px solid red;
-  .row {
-    border: 2px solid green;
-    .col {
-      border: 2px solid blue;
-    }
+  .user-info-card > * {
+    overflow: hidden;
   }
 }
 </style>

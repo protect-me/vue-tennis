@@ -2,13 +2,7 @@
   <v-container class="court-regist-container">
     <v-card flat>
       <div class="court-regist-header">
-        <div class="title font-weight-black">신규 코트 등록</div>
-        <v-spacer></v-spacer>
-        <v-btn small text color="error">
-          <v-icon>
-            mdi-trash-can-outline
-          </v-icon>
-        </v-btn>
+        <TitleWithButton titleText="신규 코트 등록" goBackButton />
       </div>
       <v-divider class="my-3"></v-divider>
       <v-form>
@@ -95,7 +89,7 @@
       </v-form>
     </v-card>
     <v-spacer></v-spacer>
-    <v-btn class="regist-btn" block color="primary" @click="apply">
+    <v-btn class="compelete-btn" block color="primary" @click="apply">
       신규 등록
     </v-btn>
 
@@ -129,12 +123,14 @@
 </template>
 
 <script>
-import { VueDaumPostcode } from 'vue-daum-postcode'
 import axios from 'axios'
+import { VueDaumPostcode } from 'vue-daum-postcode'
+import TitleWithButton from '../../components/TitleWithButton'
 
 export default {
   components: {
     VueDaumPostcode,
+    TitleWithButton,
   },
   data() {
     return {
@@ -277,10 +273,7 @@ export default {
   height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-  .court-regist-header {
-    display: flex;
-  }
-  .regist-btn {
+  .compelete-btn {
     max-height: 36px;
   }
   .type-section {

@@ -2,13 +2,15 @@
   <v-container
     :class="{
       'court-list-container': true,
-      fullscreen: this.mode === 'select',
+      fullscreen: mode === 'select',
     }"
   >
     <v-card flat>
-      <div class="court-list-header">
-        <div class="title font-weight-black">코트 리스트</div>
-      </div>
+      <TitleWithButton
+        titleText="코트 리스트"
+        :registNewButton="mode === 'view'"
+        @registNewButtonClicked="moveToRegist"
+      />
       <v-divider class="my-3"></v-divider>
     </v-card>
 
@@ -36,9 +38,6 @@
             inset
             vertical
           ></v-divider>
-          <v-btn v-if="mode === 'view'" color="primary" @click="moveToRegist">
-            NEW
-          </v-btn>
         </v-toolbar>
       </template>
       <template v-slot:[`item.address`]="{ item }">
@@ -72,9 +71,16 @@
 </template>
 
 <script>
+import TitleWithButton from '../../components/TitleWithButton'
+
 export default {
+  components: {
+    TitleWithButton,
+  },
+
   props: {
     mode: {
+      // select || view
       type: String,
       default: 'view',
     },

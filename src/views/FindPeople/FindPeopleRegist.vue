@@ -2,13 +2,7 @@
   <v-container class="find-people-regist-container">
     <v-card flat>
       <div class="find-people-regist-header">
-        <div class="title font-weight-black">신규 구인 등록</div>
-        <v-spacer></v-spacer>
-        <v-btn small text color="error">
-          <v-icon>
-            mdi-trash-can-outline
-          </v-icon>
-        </v-btn>
+        <TitleWithButton titleText="신규 구인 등록" goBackButton/>
       </div>
       <v-divider class="my-3"></v-divider>
       <v-form ref="form" v-model="valid" lazy-validation>
@@ -131,7 +125,7 @@
           class="mb-3"
           style="
             color: gray;
-            border: 1px solid gray;
+            border: 1px solid;
             border-radius: 5px;
             padding: 10px;
           "
@@ -196,7 +190,7 @@
       </v-form>
     </v-card>
     <v-spacer></v-spacer>
-    <v-btn class="regist-btn" block color="primary" @click="apply">
+    <v-btn class="compelete-btn" block color="primary" @click="apply">
       신규 등록
     </v-btn>
 
@@ -219,11 +213,13 @@
 <script>
 import CourtList from '../admin/CourtList'
 import HelpNtrp from '../../components/HelpNtrp'
+import TitleWithButton from '../../components/TitleWithButton'
 
 export default {
   components: {
     CourtList,
     HelpNtrp,
+    TitleWithButton,
   },
   data() {
     return {
@@ -245,7 +241,7 @@ export default {
         date: '',
         startTime: '',
         endTime: '',
-        ntrp: 5,
+        ntrp: 0,
         cost: '',
         contact: '',
         memo: '',
@@ -283,8 +279,7 @@ export default {
         this.isProcessing = false
         return
       }
-      const n = this.selectedNtrp
-      this.form.ntrp = n - (n - 1) * 0.5
+      this.form.ntrp = (this.selectedNtrp + 1) / 2
       this.registNewFindPeople()
     },
     async registNewFindPeople() {
@@ -317,8 +312,7 @@ export default {
   height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-  border: 1px solid green;
-  .regist-btn {
+  .compelete-btn {
     max-height: 36px;
   }
   .divide-column {
