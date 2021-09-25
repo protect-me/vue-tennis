@@ -2,7 +2,7 @@
   <v-container class="find-people-regist-container">
     <v-card flat>
       <div class="find-people-regist-header">
-        <TitleWithButton titleText="신규 구인 등록" goBackButton/>
+        <TitleWithButton titleText="신규 구인 등록" goBackButton />
       </div>
       <v-divider class="my-3"></v-divider>
       <v-form ref="form" v-model="valid" lazy-validation>
@@ -150,10 +150,32 @@
 
         <div class="divide-column">
           <v-text-field
-            class="mb-3 mr-3"
-            label="총 인원(명)"
-            v-model="form.number"
+            class="mb-3 mr-2"
+            label="구하는 인원(명)"
+            v-model="form.vacant"
             type="number"
+            outlined
+            hide-details
+            :rules="[rules.required]"
+          />
+          <div class="title mr-2 mt-3">/</div>
+          <v-text-field
+            class="mb-3"
+            label="총 인원(명)"
+            v-model="form.total"
+            type="number"
+            outlined
+            hide-details
+            :rules="[rules.required]"
+          />
+        </div>
+
+        <div class="divide-column">
+          <v-text-field
+            class="mb-3 mr-6"
+            label="연락처 | 메신저"
+            v-model="form.contact"
+            type="text"
             outlined
             hide-details
             :rules="[rules.required]"
@@ -169,15 +191,6 @@
           />
         </div>
 
-        <v-text-field
-          class="mb-3"
-          label="연락처 | 메신저"
-          v-model="form.contact"
-          type="text"
-          outlined
-          hide-details
-          :rules="[rules.required]"
-        />
         <v-textarea
           class="mb-3"
           label="기타"
@@ -186,6 +199,7 @@
           outlined
           hide-details
           no-resize
+          :rules="[rules.counter]"
         />
       </v-form>
     </v-card>
@@ -214,6 +228,7 @@
 import CourtList from '../admin/CourtList'
 import HelpNtrp from '../../components/HelpNtrp'
 import TitleWithButton from '../../components/TitleWithButton'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -221,14 +236,18 @@ export default {
     HelpNtrp,
     TitleWithButton,
   },
+  computed: {
+    ...mapState(['fireUser', 'user']),
+  },
   data() {
     return {
+      isComplete: false,
+      isProcessing: false,
       valid: true,
       rules: {
         required: (value) => !!value || '필수 기입',
         counter: (value) => value.length <= 100 || '100자 이하로 입력해주세요',
       },
-      isProcessing: false,
       courtDialogToggle: false,
       helpNtrpToggle: false,
       selectedCourt: {},
@@ -236,14 +255,17 @@ export default {
       selectedNtrp: 5,
       form: {
         organizer: '',
+        organizerNickname: '',
         name: '',
         courtType: '',
         date: '',
         startTime: '',
         endTime: '',
-        ntrp: 0,
-        cost: '',
+        ntrp: '',
+        vacant: '',
+        total: '',
         contact: '',
+        cost: '',
         memo: '',
         createdAt: '',
         updatedAt: '',
@@ -284,6 +306,8 @@ export default {
     },
     async registNewFindPeople() {
       try {
+        this.form.organizer = this.fireUser.uid
+        this.form.organizerNickName = this.fireUser.displayName
         this.form.createdAt = Date.now()
         this.form.updatedAt = this.form.createdAt
         await this.$firebase.firestore().collection('findPeople').add(this.form)
@@ -293,8 +317,9 @@ export default {
         console.log('등록 실패', err.message)
       } finally {
         this.isProcessing = false
+        this.isComplete = true
+        this.$router.push('FindPeopleHome')
       }
-      this.$router.push('FindPeopleHome')
     },
     openNtrpHelp() {
       this.helpNtrpToggle = true
@@ -302,6 +327,20 @@ export default {
     closeHelpNtrp() {
       this.helpNtrpToggle = false
     },
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.isComplete) {
+      next()
+    } else {
+      const answer = window.confirm(
+        '저장되지 않은 작업이 있습니다! 정말 나갈까요?',
+      )
+      if (answer) {
+        next()
+      } else {
+        next(false)
+      }
+    }
   },
 }
 </script>

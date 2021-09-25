@@ -128,6 +128,7 @@ export default {
   },
   data() {
     return {
+      isComplete: false,
       isProcessing: false,
       helpNtrpToggle: false,
       selectedNtrp: 7,
@@ -177,7 +178,6 @@ export default {
       }
     },
     checkSameData() {
-      let flag = false
       const info = this.$store.state.user
       if (
         this.form.nickName === info.nickName &&
@@ -217,6 +217,20 @@ export default {
     closeHelpNtrp() {
       this.helpNtrpToggle = false
     },
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.isComplete || this.checkSameData()) {
+      next()
+    } else {
+      const answer = window.confirm(
+        '저장되지 않은 작업이 있습니다! 정말 나갈까요?',
+      )
+      if (answer) {
+        next()
+      } else {
+        next(false)
+      }
+    }
   },
 }
 </script>
