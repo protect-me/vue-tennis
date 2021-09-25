@@ -14,6 +14,14 @@ const onlyAuthUser = (to, from, next) => {
   }
 }
 
+const onlyAuthUserForMypage = (to, from, next) => {
+  if (store.state.fireUser) {
+    next()
+  } else {
+    alert('로그인을 해주세요 🎾')
+  }
+}
+
 const routes = [
   {
     path: '/',
@@ -55,7 +63,7 @@ const routes = [
   {
     path: '/edituserinfo',
     name: 'EditUserInfo',
-    beforeEnter: onlyAuthUser,
+    beforeEnter: onlyAuthUserForMypage,
     component: () => import('../views/Mypage/EditUserInfo.vue'),
   },
   {

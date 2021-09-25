@@ -134,6 +134,7 @@ export default {
   },
   data() {
     return {
+      isComplete: false,
       isProcessing: false,
       addressDialogToggle: false,
       courtTypeHelpToggle: false,
@@ -260,18 +261,24 @@ export default {
         console.log('등록 실패', err.message)
       } finally {
         this.isProcessing = false
+        this.isComplete = true
       }
+
       this.$router.push('CourtList')
     },
   },
   beforeRouteLeave(to, from, next) {
-    const answer = window.confirm(
-      '저장되지 않은 작업이 있습니다! 정말 나갈까요?',
-    )
-    if (answer) {
+    if (this.isComplete) {
       next()
     } else {
-      next(false)
+      const answer = window.confirm(
+        '저장되지 않은 작업이 있습니다! 정말 나갈까요?',
+      )
+      if (answer) {
+        next()
+      } else {
+        next(false)
+      }
     }
   },
 }
