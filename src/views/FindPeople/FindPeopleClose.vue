@@ -1,13 +1,37 @@
 <template>
   <div>
-    close
+    <FindPeopleCard
+      v-for="(schedule, index) in schedules"
+      :key="index"
+      :schedule="schedule"
+    ></FindPeopleCard>
 
-    <v-text-field></v-text-field>
+    <v-card v-if="schedules && schedules.length === 0" flat>
+      <v-card-text class="mt-12" align="center">
+        마감된 데이터가 없습니다 🎾
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
 <script>
-export default {}
+import FindPeopleCard from './FindPeopleCard'
+
+export default {
+  props: {
+    schedules: {
+      type: Array,
+      default: [],
+    },
+  },
+  components: {
+    FindPeopleCard,
+  },
+  data() {
+    return {}
+  },
+  methods: {},
+}
 </script>
 
 <style></style>

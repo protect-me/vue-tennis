@@ -53,6 +53,8 @@ export default new Vuex.Store({
         const unsubscribeFindPeople = await firebase
           .firestore()
           .collection('findPeople')
+          .orderBy('date')
+          .orderBy('startTime')
           .onSnapshot((snapshot) => {
             if (snapshot.empty) {
               return
@@ -77,10 +79,9 @@ export default new Vuex.Store({
                 memo: item.memo,
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,
+                status: item.status,
               }
             })
-
-            console.log('schedules', schedules)
             commit('updateState', {
               unsubscribeFindPeople,
               schedules,

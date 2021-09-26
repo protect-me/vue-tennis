@@ -269,6 +269,7 @@ export default {
         memo: '',
         createdAt: '',
         updatedAt: '',
+        status: 1,
       },
       dateMenu: false,
       startTimeMenu: false,

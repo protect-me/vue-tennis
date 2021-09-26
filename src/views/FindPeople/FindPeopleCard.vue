@@ -88,9 +88,7 @@ export default {
     },
   },
   methods: {
-    goToDetail() {
-      console.log('ggoToDetail')
-    },
+    goToDetail() {},
   },
 }
 </script>
