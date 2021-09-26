@@ -2,7 +2,11 @@
   <v-container class="edit-user-info-container">
     <v-card flat>
       <div class="edit-user-info-header">
-        <TitleWithButton titleText="회원 정보 수정" goBackButton />
+        <TitleWithButton
+          titleText="회원 정보 수정"
+          goBackButton
+          @goBackButtonClicked="goBackButtonClicked"
+        />
       </div>
       <v-divider class="my-3"></v-divider>
       <div></div>
@@ -153,6 +157,9 @@ export default {
     }
   },
   methods: {
+    goBackButtonClicked() {
+      this.$router.go(-1)
+    },
     async apply() {
       if (this.isProcessing) {
         console.log('isProcessing!')

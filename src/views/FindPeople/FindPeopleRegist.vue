@@ -2,7 +2,11 @@
   <v-container class="find-people-regist-container">
     <v-card flat>
       <div class="find-people-regist-header">
-        <TitleWithButton titleText="신규 구인 등록" goBackButton />
+        <TitleWithButton
+          titleText="신규 게스트 모집 등록"
+          goBackButton
+          @goBackButtonClicked="goBackButtonClicked"
+        />
       </div>
       <v-divider class="my-3"></v-divider>
       <v-form ref="form" v-model="valid" lazy-validation>
@@ -225,10 +229,10 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import CourtList from '../admin/CourtList'
 import HelpNtrp from '../../components/HelpNtrp'
 import TitleWithButton from '../../components/TitleWithButton'
-import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -285,6 +289,9 @@ export default {
     }
   },
   methods: {
+    goBackButtonClicked() {
+      this.$router.go(-1)
+    },
     openCourtDialog() {
       this.courtDialogToggle = true
     },

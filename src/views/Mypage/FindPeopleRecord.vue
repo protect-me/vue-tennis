@@ -2,7 +2,11 @@
   <v-container class="find-people-record-container">
     <v-card flat>
       <div class="find-people-record-header">
-        <TitleWithButton titleText="게스트 모집 내역" goBackButton />
+        <TitleWithButton
+          titleText="게스트 모집 내역"
+          goBackButton
+          @goBackButtonClicked="goBackButtonClicked"
+        />
       </div>
       <v-divider class="my-3"></v-divider>
     </v-card>
@@ -50,6 +54,9 @@ export default {
     }
   },
   methods: {
+    goBackButtonClicked() {
+      this.$router.go(-1)
+    },
     async initData() {
       if (this.user.findPeopleList.length === 0) return
       const idList = this.user.findPeopleList

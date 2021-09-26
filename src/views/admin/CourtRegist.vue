@@ -2,7 +2,11 @@
   <v-container class="court-regist-container">
     <v-card flat>
       <div class="court-regist-header">
-        <TitleWithButton titleText="신규 코트 등록" goBackButton />
+        <TitleWithButton
+          titleText="신규 코트 등록"
+          goBackButton
+          @goBackButtonClicked="goBackButtonClicked"
+        />
       </div>
       <v-divider class="my-3"></v-divider>
       <v-form>
@@ -189,6 +193,9 @@ export default {
     }
   },
   methods: {
+    goBackButtonClicked() {
+      this.$router.go(-1)
+    },
     openAddressDialog() {
       console.log('openAddressDialog')
       this.addressDialogToggle = true
