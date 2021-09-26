@@ -111,13 +111,18 @@ export default {
           to: 'EditUserInfo',
         },
         {
-          text: '구인 내역',
+          text: '게스트 모집 내역',
           icon: 'mdi-account-search-outline',
           to: 'FindPeopleRecord',
         },
         {
-          text: '참가 내역',
+          text: '참가 요청 내역',
           icon: 'mdi-account-heart-outline',
+          to: 'FindCourtRecord',
+        },
+        {
+          text: '참가 확정 내역',
+          icon: 'mdi-account-check-outline',
           to: 'FindCourtRecord',
         },
         {

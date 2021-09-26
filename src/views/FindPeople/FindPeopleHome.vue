@@ -68,7 +68,6 @@ export default {
   watch: {
     schedules() {
       this.filtering()
-      console.log('watch')
     },
   },
   data() {
@@ -87,7 +86,6 @@ export default {
   },
   methods: {
     filtering() {
-      console.log('filtering')
       this.schedulesOpen = []
       this.schedulesClose = []
       this.schedulesComplete = []
@@ -115,23 +113,18 @@ export default {
 
         // 30일을 경과한 구인 => Continue
         // To Do: snapshot에서 부터 filtering 해오기
-        console.log('==========')
         if (elapsedDate > 30) {
-          console.log('1')
           continue
         }
         if (
           schedule.date < dateOfToday ||
           (schedule.date === dateOfToday && schedule.endTime <= currentTime)
         ) {
-          console.log('2')
           // 30일 이내 ~ 종료시간이 지난 구인 => Complete
           this.schedulesComplete.push(schedule)
         } else if (schedule.status === 0) {
-          console.log('3')
           this.schedulesClose.push(schedule)
         } else if (schedule.status === 1) {
-          console.log('4')
           this.schedulesOpen.push(schedule)
         }
       }

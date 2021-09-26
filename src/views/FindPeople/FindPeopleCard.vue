@@ -96,6 +96,7 @@ export default {
 <style lang="scss" scoped>
 .find-people-card-container {
   display: flex;
+  width: calc(100vw - 26px);
   .left {
     min-width: 70px;
     .title-container {
@@ -115,7 +116,7 @@ export default {
   }
   .right {
     flex-grow: 1;
-    max-width: calc(100vw - 94px);
+    max-width: calc(100vw - 100px);
     .right-wrapper {
       .divide-column {
         display: flex;
