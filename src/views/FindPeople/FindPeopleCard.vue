@@ -1,5 +1,5 @@
 <template>
-  <v-card class="find-people-card-container" @click="goToDetail()">
+  <v-card class="find-people-card-container" @click="goToDetail">
     <div class="left">
       <v-card-title class="title-container mb-0 pa-2">
         <div class="title-year">{{ scheduleDate.year }}</div>
@@ -88,8 +88,9 @@ export default {
     },
   },
   methods: {
-    goToDetail() {
-      console.log('ggoToDetail')
+    async goToDetail() {
+      await this.$store.dispatch('setSchedule', this.schedule)
+      this.$router.push('FindPeopleDetail')
     },
   },
 }
@@ -98,6 +99,8 @@ export default {
 <style lang="scss" scoped>
 .find-people-card-container {
   display: flex;
+  margin: 0px 2px;
+  width: calc(100% - 4px);
   .left {
     min-width: 70px;
     .title-container {
@@ -117,7 +120,6 @@ export default {
   }
   .right {
     flex-grow: 1;
-    max-width: calc(100vw - 94px);
     .right-wrapper {
       .divide-column {
         display: flex;

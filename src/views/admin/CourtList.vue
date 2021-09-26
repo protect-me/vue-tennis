@@ -32,12 +32,6 @@
             single-line
             hide-details
           ></v-text-field>
-          <v-divider
-            v-if="mode === 'view'"
-            class="mx-3"
-            inset
-            vertical
-          ></v-divider>
         </v-toolbar>
       </template>
       <template v-slot:[`item.address`]="{ item }">
@@ -80,9 +74,8 @@ export default {
 
   props: {
     mode: {
-      // select || view
       type: String,
-      default: 'view',
+      default: 'view', // select || view
     },
   },
   created() {

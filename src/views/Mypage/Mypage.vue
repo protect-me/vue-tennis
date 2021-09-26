@@ -1,45 +1,8 @@
 <template>
   <v-container class="mypage-container">
     <v-card v-if="user">
-      <div class="user-info-card d-flex flex-no-wrap justify-space-between">
-        <v-avatar class="ma-3" size="125" tile>
-          <img :src="user.photoURL" alt="photo" />
-        </v-avatar>
-        <div>
-          <v-card-title class="text-h6 pt-3 pl-0">
-            {{ user.nickName || user.displayName }}
-          </v-card-title>
-          <v-card-subtitle class="pb-2 pl-0">
-            {{ user.email }}
-          </v-card-subtitle>
-
-          <v-card-text class="py-0 pl-0">
-            <div>
-              <span v-if="user.sex">
-                {{ user.sex === 1 ? '남' : '여' }}
-              </span>
-              <span class="mx-1">|</span>
-              <span v-if="user.birth">
-                {{ userAge }}
-              </span>
-              <span class="mx-1">|</span>
-              <span v-if="user.location" v-text="user.location"></span>
-            </div>
-
-            <div></div>
-          </v-card-text>
-
-          <v-card-actions class="pt-1 pb-0 pl-0">
-            <v-spacer></v-spacer>
-            <v-chip small class="mt-1">
-              <span class="mr-1">NTRP</span>
-              <span v-if="user.ntrp" v-text="user.ntrp"></span>
-            </v-chip>
-          </v-card-actions>
-        </div>
-      </div>
+      <UserCard :user="user"></UserCard>
     </v-card>
-
     <v-card v-else>
       <div class="d-flex flex-no-wrap justify-space-between">
         <v-avatar class="ma-3" size="125" tile>
@@ -93,9 +56,13 @@
 </template>
 
 <script>
+import UserCard from '../../components/UserCard'
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    UserCard,
+  },
   mounted() {
     this.checkAdditionalInfo()
   },
@@ -111,13 +78,18 @@ export default {
           to: 'EditUserInfo',
         },
         {
-          text: '구인 내역',
+          text: '게스트 모집 내역',
           icon: 'mdi-account-search-outline',
           to: 'FindPeopleRecord',
         },
         {
-          text: '참가 내역',
+          text: '참가 요청 내역',
           icon: 'mdi-account-heart-outline',
+          to: 'FindCourtRecord',
+        },
+        {
+          text: '참가 확정 내역',
+          icon: 'mdi-account-check-outline',
           to: 'FindCourtRecord',
         },
         {
@@ -134,9 +106,6 @@ export default {
   },
   computed: {
     ...mapState(['fireUser', 'user']),
-    userAge() {
-      return Math.floor((new Date().getFullYear() - this.user.birth) / 10) * 10
-    },
   },
   watch: {
     user() {
@@ -180,12 +149,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.mypage-container {
-  width: 100%;
-  height: 100%;
-  .user-info-card > * {
-    overflow: hidden;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

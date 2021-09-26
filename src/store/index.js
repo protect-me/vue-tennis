@@ -6,11 +6,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    unsubscribeFindPeople: null,
-    schedules: [],
     loading: false,
     fireUser: null,
     user: null,
+    unsubscribeFindPeople: null,
+    schedules: [],
+    schedule: {},
   },
   getters: {
     unsubscribeFindPeople(state) {
@@ -53,6 +54,8 @@ export default new Vuex.Store({
         const unsubscribeFindPeople = await firebase
           .firestore()
           .collection('findPeople')
+          .orderBy('date')
+          .orderBy('startTime')
           .onSnapshot((snapshot) => {
             if (snapshot.empty) {
               return
@@ -77,10 +80,9 @@ export default new Vuex.Store({
                 memo: item.memo,
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,
+                status: item.status,
               }
             })
-
-            console.log('schedules', schedules)
             commit('updateState', {
               unsubscribeFindPeople,
               schedules,
@@ -92,6 +94,11 @@ export default new Vuex.Store({
         console.log(err)
         commit('updateState', { loading: false })
       }
+    },
+    async setSchedule({ commit }, payload) {
+      commit('updateState', {
+        schedule: payload,
+      })
     },
   },
   modules: {},

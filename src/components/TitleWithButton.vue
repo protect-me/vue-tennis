@@ -6,7 +6,7 @@
       icon
       color="gray"
       class="mr-1"
-      @click="$router.go(-1)"
+      @click="$emit('goBackButtonClicked')"
     >
       <v-icon>mdi-chevron-left</v-icon>
     </v-btn>
@@ -20,6 +20,13 @@
       color="primary"
     >
       NEW
+    </v-btn>
+    <v-btn
+      v-if="editButton"
+      @click="$emit('editButtonClicked')"
+      color="primary"
+    >
+      Edit
     </v-btn>
   </div>
 </template>
@@ -36,6 +43,10 @@ export default {
       default: false,
     },
     registNewButton: {
+      type: Boolean,
+      default: false,
+    },
+    editButton: {
       type: Boolean,
       default: false,
     },

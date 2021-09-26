@@ -51,6 +51,12 @@ const routes = [
     component: () => import('../views/FindPeople/FindPeopleRegist.vue'),
   },
   {
+    path: '/findpeopledetail',
+    name: 'FindPeopleDetail',
+    beforeEnter: onlyAuthUser,
+    component: () => import('../views/FindPeople/FindPeopleDetail.vue'),
+  },
+  {
     path: '/findcourt',
     name: 'FindCourt',
     component: () => import('../views/FindCourt.vue'),
@@ -70,11 +76,6 @@ const routes = [
     path: '/findpeoplerecord',
     name: 'FindPeopleRecord',
     component: () => import('../views/Mypage/FindPeopleRecord.vue'),
-  },
-  {
-    path: '/findcourtrecord',
-    name: 'FindCourtRecord',
-    component: () => import('../views/Mypage/FindCourtRecord.vue'),
   },
   {
     path: '/operationpolicy',

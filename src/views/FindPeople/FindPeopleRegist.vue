@@ -2,7 +2,11 @@
   <v-container class="find-people-regist-container">
     <v-card flat>
       <div class="find-people-regist-header">
-        <TitleWithButton titleText="신규 구인 등록" goBackButton />
+        <TitleWithButton
+          titleText="신규 게스트 모집 등록"
+          goBackButton
+          @goBackButtonClicked="goBackButtonClicked"
+        />
       </div>
       <v-divider class="my-3"></v-divider>
       <v-form ref="form" v-model="valid" lazy-validation>
@@ -48,7 +52,7 @@
               hide-details
               v-bind="attrs"
               v-on="on"
-              :rules="[rules.required]"
+              :rules="[rules.required, rules.beforeToday]"
             ></v-text-field>
           </template>
           <v-date-picker
@@ -197,8 +201,8 @@
           v-model="form.memo"
           type="text"
           outlined
-          hide-details
           no-resize
+          counter="100"
           :rules="[rules.counter]"
         />
       </v-form>
@@ -225,10 +229,10 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import CourtList from '../admin/CourtList'
 import HelpNtrp from '../../components/HelpNtrp'
 import TitleWithButton from '../../components/TitleWithButton'
-import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -247,6 +251,14 @@ export default {
       rules: {
         required: (value) => !!value || '필수 기입',
         counter: (value) => value.length <= 100 || '100자 이하로 입력해주세요',
+        beforeToday: (value) => {
+          const inputDate = new Date(value)
+          const today = new Date().setHours(0)
+          if (inputDate < today) {
+            return '날짜를 확인해주세요'
+          }
+          return true
+        },
       },
       courtDialogToggle: false,
       helpNtrpToggle: false,
@@ -255,7 +267,7 @@ export default {
       selectedNtrp: 5,
       form: {
         organizer: '',
-        organizerNickname: '',
+        organizerNickName: '',
         name: '',
         courtType: '',
         date: '',
@@ -269,6 +281,7 @@ export default {
         memo: '',
         createdAt: '',
         updatedAt: '',
+        status: 1,
       },
       dateMenu: false,
       startTimeMenu: false,
@@ -276,6 +289,9 @@ export default {
     }
   },
   methods: {
+    goBackButtonClicked() {
+      this.$router.go(-1)
+    },
     openCourtDialog() {
       this.courtDialogToggle = true
     },
@@ -308,9 +324,23 @@ export default {
       try {
         this.form.organizer = this.fireUser.uid
         this.form.organizerNickName = this.fireUser.displayName
-        this.form.createdAt = Date.now()
+        this.form.createdAt = new Date()
         this.form.updatedAt = this.form.createdAt
-        await this.$firebase.firestore().collection('findPeople').add(this.form)
+        const id = this.form.createdAt.getTime().toString()
+
+        const ref = this.$firebase.firestore().collection('findPeople').doc(id)
+        const refUser = this.$firebase
+          .firestore()
+          .collection('users')
+          .doc(this.fireUser.uid)
+
+        const batch = await this.$firebase.firestore().batch()
+        batch.set(ref, this.form)
+        batch.update(refUser, {
+          findPeopleList: this.$firebase.firestore.FieldValue.arrayUnion(id),
+        })
+        await batch.commit()
+
         console.log('등록 성공')
       } catch (err) {
         alert('등록에 실패했습니다.', err.message)
