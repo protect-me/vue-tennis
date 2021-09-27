@@ -33,6 +33,7 @@
           <div>
             <v-icon class="mr-1 mb-1" small>mdi-map-marker-outline</v-icon>
             <span>{{ schedule.name }}</span>
+            <span>-{{ schedule.courtType }}</span>
           </div>
           <div>
             <v-icon class="mr-1 mb-1" small>mdi-tennis</v-icon>
@@ -43,7 +44,7 @@
         <div class="divide-column">
           <div>
             <v-icon class="mr-1 mb-1" small>
-              mdi-account-cowboy-hat-outline
+              mdi-crown
             </v-icon>
             <span>{{ schedule.organizerNickName }}</span>
           </div>
@@ -73,6 +74,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    mode: {
+      type: String,
+      default: 'list', // list || detail
+    },
   },
   computed: {
     scheduleDate() {
@@ -89,6 +94,7 @@ export default {
   },
   methods: {
     async goToDetail() {
+      if (this.mode === 'detail') return
       await this.$store.dispatch('setSchedule', this.schedule)
       this.$router.push('FindPeopleDetail')
     },
@@ -99,8 +105,6 @@ export default {
 <style lang="scss" scoped>
 .find-people-card-container {
   display: flex;
-  margin: 0px 2px;
-  width: calc(100% - 4px);
   .left {
     min-width: 70px;
     .title-container {
