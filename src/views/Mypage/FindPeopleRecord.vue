@@ -85,6 +85,7 @@ export default {
               contact: item.contact,
               cost: item.cost,
               memo: item.memo,
+              participants: item.participants,
               createdAt: item.createdAt,
               updatedAt: item.updatedAt,
               status: item.status,

@@ -140,6 +140,7 @@ export default {
 .find-people-container {
   height: calc(100vh - 48px);
   .tabs-item {
+    padding: 2px;
     height: calc(100vh - 180px);
     overflow: scroll;
   }

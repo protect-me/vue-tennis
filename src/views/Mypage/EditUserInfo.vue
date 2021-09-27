@@ -19,7 +19,7 @@
             type="text"
             outlined
             hide-details
-            :rules="[rules.required, rules.counter8]"
+            :rules="[rules.required, rules.counter10]"
           />
           <v-btn-toggle
             style="
@@ -143,6 +143,8 @@ export default {
           (value && value.length === 4) || '4자리 숫자로 입력해주세요',
         counter8: (value) =>
           (value && value.length <= 8) || '8자리 이하로 입력해주세요',
+        counter10: (value) =>
+          (value && value.length <= 10) || '10자리 이하로 입력해주세요',
       },
 
       form: {

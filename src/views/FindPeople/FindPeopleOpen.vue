@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="find-people-detail-container">
     <FindPeopleCard
       v-for="(schedule, index) in schedules"
       :key="index"
@@ -34,4 +34,4 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped></style>

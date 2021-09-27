@@ -67,6 +67,8 @@ export default new Vuex.Store({
                 findPeopleId: id,
                 organizer: item.organizer,
                 organizerNickName: item.organizerNickName,
+                applicants: item.applicants,
+                participants: item.participants,
                 name: item.name,
                 courtType: item.courtType,
                 date: item.date,

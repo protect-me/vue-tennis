@@ -268,6 +268,8 @@ export default {
       form: {
         organizer: '',
         organizerNickName: '',
+        participants: [],
+        applicants: [],
         name: '',
         courtType: '',
         date: '',
@@ -322,8 +324,9 @@ export default {
     },
     async registNewFindPeople() {
       try {
+        this.form.vacant = Number(this.form.vacant)
         this.form.organizer = this.fireUser.uid
-        this.form.organizerNickName = this.fireUser.displayName
+        this.form.organizerNickName = this.user.nickName
         this.form.createdAt = new Date()
         this.form.updatedAt = this.form.createdAt
         const id = this.form.createdAt.getTime().toString()
