@@ -64,7 +64,7 @@ export default new Vuex.Store({
               const id = value.id
               const item = value.data()
               return {
-                findPeopleId: id,
+                scheduleId: id,
                 organizer: item.organizer,
                 organizerNickName: item.organizerNickName,
                 applicants: item.applicants,

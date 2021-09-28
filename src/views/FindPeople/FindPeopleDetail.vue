@@ -1,5 +1,8 @@
 <template>
-  <v-container class="find-people-detail-container" v-if="schedule">
+  <v-container
+    class="find-people-detail-container"
+    v-if="subscribedSchedule && subscribedSchedule.scheduleId"
+  >
     <div class="find-people-detail-header">
       <TitleWithButton
         titleText="게스트 모집 상세"
@@ -10,7 +13,7 @@
       />
     </div>
     <v-divider class="my-3"></v-divider>
-    <FindPeopleCard :schedule="schedule" mode="detail" />
+    <FindPeopleCard :schedule="subscribedSchedule" mode="detail" />
     <v-card>
       <v-card-text>
         <v-icon class="mr-1" small>mdi-forum-outline</v-icon>
@@ -86,7 +89,7 @@
 
       <v-card
         flat
-        v-for="(vacant, index) in Number(schedule.vacant)"
+        v-for="(vacant, index) in subscribedSchedule.vacant"
         :key="participants.length + index"
         :class="{
           'participants-card': true,
@@ -160,7 +163,7 @@
       class="compelete-btn"
       block
       color="primary"
-      @click="apply"
+      @click="openApplyDialog"
     >
       참가 신청
     </v-btn>
@@ -236,11 +239,27 @@ export default {
   },
   mounted() {
     this.$nextTick(function () {
-      this.initData()
+      this.subscribe()
     })
+  },
+  destroyed() {
+    if (this.unsubscribe) {
+      this.unsubscribe()
+    }
+  },
+  watch: {
+    subscribedSchedule: {
+      deep: true,
+      handler(nv) {
+        console.log(nv)
+      },
+    },
   },
   data() {
     return {
+      unsubscribe: null,
+      subscribedSchedule: {},
+
       applyDialogToggle: false,
       participants: [],
       applicants: [],
@@ -283,27 +302,47 @@ export default {
     editButtonClicked() {
       console.log('editButtonClicked')
     },
+    openApplyDialog() {
+      this.applyDialogToggle = true
+    },
+    closeApplyDialog() {
+      this.comment = ''
+      this.applyDialogToggle = false
+    },
+    subscribe() {
+      console.log('subscribe')
+      if (this.unsubscribe) {
+        this.unsubscribe()
+      }
+      this.unsubscribe = this.$firebase
+        .firestore()
+        .collection('findPeople')
+        .doc(this.schedule.scheduleId)
+        .onSnapshot((sn) => {
+          if (sn.empty) {
+            this.subscribedSchedule = {}
+            return
+          }
+          this.subscribedSchedule = sn.data()
+          this.subscribedSchedule.scheduleId = this.schedule.scheduleId
+          this.initData()
+        })
+    },
     async initData() {
-      console.log('init')
+      console.log('init', this.subscribedSchedule)
       this.participants = []
       this.applicants = []
-      this.applicantsUserIdList = []
-      let participantsIdList = []
-      let snapshot = null
-
-      participantsIdList = [
-        this.schedule.organizer,
-        ...this.schedule.participants,
+      const participantsIdList = [
+        this.subscribedSchedule.organizer,
+        ...this.subscribedSchedule.participants,
       ]
 
-      console.log('key!!', participantsIdList)
-
+      // comment
       const applicantsUserIdListWithComment = {}
-
       const applicantsData = await this.$firebase
         .firestore()
         .collection('findPeople')
-        .doc(this.schedule.findPeopleId)
+        .doc(this.subscribedSchedule.scheduleId)
         .collection('applicants')
         .get()
       this.applicantsUserIdList = applicantsData.docs.map((doc) => {
@@ -312,13 +351,16 @@ export default {
       })
 
       try {
-        snapshot = await this.$firebase.firestore().collection('users').get()
-
+        const snapshot = await this.$firebase
+          .firestore()
+          .collection('users')
+          .get()
         this.participants = snapshot.docs
           .filter((value) => participantsIdList.includes(value.id))
           .map((value, index) => {
             const id = value.id
-            if (id === this.schedule.organizer) this.organizerIndex = index
+            if (id === this.subscribedSchedule.organizer)
+              this.organizerIndex = index
             const item = value.data()
             return {
               userId: id,
@@ -358,27 +400,26 @@ export default {
           this.participants[this.organizerIndex] = Object.assign(tmp)
         }
         const ghostNumber =
-          this.schedule.total - this.participants.length - this.schedule.vacant
+          this.subscribedSchedule.total -
+          this.participants.length -
+          this.subscribedSchedule.vacant
         for (let i = 0; i < ghostNumber; i++) {
-          this.participants.push(this.ghostParticipant)
+          this.participants.push(Object.assign(this.ghostParticipant))
         }
         for (let j = 0; j < this.applicantsUserIdList.length; j++) {
           this.applicants[j].comment =
             applicantsUserIdListWithComment[this.applicants[j].userId]
         }
-        console.log('init complete / participants', this.participants)
-        console.log('init complete / schedule', this.schedule)
+        console.log(
+          'init complete / participants',
+          this.participants,
+          this.applicants,
+        )
+        console.log(
+          'init complete / subscribedSchedule',
+          this.subscribedSchedule,
+        )
       }
-    },
-    openApplyDialog() {
-      this.applyDialogToggle = true
-    },
-    closeApplyDialog() {
-      this.comment = ''
-      this.applyDialogToggle = false
-    },
-    async apply() {
-      this.openApplyDialog()
     },
     async registApplicant() {
       await this.$refs.form.validate()
@@ -388,19 +429,21 @@ export default {
         const ref = this.$firebase
           .firestore()
           .collection('findPeople')
-          .doc(this.schedule.findPeopleId)
-          .collection('applicants')
-          .doc(this.fireUser.uid)
+          .doc(this.subscribedSchedule.scheduleId)
         const refUser = this.$firebase
           .firestore()
           .collection('users')
           .doc(this.fireUser.uid)
-
         const batch = await this.$firebase.firestore().batch()
-        batch.set(ref, { comment: this.comment })
+        batch.update(ref, {
+          applicantsCount: this.$firebase.firestore.FieldValue.increment(1),
+        })
+        batch.set(ref.collection('applicants').doc(this.fireUser.uid), {
+          comment: this.comment,
+        })
         batch.update(refUser, {
           applyList: this.$firebase.firestore.FieldValue.arrayUnion(
-            this.schedule.findPeopleId,
+            this.subscribedSchedule.scheduleId,
           ),
         })
         await batch.commit()
@@ -415,11 +458,12 @@ export default {
     },
     async cancleApply() {
       const answer = window.confirm('참가 요청을 취소하시겠어요?')
+      console.log('uid', this.fireUser.uid)
       if (answer) {
         const ref = this.$firebase
           .firestore()
           .collection('findPeople')
-          .doc(this.schedule.findPeopleId)
+          .doc(this.subscribedSchedule.scheduleId)
         const refUser = this.$firebase
           .firestore()
           .collection('users')
@@ -427,11 +471,18 @@ export default {
         try {
           const batch = await this.$firebase.firestore().batch()
           batch.update(ref, {
+            applicantsCount: this.$firebase.firestore.FieldValue.increment(-1),
             participants: this.$firebase.firestore.FieldValue.arrayRemove(
               this.fireUser.uid,
             ),
-            vacant: this.$firebase.firestore.FieldValue.increment(1),
           })
+          if (
+            this.subscribedSchedule.participants.includes(this.fireUser.uid)
+          ) {
+            batch.update(ref, {
+              vacant: this.$firebase.firestore.FieldValue.increment(1),
+            })
+          }
           batch.delete(ref.collection('applicants').doc(this.fireUser.uid))
           batch.update(refUser, {
             applyList: this.$firebase.firestore.FieldValue.arrayRemove(
@@ -444,23 +495,17 @@ export default {
           alert('참가 요청 취소에 실패했습니다', err)
           console.log(err)
         } finally {
-          const deleteIndex = this.schedule.participants.indexOf(
-            this.fireUser.uid,
+          const deleteIndex = this.applicants.findINdex(
+            (v) => (v.userId = this.fireUser.uid),
           )
-          if (deleteIndex >= 0) {
-            this.schedule.participants.splice(deleteIndex, 1)
-            // To Do
-            // vacant++를 해줘야하는데, 실시간으로 데이터가 아니라서
-            // 방장이 게스트 수락을 했는지 안했는지 보장이 되어있지 않음
-          }
-
+          this.applicants.splice(deleteIndex, 1)
           this.initData()
         }
       }
     },
     async selectApplicant(applicant) {
-      if (this.schedule.organizer !== this.fireUser.uid) return
-      if (this.schedule.participants.includes(applicant.userId)) {
+      if (this.subscribedSchedule.organizer !== this.fireUser.uid) return
+      if (this.subscribedSchedule.participants.includes(applicant.userId)) {
         alert('이미 참여한 게스트입니다!')
         return
       }
@@ -470,7 +515,7 @@ export default {
         const ref = this.$firebase
           .firestore()
           .collection('findPeople')
-          .doc(this.schedule.findPeopleId)
+          .doc(this.subscribedSchedule.scheduleId)
 
         try {
           const batch = await this.$firebase.firestore().batch()
@@ -486,11 +531,6 @@ export default {
           alert('게스트 영입 실패', err)
           console.log(err)
         } finally {
-          if (!this.schedule.participants.includes(applicant.userId)) {
-            this.schedule.participants.push(applicant.userId)
-            this.schedule.vacant--
-          }
-          console.log('outisde')
           this.initData()
         }
       }

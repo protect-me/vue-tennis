@@ -270,6 +270,7 @@ export default {
         organizerNickName: '',
         participants: [],
         applicants: [],
+        applicantsCount: 0,
         name: '',
         courtType: '',
         date: '',
@@ -324,6 +325,7 @@ export default {
     },
     async registNewFindPeople() {
       try {
+        this.form.total = Number(this.form.total)
         this.form.vacant = Number(this.form.vacant)
         this.form.organizer = this.fireUser.uid
         this.form.organizerNickName = this.user.nickName
