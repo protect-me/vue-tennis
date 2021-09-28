@@ -13,13 +13,11 @@
       <v-form v-if="user" ref="form" v-model="valid" lazy-validation>
         <div class="divide-column">
           <v-text-field
-            class="mb-3"
             v-model="form.nickName"
             label="닉네임"
             type="text"
             outlined
-            hide-details
-            :rules="[rules.required, rules.counter10]"
+            :rules="[rules.required, rules.counter10, rules.banGhost]"
           />
           <v-btn-toggle
             style="
@@ -28,7 +26,7 @@
               border-radius: 4px;
             "
             v-model="sex"
-            class="mb-3"
+            class="mb-7"
             color="primary"
             mandatory
             tile
@@ -37,27 +35,22 @@
             <v-btn width="50%" :value="2">여</v-btn>
           </v-btn-toggle>
           <v-text-field
-            class="mb-3"
             v-model="form.birth"
             label="생년 (e.g. 1988)"
             type="number"
             max="4"
             outlined
-            hide-details
             :rules="[rules.required, rules.counter4number]"
           />
           <v-text-field
-            class="mb-3"
             v-model="form.location"
             label="지역 (e.g. 서울시 중구)"
             max="8"
             type="text"
             outlined
-            hide-details
             :rules="[rules.required, rules.counter8]"
           />
           <div
-            class="mb-3"
             style="
               color: gray;
               border: 1px solid rgba(0, 0, 0, 0.42);
@@ -145,6 +138,16 @@ export default {
           (value && value.length <= 8) || '8자리 이하로 입력해주세요',
         counter10: (value) =>
           (value && value.length <= 10) || '10자리 이하로 입력해주세요',
+        banGhost: (value) =>
+          (value &&
+            value !== 'GHOST' &&
+            value !== 'Ghost' &&
+            value !== 'ghost' &&
+            value !== 'ADMIN' &&
+            value !== 'Admin' &&
+            value !== 'admin' &&
+            value !== '관리자') ||
+          '사용할 수 없는 닉네임입니다',
       },
 
       form: {

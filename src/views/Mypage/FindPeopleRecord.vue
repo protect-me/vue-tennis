@@ -71,7 +71,7 @@ export default {
             const id = value.id
             const item = value.data()
             return {
-              findPeopleId: id,
+              scheduleId: id,
               organizer: item.organizer,
               organizerNickName: item.organizerNickName,
               name: item.name,
