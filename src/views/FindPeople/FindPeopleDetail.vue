@@ -40,6 +40,7 @@
           'ml-1': index % 2 === 1,
         }"
         :dark="participant.userId === fireUser.uid"
+        @click="selectParticipant(participant)"
       >
         <v-card-subtitle class="pt-2 px-2 pb-0">
           {{ participant.nickName }}
@@ -484,6 +485,49 @@ export default {
         }
       }
     },
+    async selectParticipant(participant) {
+      if (this.subscribedSchedule.organizer !== this.fireUser.uid) return
+      if (participant.userId === 'Ghost') return
+
+      const answer = window.confirm('게스트를 방출하시겠어요?')
+      if (answer) {
+        const ref = this.$firebase
+          .firestore()
+          .collection('findPeople')
+          .doc(this.subscribedSchedule.scheduleId)
+        const refUser = this.$firebase
+          .firestore()
+          .collection('users')
+          .doc(participant.userId)
+        try {
+          const batch = await this.$firebase.firestore().batch()
+          batch.update(ref, {
+            participants: this.$firebase.firestore.FieldValue.arrayRemove(
+              participant.userId,
+            ),
+          })
+          if (
+            this.subscribedSchedule.participants.includes(participant.userId)
+          ) {
+            batch.update(ref, {
+              vacant: this.$firebase.firestore.FieldValue.increment(1),
+            })
+          }
+          batch.update(refUser, {
+            applyList: this.$firebase.firestore.FieldValue.arrayRemove(
+              this.fireUser.uid,
+            ),
+          })
+          await batch.commit()
+          console.log('게스트 방출 성공')
+        } catch (err) {
+          alert('게스트 방출 실패', err)
+          console.log(err)
+        } finally {
+        }
+      }
+    },
+
     async selectApplicant(applicant) {
       if (this.subscribedSchedule.organizer !== this.fireUser.uid) return
       if (this.subscribedSchedule.participants.includes(applicant.userId)) {
