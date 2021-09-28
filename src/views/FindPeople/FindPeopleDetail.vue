@@ -247,14 +247,6 @@ export default {
       this.unsubscribe()
     }
   },
-  watch: {
-    subscribedSchedule: {
-      deep: true,
-      handler(nv) {
-        console.log(nv)
-      },
-    },
-  },
   data() {
     return {
       unsubscribe: null,
@@ -310,7 +302,6 @@ export default {
       this.applyDialogToggle = false
     },
     subscribe() {
-      console.log('subscribe')
       if (this.unsubscribe) {
         this.unsubscribe()
       }
@@ -410,15 +401,6 @@ export default {
           this.applicants[j].comment =
             applicantsUserIdListWithComment[this.applicants[j].userId]
         }
-        console.log(
-          'init complete / participants',
-          this.participants,
-          this.applicants,
-        )
-        console.log(
-          'init complete / subscribedSchedule',
-          this.subscribedSchedule,
-        )
       }
     },
     async registApplicant() {
@@ -449,16 +431,14 @@ export default {
         await batch.commit()
         console.log('참가 요청 성공')
       } catch (err) {
-        alert('참가 요청에 실패했습니다', err)
+        alert('참가 요청 실패', err)
         console.log('참가 요청 실패', err)
       } finally {
-        this.initData()
         this.closeApplyDialog()
       }
     },
     async cancleApply() {
       const answer = window.confirm('참가 요청을 취소하시겠어요?')
-      console.log('uid', this.fireUser.uid)
       if (answer) {
         const ref = this.$firebase
           .firestore()
@@ -492,14 +472,15 @@ export default {
           await batch.commit()
           console.log('참가 요청 취소 성공')
         } catch (err) {
-          alert('참가 요청 취소에 실패했습니다', err)
+          alert('참가 요청 취소 실패', err)
           console.log(err)
         } finally {
-          const deleteIndex = this.applicants.findINdex(
+          const deleteIndex = this.applicants.findIndex(
             (v) => (v.userId = this.fireUser.uid),
           )
-          this.applicants.splice(deleteIndex, 1)
-          this.initData()
+          if (deleteIndex > 0) {
+            this.applicants.splice(deleteIndex, 1)
+          }
         }
       }
     },
@@ -530,8 +511,6 @@ export default {
         } catch (err) {
           alert('게스트 영입 실패', err)
           console.log(err)
-        } finally {
-          this.initData()
         }
       }
     },
