@@ -3,160 +3,171 @@
     class="find-people-detail-container"
     v-if="subscribedSchedule && subscribedSchedule.scheduleId"
   >
-    <div class="find-people-detail-header">
-      <TitleWithButton
-        titleText="게스트 모집 상세"
-        goBackButton
-        :editButton="fireUser.uid === schedule.organizer"
-        @editButtonClicked="editButtonClicked"
-        @goBackButtonClicked="goBackButtonClicked"
-      />
-    </div>
-    <v-divider class="my-3"></v-divider>
-    <FindPeopleCard :schedule="subscribedSchedule" mode="detail" />
-    <v-card>
-      <v-card-text>
-        <v-icon class="mr-1" small>mdi-forum-outline</v-icon>
-        open kakao talk link
-        <v-icon class="mr-1" small>mdi-link-varian</v-icon>
-        <span>{{ schedule.contact }}</span>
-      </v-card-text>
-    </v-card>
+    <div class="find-people-detail-content">
+      <div class="find-people-detail-header">
+        <TitleWithButton
+          titleText="게스트 모집 상세"
+          goBackButton
+          :editButton="fireUser.uid === schedule.organizer"
+          @editButtonClicked="editButtonClicked"
+          @goBackButtonClicked="goBackButtonClicked"
+        />
+      </div>
+      <v-divider class="my-3"></v-divider>
+      <FindPeopleCard :schedule="subscribedSchedule" mode="detail" />
+      <v-card>
+        <v-card-text>
+          <v-icon class="mr-1" small>mdi-forum-outline</v-icon>
+          open kakao talk link
+          <v-icon class="mr-1" small>mdi-link-varian</v-icon>
+          <span>{{ schedule.contact }}</span>
+        </v-card-text>
+      </v-card>
 
-    <div class="my-3" style="display: flex;">
-      <v-divider class="mt-3" />
-      <div class="mx-3">현재 참가자</div>
-      <v-divider class="mt-3" />
-    </div>
+      <div class="my-3" style="display: flex;">
+        <v-divider class="mt-3" />
+        <div class="mx-3">현재 참가자</div>
+        <v-divider class="mt-3" />
+      </div>
 
-    <v-container class="participants-container pa-0" v-if="participants">
-      <v-card
-        v-for="(participant, index) in participants"
-        :key="index"
-        :class="{
-          'participants-card': true,
-          'mb-1': true,
-          'mr-1': index % 2 === 0,
-          'ml-1': index % 2 === 1,
-        }"
-        :dark="participant.userId === fireUser.uid"
-        @click="selectParticipant(participant)"
-      >
-        <v-card-subtitle class="pt-2 px-2 pb-0">
-          {{ participant.nickName }}
-          <v-icon v-if="index === 0" small class="mb-1">
-            mdi-crown-outline
-          </v-icon>
-          <v-icon v-if="participant.userId === 'Ghost'" small class="mb-1">
-            mdi-ghost-outline
-          </v-icon>
-        </v-card-subtitle>
-
-        <v-card-text
-          v-if="participant.userId !== 'Ghost'"
-          class="pt-0 px-2 pb-2"
+      <v-container class="participants-container pa-0" v-if="participants">
+        <v-card
+          v-for="(participant, index) in participants"
+          :key="index"
+          :class="{
+            'participants-card': true,
+            'mb-1': true,
+            'mr-1': index % 2 === 0,
+            'ml-1': index % 2 === 1,
+          }"
+          :dark="participant.userId === fireUser.uid"
+          @click="selectParticipant(participant)"
         >
-          <div>
-            <span v-if="participant.sex">
-              {{ participant.sex === 1 ? '남' : '여' }}
-            </span>
-            <span class="mx-1">|</span>
-            <span v-if="participant.age">
-              {{ participant.age }}
-            </span>
-            <span class="mx-1">|</span>
-            <span
-              v-if="participant.location"
-              v-text="participant.location"
-            ></span>
-          </div>
-          <div align="right" class="mt-1">
-            <v-chip small>
-              <span>NTRP</span>
-              <span v-if="participant.ntrp" v-text="participant.ntrp"></span>
-            </v-chip>
-          </div>
-        </v-card-text>
-        <v-card-text
-          v-else-if="participant.userId === 'Ghost'"
-          class="pt-0 px-2 pb-2"
+          <v-card-subtitle class="pt-2 px-2 pb-0">
+            {{ participant.nickName }}
+            <v-icon v-if="index === 0" small class="mb-1">
+              mdi-crown-outline
+            </v-icon>
+            <v-icon v-if="participant.userId === 'Ghost'" small class="mb-1">
+              mdi-ghost-outline
+            </v-icon>
+          </v-card-subtitle>
+
+          <v-card-text
+            v-if="participant.userId !== 'Ghost'"
+            class="pt-0 px-2 pb-2"
+          >
+            <div>
+              <span v-if="participant.sex">
+                {{ participant.sex === 1 ? '남' : '여' }}
+              </span>
+              <span class="mx-1">|</span>
+              <span v-if="participant.age">
+                {{ participant.age }}
+              </span>
+              <span class="mx-1">|</span>
+              <span
+                v-if="participant.location"
+                v-text="participant.location"
+              ></span>
+            </div>
+            <div align="right" class="mt-1">
+              <v-chip small>
+                <span>NTRP</span>
+                <span v-if="participant.ntrp" v-text="participant.ntrp"></span>
+              </v-chip>
+            </div>
+          </v-card-text>
+          <v-card-text
+            v-else-if="participant.userId === 'Ghost'"
+            class="pt-0 px-2 pb-2"
+          >
+            <div>-</div>
+            <div align="right" class="mt-1">
+              <v-chip small><span>NTRP</span></v-chip>
+            </div>
+          </v-card-text>
+        </v-card>
+
+        <v-card
+          flat
+          v-for="(vacant, index) in subscribedSchedule.vacant"
+          :key="participants.length + index"
+          :class="{
+            'participants-card': true,
+            'vacant-card': true,
+            'mb-1': true,
+            'mr-1': (participants.length + index) % 2 === 0,
+            'ml-1': (participants.length + index) % 2 === 1,
+          }"
+        ></v-card>
+      </v-container>
+
+      <div class="my-3" style="display: flex;">
+        <v-divider class="mt-3" />
+        <div class="mx-3">참가 신청자</div>
+        <v-divider class="mt-3" />
+      </div>
+
+      <v-container v-if="applicants && applicants.length === 0">
+        <v-card flat>
+          Notice. 참가 신청한 게스트가 없습니다 🎾
+        </v-card>
+      </v-container>
+
+      <v-container v-else class="applicants-container pa-0">
+        <v-card
+          v-for="(applicant, index) in applicants"
+          :key="index"
+          :class="{
+            'applicants-card': true,
+            'mb-1': true,
+            'mr-1': index % 2 === 0,
+            'ml-1': index % 2 === 1,
+          }"
+          @click="selectApplicant(applicant)"
         >
-          <div>-</div>
-          <div align="right" class="mt-1">
-            <v-chip small><span>NTRP</span></v-chip>
-          </div>
-        </v-card-text>
-      </v-card>
-
-      <v-card
-        flat
-        v-for="(vacant, index) in subscribedSchedule.vacant"
-        :key="participants.length + index"
-        :class="{
-          'participants-card': true,
-          'vacant-card': true,
-          'mb-1': true,
-          'mr-1': (participants.length + index) % 2 === 0,
-          'ml-1': (participants.length + index) % 2 === 1,
-        }"
-      ></v-card>
-    </v-container>
-
-    <div class="my-3" style="display: flex;">
-      <v-divider class="mt-3" />
-      <div class="mx-3">참가 신청자</div>
-      <v-divider class="mt-3" />
+          <v-card-subtitle class="pt-2 px-2 pb-0">
+            {{ applicant.nickName }}
+          </v-card-subtitle>
+          <v-card-text class="pt-0 px-2 pb-2">
+            <div>
+              <span v-if="applicant.sex">
+                {{ applicant.sex === 1 ? '남' : '여' }}
+              </span>
+              <span class="mx-1">|</span>
+              <span v-if="applicant.age">
+                {{ applicant.age }}
+              </span>
+              <span class="mx-1">|</span>
+              <span
+                v-if="applicant.location"
+                v-text="applicant.location"
+              ></span>
+            </div>
+            <div v-if="applicant.comment">
+              <v-icon small class="mr-1 mb-1">mdi-bullhorn-outline</v-icon>
+              <span>{{ applicant.comment }}</span>
+            </div>
+            <div align="right" class="mt-1">
+              <v-chip small>
+                <span class="mr-1">NTRP</span>
+                <span v-if="applicant.ntrp" v-text="applicant.ntrp"></span>
+              </v-chip>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-container>
     </div>
 
-    <v-container v-if="applicants && applicants.length === 0">
-      <v-card flat>
-        Notice. 참가 신청한 게스트가 없습니다 🎾
-      </v-card>
-    </v-container>
-
-    <v-container v-else class="applicants-container pa-0">
-      <v-card
-        v-for="(applicant, index) in applicants"
-        :key="index"
-        :class="{
-          'applicants-card': true,
-          'mb-1': true,
-          'mr-1': index % 2 === 0,
-          'ml-1': index % 2 === 1,
-        }"
-        @click="selectApplicant(applicant)"
-      >
-        <v-card-subtitle class="pt-2 px-2 pb-0">
-          {{ applicant.nickName }}
-        </v-card-subtitle>
-        <v-card-text class="pt-0 px-2 pb-2">
-          <div>
-            <span v-if="applicant.sex">
-              {{ applicant.sex === 1 ? '남' : '여' }}
-            </span>
-            <span class="mx-1">|</span>
-            <span v-if="applicant.age">
-              {{ applicant.age }}
-            </span>
-            <span class="mx-1">|</span>
-            <span v-if="applicant.location" v-text="applicant.location"></span>
-          </div>
-          <div v-if="applicant.comment">
-            <v-icon small class="mr-1 mb-1">mdi-bullhorn-outline</v-icon>
-            <span>{{ applicant.comment }}</span>
-          </div>
-          <div align="right" class="mt-1">
-            <v-chip small>
-              <span class="mr-1">NTRP</span>
-              <span v-if="applicant.ntrp" v-text="applicant.ntrp"></span>
-            </v-chip>
-          </div>
-        </v-card-text>
-      </v-card>
-    </v-container>
     <v-spacer></v-spacer>
     <v-btn
-      v-if="
+      class="compelete-btn"
+      disabled
+      v-if="schedule.organizer === fireUser.uid"
+    ></v-btn>
+    <v-btn
+      v-else-if="
         schedule.organizer !== fireUser.uid &&
         applicantsUserIdList &&
         !applicantsUserIdList.includes(fireUser.uid)
@@ -169,7 +180,7 @@
       참가 신청
     </v-btn>
     <v-btn
-      v-if="
+      v-else-if="
         schedule.organizer !== fireUser.uid &&
         applicantsUserIdList &&
         applicantsUserIdList.includes(fireUser.uid)
@@ -331,6 +342,7 @@ export default {
 
       // comment
       const applicantsUserIdListWithComment = {}
+      const applicantsUserIdListWithCreatedAt = {}
       const applicantsData = await this.$firebase
         .firestore()
         .collection('findPeople')
@@ -339,6 +351,7 @@ export default {
         .get()
       this.applicantsUserIdList = applicantsData.docs.map((doc) => {
         applicantsUserIdListWithComment[doc.id] = doc.data().comment
+        applicantsUserIdListWithCreatedAt[doc.id] = doc.data().createdAt
         return doc.id
       })
 
@@ -401,7 +414,13 @@ export default {
         for (let j = 0; j < this.applicantsUserIdList.length; j++) {
           this.applicants[j].comment =
             applicantsUserIdListWithComment[this.applicants[j].userId]
+          this.applicants[j].createdAt = Number(
+            applicantsUserIdListWithCreatedAt[this.applicants[j].userId],
+          )
         }
+        this.applicants.sort((a, b) => {
+          return a.createdAt - b.createdAt
+        })
       }
     },
     async registApplicant() {
@@ -423,6 +442,7 @@ export default {
         })
         batch.set(ref.collection('applicants').doc(this.fireUser.uid), {
           comment: this.comment,
+          createdAt: new Date().getTime().toString(),
         })
         batch.update(refUser, {
           applyList: this.$firebase.firestore.FieldValue.arrayUnion(
@@ -563,31 +583,44 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/* .find-people-regist-content {
+    height: calc(100vh - 120px);
+    overflow: scroll;
+  }
+  .compelete-btn {
+    max-height: 36px;
+  } */
+
 .find-people-detail-container {
   height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-  .participants-container {
-    width: calc(100vw - 24px);
-    display: flex;
-    flex-wrap: wrap;
-    .participants-card {
-      width: calc(50% - 4px);
+  .find-people-detail-content {
+    height: calc(100vh - 120px);
+    overflow: scroll;
+    .participants-container {
+      width: calc(100vw - 24px);
+      display: flex;
+      flex-wrap: wrap;
+      .participants-card {
+        width: calc(50% - 4px);
+      }
+      .vacant-card {
+        min-height: 89px;
+        border: 1px dashed grey;
+        background-color: rgba(0, 0, 0, 0.05);
+      }
     }
-    .vacant-card {
-      min-height: 89px;
-      border: 1px dashed grey;
-      background-color: rgba(0, 0, 0, 0.05);
+    .applicants-container {
+      width: calc(100vw - 24px);
+      display: flex;
+      flex-wrap: wrap;
+      .applicants-card {
+        width: calc(50% - 4px);
+      }
     }
   }
-  .applicants-container {
-    width: calc(100vw - 24px);
-    display: flex;
-    flex-wrap: wrap;
-    .applicants-card {
-      width: calc(50% - 4px);
-    }
-  }
+
   .compelete-btn {
     max-height: 36px;
   }
