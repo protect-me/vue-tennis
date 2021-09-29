@@ -14,9 +14,7 @@ export default {
   components: {
     Header,
   },
-  mounted() {
-    console.log('here', this.$firebase)
-  },
+  mounted() {},
   data() {
     return {}
   },

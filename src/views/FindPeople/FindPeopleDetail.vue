@@ -9,6 +9,7 @@
           titleText="게스트 모집 상세"
           goBackButton
           :editButton="fireUser.uid === schedule.organizer"
+          :icon="titleIcon"
           @editButtonClicked="editButtonClicked"
           @goBackButtonClicked="goBackButtonClicked"
         />
@@ -162,12 +163,7 @@
 
     <v-spacer></v-spacer>
     <v-btn
-      class="compelete-btn"
-      disabled
-      v-if="schedule.organizer === fireUser.uid"
-    ></v-btn>
-    <v-btn
-      v-else-if="
+      v-if="
         schedule.organizer !== fireUser.uid &&
         applicantsUserIdList &&
         !applicantsUserIdList.includes(fireUser.uid)
@@ -192,6 +188,32 @@
     >
       참가 신청 취소
     </v-btn>
+    <v-btn
+      v-else-if="
+        subscribedSchedule.organizer === fireUser.uid &&
+        subscribedSchedule.status === 1
+      "
+      class="compelete-btn"
+      block
+      color="error"
+      @click="confirmStatusClose"
+    >
+      게스트 모집 마감
+    </v-btn>
+    <v-btn
+      v-else-if="
+        subscribedSchedule.organizer === fireUser.uid &&
+        subscribedSchedule.status === 0
+      "
+      class="compelete-btn"
+      block
+      color="error"
+      @click="confirmStatusOpen"
+    >
+      게스트 모집
+    </v-btn>
+
+    <v-btn v-else class="compelete-btn" disabled></v-btn>
 
     <v-bottom-sheet
       v-if="applyDialogToggle"
@@ -264,6 +286,7 @@ export default {
       unsubscribe: null,
       subscribedSchedule: {},
 
+      titleIcon: '',
       applyDialogToggle: false,
       participants: [],
       applicants: [],
@@ -300,11 +323,25 @@ export default {
     },
   },
   methods: {
+    setTitleIcon() {
+      switch (this.subscribedSchedule.status) {
+        case 0:
+          this.titleIcon = 'mdi-door-closed'
+          break
+        case 2:
+          this.titleIcon = 'mdi-door-closed-lock'
+          break
+        default:
+          this.titleIcon = 'mdi-door-open'
+          break
+      }
+    },
     goBackButtonClicked() {
       this.$router.go(-1)
     },
     editButtonClicked() {
       console.log('editButtonClicked')
+      console.log(this.subscribedSchedule.status)
     },
     openApplyDialog() {
       this.applyDialogToggle = true
@@ -329,7 +366,54 @@ export default {
           this.subscribedSchedule = sn.data()
           this.subscribedSchedule.scheduleId = this.schedule.scheduleId
           this.initData()
+          this.setTitleIcon()
         })
+    },
+    async confirmStatusOpen() {
+      if (
+        this.subscribedSchedule.status === 0 &&
+        this.subscribedSchedule.organizer === this.fireUser.uid
+      ) {
+        const answer = window.confirm('게스트 모집 상태로 변경할까요?')
+        if (answer) {
+          try {
+            await this.$firebase
+              .firestore()
+              .collection('findPeople')
+              .doc(this.subscribedSchedule.scheduleId)
+              .update({ status: 1 })
+            console.log('게스트 모집 상태 변경 성공')
+          } catch (err) {
+            alert('게스트 모집 상태 변경 실패', err.message)
+            console.log('게스트 모집 상태 변경 실패', err.message)
+          }
+        }
+      } else {
+        return
+      }
+    },
+    async confirmStatusClose() {
+      if (
+        this.subscribedSchedule.status === 1 &&
+        this.subscribedSchedule.organizer === this.fireUser.uid
+      ) {
+        const answer = window.confirm('게스트 모집을 마감할까요?')
+        if (answer) {
+          try {
+            await this.$firebase
+              .firestore()
+              .collection('findPeople')
+              .doc(this.subscribedSchedule.scheduleId)
+              .update({ status: 0 })
+            console.log('게스트 모집 마감 성공')
+          } catch (err) {
+            alert('게스트 모집 마감 실패', err.message)
+            console.log('게스트 모집 마감 실패', err.message)
+          }
+        }
+      } else {
+        return
+      }
     },
     async initData() {
       console.log('init', this.subscribedSchedule)
@@ -421,6 +505,13 @@ export default {
         this.applicants.sort((a, b) => {
           return a.createdAt - b.createdAt
         })
+        if (this.subscribedSchedule.vacant === 0) {
+          this.$nextTick().then(() => {
+            setTimeout(() => {
+              this.confirmStatusClose()
+            }, 500)
+          })
+        }
       }
     },
     async registApplicant() {
@@ -510,7 +601,9 @@ export default {
       if (participant.userId === 'Ghost') return
 
       const answer = window.confirm('게스트를 방출하시겠어요?')
-      if (answer) {
+      if (!answer) return
+      const answer2 = window.confirm('방출할 게스트에게 방출 사실을 알렸나요?')
+      if (answer && answer2) {
         const ref = this.$firebase
           .firestore()
           .collection('findPeople')
@@ -539,6 +632,7 @@ export default {
             ),
           })
           await batch.commit()
+          alert('방출된 게스트에게 방출 사실을 꼭 알리세요 🎾')
           console.log('게스트 방출 성공')
         } catch (err) {
           alert('게스트 방출 실패', err)
@@ -572,6 +666,7 @@ export default {
           })
           await batch.commit()
           console.log('게스트 영입 성공')
+          alert('영입된 게스트에게 영입 사실을 꼭 알리세요 🎾')
         } catch (err) {
           alert('게스트 영입 실패', err)
           console.log(err)

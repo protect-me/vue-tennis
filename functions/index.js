@@ -11,7 +11,6 @@ const db = admin.database()
 const fdb = admin.firestore()
 
 exports.createUser = functions.auth.user().onCreate(async (user) => {
-  console.log('here functions')
   const { uid, email, displayName, photoURL } = user
   const time = new Date()
   const userInfo = {

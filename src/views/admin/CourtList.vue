@@ -134,7 +134,6 @@ export default {
             }
           })
         })
-      console.log('courts', this.courts)
     },
     moveToRegist() {
       console.log('moveToRegist')

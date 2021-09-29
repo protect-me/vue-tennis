@@ -10,8 +10,11 @@
     >
       <v-icon>mdi-chevron-left</v-icon>
     </v-btn>
-    <div v-if="titleText" class="title-text title font-weight-black">
+    <div v-if="titleText" class="title-text title font-weight-black mr-2">
       {{ titleText }}
+    </div>
+    <div v-if="icon" class="mt-1">
+      <v-icon>{{ icon }}</v-icon>
     </div>
     <v-spacer></v-spacer>
     <v-btn
@@ -49,6 +52,10 @@ export default {
     editButton: {
       type: Boolean,
       default: false,
+    },
+    icon: {
+      type: String,
+      default: '',
     },
   },
 }
