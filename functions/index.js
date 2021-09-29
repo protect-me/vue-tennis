@@ -27,6 +27,7 @@ exports.createUser = functions.auth.user().onCreate(async (user) => {
     findPeopleList: [],
     applicationList: [],
     participationList: [],
+    updateNickName: false,
   }
   await fdb.collection('users').doc(uid).set(userInfo) // set user at Firestore
   userInfo.createdAt = time.getTime()
