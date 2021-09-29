@@ -203,7 +203,7 @@
     <v-btn
       v-else-if="
         subscribedSchedule.organizer === fireUser.uid &&
-        subscribedSchedule.status === 0
+        subscribedSchedule.status === 2
       "
       class="compelete-btn"
       block
@@ -323,25 +323,11 @@ export default {
     },
   },
   methods: {
-    setTitleIcon() {
-      switch (this.subscribedSchedule.status) {
-        case 0:
-          this.titleIcon = 'mdi-door-closed'
-          break
-        case 2:
-          this.titleIcon = 'mdi-door-closed-lock'
-          break
-        default:
-          this.titleIcon = 'mdi-door-open'
-          break
-      }
-    },
     goBackButtonClicked() {
       this.$router.go(-1)
     },
     editButtonClicked() {
       console.log('editButtonClicked')
-      console.log(this.subscribedSchedule.status)
     },
     openApplyDialog() {
       this.applyDialogToggle = true
@@ -349,6 +335,40 @@ export default {
     closeApplyDialog() {
       this.comment = ''
       this.applyDialogToggle = false
+    },
+    setTitleIcon() {
+      // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
+      switch (this.subscribedSchedule.status) {
+        case 1:
+          this.titleIcon = 'mdi-door-open'
+          break
+        case 2:
+          this.titleIcon = 'mdi-door-closed'
+          break
+        default:
+          this.titleIcon = 'mdi-door-closed-lock'
+          break
+      }
+    },
+    checkStatus() {
+      function leftPad(value) {
+        return value >= 10 ? value : `0${value}`
+      }
+      const now = new Date()
+      const dateOfToday = `${now.getFullYear()}-${leftPad(
+        now.getMonth() + 1,
+      )}-${leftPad(now.getDate())}`
+      const currentTime = `${leftPad(now.getHours())}:${leftPad(
+        now.getMinutes(),
+      )}`
+      if (
+        this.subscribedSchedule.date < dateOfToday ||
+        (this.subscribedSchedule.date === dateOfToday &&
+          this.subscribedSchedule.endTime <= currentTime)
+      ) {
+        this.subscribedSchedule.status = 3
+      }
+      this.setTitleIcon()
     },
     subscribe() {
       if (this.unsubscribe) {
@@ -366,12 +386,12 @@ export default {
           this.subscribedSchedule = sn.data()
           this.subscribedSchedule.scheduleId = this.schedule.scheduleId
           this.initData()
-          this.setTitleIcon()
+          this.checkStatus()
         })
     },
     async confirmStatusOpen() {
       if (
-        this.subscribedSchedule.status === 0 &&
+        this.subscribedSchedule.status === 2 &&
         this.subscribedSchedule.organizer === this.fireUser.uid
       ) {
         const answer = window.confirm('게스트 모집 상태로 변경할까요?')
@@ -678,14 +698,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* .find-people-regist-content {
-    height: calc(100vh - 120px);
-    overflow: scroll;
-  }
-  .compelete-btn {
-    max-height: 36px;
-  } */
-
 .find-people-detail-container {
   height: calc(100vh - 48px);
   display: flex;
