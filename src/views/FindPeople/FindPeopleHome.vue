@@ -11,7 +11,8 @@
 
     <v-tabs v-model="tab" grow>
       <v-tab v-for="item in items" :key="item.tab">
-        {{ item.tab }}
+        <span class="mr-2">{{ item.tab }}</span>
+        <v-icon>{{ item.icon }}</v-icon>
       </v-tab>
     </v-tabs>
     <v-tabs-items class="tabs-item" v-model="tab" v-if="schedules">
@@ -75,9 +76,13 @@ export default {
       findPeoples: [],
       tab: null,
       items: [
-        { tab: '모집', content: 'FindPeopleOpen' },
-        { tab: '마감', content: 'FindPeopleClose' },
-        { tab: '완료', content: 'FindPeopleComplete' },
+        { tab: '모집', icon: 'mdi-door-open', content: 'FindPeopleOpen' },
+        { tab: '마감', icon: 'mdi-door-closed', content: 'FindPeopleClose' },
+        {
+          tab: '완료',
+          icon: 'mdi-door-closed-lock',
+          content: 'FindPeopleComplete',
+        },
       ],
       schedulesOpen: [],
       schedulesClose: [],
