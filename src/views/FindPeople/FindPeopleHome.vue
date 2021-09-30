@@ -61,7 +61,6 @@ export default {
   async beforeDestroy() {
     await this.$store.dispatch('setSelectedTab', this.tab)
     if (this.unsubscribeFindPeople) {
-      console.log('unsub')
       this.unsubscribeFindPeople()
     }
   },

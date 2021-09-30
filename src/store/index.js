@@ -49,7 +49,6 @@ export default new Vuex.Store({
       commit('updateState', {
         selectedTab: payload,
       })
-      console.log(payload)
     },
     setSchedule({ commit }, payload) {
       commit('updateState', {
