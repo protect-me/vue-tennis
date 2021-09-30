@@ -55,16 +55,19 @@ export default {
   mounted() {
     this.$nextTick(function () {
       this.$store.dispatch('setSchedules')
+      this.tab = this.selectedTab
     })
   },
-  unmounted() {
+  async beforeDestroy() {
+    await this.$store.dispatch('setSelectedTab', this.tab)
     if (this.unsubscribeFindPeople) {
+      console.log('unsub')
       this.unsubscribeFindPeople()
     }
   },
   computed: {
     ...mapGetters(['unsubscribeFindPeople']),
-    ...mapState(['fireUser', 'user', 'schedules']),
+    ...mapState(['fireUser', 'user', 'schedules', 'selectedTab']),
   },
   watch: {
     schedules() {
@@ -125,7 +128,7 @@ export default {
           // 30일 이내 ~ 종료시간이 지난 모집 => Complete
           schedule.status = 3 // status를 3으로 변경 후 push
           this.schedulesComplete.push(schedule)
-        } else if (schedule.status === 0) {
+        } else if (schedule.status === 2) {
           this.schedulesClose.push(schedule)
         } else if (schedule.status === 1) {
           this.schedulesOpen.push(schedule)

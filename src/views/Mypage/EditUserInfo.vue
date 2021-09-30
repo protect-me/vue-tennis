@@ -15,6 +15,8 @@
           <v-card flat class="mb-3">
             <v-card-subtitle>
               <span>
+                Notice.
+                <br />
                 닉네임은 첫 회원 정보 수정 시에만 변경 가능합니다 🎾
               </span>
             </v-card-subtitle>

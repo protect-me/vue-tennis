@@ -246,6 +246,9 @@ export default {
     HelpNtrp,
     TitleWithButton,
   },
+  async beforeDestroy() {
+    await this.$store.dispatch('setSelectedTab', 0)
+  },
   computed: {
     ...mapState(['fireUser', 'user']),
     startTimeNudgeLeft() {

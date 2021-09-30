@@ -24,6 +24,12 @@ export default {
       default: [],
     },
   },
+  unmounted() {
+    console.log('unmounted')
+  },
+  beforeUnmount() {
+    console.log('beforeUnmount')
+  },
   components: {
     FindPeopleCard,
   },

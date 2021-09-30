@@ -8,7 +8,10 @@
         <TitleWithButton
           titleText="게스트 모집 상세"
           goBackButton
-          :editButton="fireUser.uid === schedule.organizer"
+          :editButton="
+            fireUser.uid === schedule.organizer &&
+            subscribedSchedule.status !== 3
+          "
           :icon="titleIcon"
           @editButtonClicked="editButtonClicked"
           @goBackButtonClicked="goBackButtonClicked"
@@ -162,99 +165,22 @@
     </div>
 
     <v-spacer></v-spacer>
-    <v-btn
-      v-if="
-        schedule.organizer !== fireUser.uid &&
-        applicantsUserIdList &&
-        !applicantsUserIdList.includes(fireUser.uid)
-      "
-      class="compelete-btn"
-      block
-      color="primary"
-      @click="openApplyDialog"
-    >
-      참가 신청
-    </v-btn>
-    <v-btn
-      v-else-if="
-        schedule.organizer !== fireUser.uid &&
-        applicantsUserIdList &&
-        applicantsUserIdList.includes(fireUser.uid)
-      "
-      class="compelete-btn"
-      block
-      color="error"
-      @click="cancleApply"
-    >
-      참가 신청 취소
-    </v-btn>
-    <v-btn
-      v-else-if="
-        subscribedSchedule.organizer === fireUser.uid &&
-        subscribedSchedule.status === 1
-      "
-      class="compelete-btn"
-      block
-      color="error"
-      @click="confirmStatusClose"
-    >
-      게스트 모집 마감
-    </v-btn>
-    <v-btn
-      v-else-if="
-        subscribedSchedule.organizer === fireUser.uid &&
-        subscribedSchedule.status === 2
-      "
-      class="compelete-btn"
-      block
-      color="error"
-      @click="confirmStatusOpen"
-    >
-      게스트 모집
-    </v-btn>
-
-    <v-btn v-else class="compelete-btn" disabled></v-btn>
+    <FindPeopleDetailActionBtn
+      :subscribedSchedule="subscribedSchedule"
+      :applicants="applicants"
+      :applicantsUserIdList="applicantsUserIdList"
+      @apply="openApplyDialog"
+    />
 
     <v-bottom-sheet
       v-if="applyDialogToggle"
       v-model="applyDialogToggle"
       @click:outside="closeApplyDialog"
     >
-      <v-container>
-        <v-card>
-          <UserCard :user="user"></UserCard>
-          <v-card-text class="py-2">
-            <v-form ref="form" v-model="valid" lazy-validation>
-              <v-text-field
-                class="mb-3"
-                label="Comment"
-                v-model="comment"
-                type="text"
-                outlined
-                :rules="[rules.counter20]"
-              />
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <div style="display: flex; width: 100%;">
-              <v-btn
-                style="width: 125px;"
-                class="mr-3"
-                @click="closeApplyDialog"
-              >
-                취소
-              </v-btn>
-              <v-btn
-                style="flex-grow: 1;"
-                color="primary"
-                @click="registApplicant"
-              >
-                참가 요청 완료
-              </v-btn>
-            </div>
-          </v-card-actions>
-        </v-card>
-      </v-container>
+      <FindPeopleApplyDialog
+        :schedule="schedule"
+        @closeApplyDialog="closeApplyDialog"
+      />
     </v-bottom-sheet>
   </v-container>
 </template>
@@ -264,17 +190,31 @@ import { mapState } from 'vuex'
 import TitleWithButton from '../../components/TitleWithButton'
 import FindPeopleCard from './FindPeopleCard'
 import UserCard from '../../components/UserCard'
+import FindPeopleApplyDialog from '../../components/FindPeopleApplyDialog'
+import FindPeopleDetailActionBtn from '../../components/FindPeopleDetailActionBtn'
 
 export default {
   components: {
     TitleWithButton,
     FindPeopleCard,
     UserCard,
+    FindPeopleApplyDialog,
+    FindPeopleDetailActionBtn,
   },
   mounted() {
     this.$nextTick(function () {
+      this.ref = this.$firebase
+        .firestore()
+        .collection('findPeople')
+        .doc(this.schedule.scheduleId)
       this.subscribe()
     })
+  },
+  async beforeDestroy() {
+    await this.$store.dispatch(
+      'setSelectedTab',
+      this.subscribedSchedule.status - 1,
+    )
   },
   destroyed() {
     if (this.unsubscribe) {
@@ -285,7 +225,6 @@ export default {
     return {
       unsubscribe: null,
       subscribedSchedule: {},
-
       titleIcon: '',
       applyDialogToggle: false,
       participants: [],
@@ -300,12 +239,8 @@ export default {
         age: 0,
       },
       organizerIndex: 0,
-      comment: '',
-      valid: false,
-      rules: {
-        counter20: (value) =>
-          (value && value.length <= 20) || '20자리 이하로 입력해주세요',
-      },
+      ref: null,
+      refUser: this.$firebase.firestore().collection('users'),
     }
   },
   computed: {
@@ -327,13 +262,14 @@ export default {
       this.$router.go(-1)
     },
     editButtonClicked() {
+      if (this.subscribedSchedule.status === 3) return
       console.log('editButtonClicked')
     },
     openApplyDialog() {
+      console.log('????')
       this.applyDialogToggle = true
     },
     closeApplyDialog() {
-      this.comment = ''
       this.applyDialogToggle = false
     },
     setTitleIcon() {
@@ -374,66 +310,16 @@ export default {
       if (this.unsubscribe) {
         this.unsubscribe()
       }
-      this.unsubscribe = this.$firebase
-        .firestore()
-        .collection('findPeople')
-        .doc(this.schedule.scheduleId)
-        .onSnapshot((sn) => {
-          if (sn.empty) {
-            this.subscribedSchedule = {}
-            return
-          }
-          this.subscribedSchedule = sn.data()
-          this.subscribedSchedule.scheduleId = this.schedule.scheduleId
-          this.initData()
-          this.checkStatus()
-        })
-    },
-    async confirmStatusOpen() {
-      if (
-        this.subscribedSchedule.status === 2 &&
-        this.subscribedSchedule.organizer === this.fireUser.uid
-      ) {
-        const answer = window.confirm('게스트 모집 상태로 변경할까요?')
-        if (answer) {
-          try {
-            await this.$firebase
-              .firestore()
-              .collection('findPeople')
-              .doc(this.subscribedSchedule.scheduleId)
-              .update({ status: 1 })
-            console.log('게스트 모집 상태 변경 성공')
-          } catch (err) {
-            alert('게스트 모집 상태 변경 실패', err.message)
-            console.log('게스트 모집 상태 변경 실패', err.message)
-          }
+      this.unsubscribe = this.ref.onSnapshot((sn) => {
+        if (sn.empty) {
+          this.subscribedSchedule = {}
+          return
         }
-      } else {
-        return
-      }
-    },
-    async confirmStatusClose() {
-      if (
-        this.subscribedSchedule.status === 1 &&
-        this.subscribedSchedule.organizer === this.fireUser.uid
-      ) {
-        const answer = window.confirm('게스트 모집을 마감할까요?')
-        if (answer) {
-          try {
-            await this.$firebase
-              .firestore()
-              .collection('findPeople')
-              .doc(this.subscribedSchedule.scheduleId)
-              .update({ status: 0 })
-            console.log('게스트 모집 마감 성공')
-          } catch (err) {
-            alert('게스트 모집 마감 실패', err.message)
-            console.log('게스트 모집 마감 실패', err.message)
-          }
-        }
-      } else {
-        return
-      }
+        this.subscribedSchedule = sn.data()
+        this.subscribedSchedule.scheduleId = this.schedule.scheduleId
+        this.initData()
+        this.checkStatus()
+      })
     },
     async initData() {
       console.log('init', this.subscribedSchedule)
@@ -443,16 +329,9 @@ export default {
         this.subscribedSchedule.organizer,
         ...this.subscribedSchedule.participants,
       ]
-
-      // comment
       const applicantsUserIdListWithComment = {}
       const applicantsUserIdListWithCreatedAt = {}
-      const applicantsData = await this.$firebase
-        .firestore()
-        .collection('findPeople')
-        .doc(this.subscribedSchedule.scheduleId)
-        .collection('applicants')
-        .get()
+      const applicantsData = await this.ref.collection('applicants').get()
       this.applicantsUserIdList = applicantsData.docs.map((doc) => {
         applicantsUserIdListWithComment[doc.id] = doc.data().comment
         applicantsUserIdListWithCreatedAt[doc.id] = doc.data().createdAt
@@ -460,10 +339,7 @@ export default {
       })
 
       try {
-        const snapshot = await this.$firebase
-          .firestore()
-          .collection('users')
-          .get()
+        const snapshot = await this.refUser.get()
         this.participants = snapshot.docs
           .filter((value) => participantsIdList.includes(value.id))
           .map((value, index) => {
@@ -534,107 +410,20 @@ export default {
         }
       }
     },
-    async registApplicant() {
-      await this.$refs.form.validate()
-      if (!this.valid) return
 
-      try {
-        const ref = this.$firebase
-          .firestore()
-          .collection('findPeople')
-          .doc(this.subscribedSchedule.scheduleId)
-        const refUser = this.$firebase
-          .firestore()
-          .collection('users')
-          .doc(this.fireUser.uid)
-        const batch = await this.$firebase.firestore().batch()
-        batch.update(ref, {
-          applicantsCount: this.$firebase.firestore.FieldValue.increment(1),
-        })
-        batch.set(ref.collection('applicants').doc(this.fireUser.uid), {
-          comment: this.comment,
-          createdAt: new Date().getTime().toString(),
-        })
-        batch.update(refUser, {
-          applyList: this.$firebase.firestore.FieldValue.arrayUnion(
-            this.subscribedSchedule.scheduleId,
-          ),
-        })
-        await batch.commit()
-        console.log('참가 요청 성공')
-      } catch (err) {
-        alert('참가 요청 실패', err)
-        console.log('참가 요청 실패', err)
-      } finally {
-        this.closeApplyDialog()
-      }
-    },
-    async cancleApply() {
-      const answer = window.confirm('참가 요청을 취소하시겠어요?')
-      if (answer) {
-        const ref = this.$firebase
-          .firestore()
-          .collection('findPeople')
-          .doc(this.subscribedSchedule.scheduleId)
-        const refUser = this.$firebase
-          .firestore()
-          .collection('users')
-          .doc(this.fireUser.uid)
-        try {
-          const batch = await this.$firebase.firestore().batch()
-          batch.update(ref, {
-            applicantsCount: this.$firebase.firestore.FieldValue.increment(-1),
-            participants: this.$firebase.firestore.FieldValue.arrayRemove(
-              this.fireUser.uid,
-            ),
-          })
-          if (
-            this.subscribedSchedule.participants.includes(this.fireUser.uid)
-          ) {
-            batch.update(ref, {
-              vacant: this.$firebase.firestore.FieldValue.increment(1),
-            })
-          }
-          batch.delete(ref.collection('applicants').doc(this.fireUser.uid))
-          batch.update(refUser, {
-            applyList: this.$firebase.firestore.FieldValue.arrayRemove(
-              this.fireUser.uid,
-            ),
-          })
-          await batch.commit()
-          console.log('참가 요청 취소 성공')
-        } catch (err) {
-          alert('참가 요청 취소 실패', err)
-          console.log(err)
-        } finally {
-          const deleteIndex = this.applicants.findIndex(
-            (v) => (v.userId = this.fireUser.uid),
-          )
-          if (deleteIndex > 0) {
-            this.applicants.splice(deleteIndex, 1)
-          }
-        }
-      }
-    },
     async selectParticipant(participant) {
+      if (this.subscribedSchedule.status === 3) return
       if (this.subscribedSchedule.organizer !== this.fireUser.uid) return
+      if (this.subscribedSchedule.organizer === participant.userId) return
       if (participant.userId === 'Ghost') return
 
       const answer = window.confirm('게스트를 방출하시겠어요?')
       if (!answer) return
       const answer2 = window.confirm('방출할 게스트에게 방출 사실을 알렸나요?')
       if (answer && answer2) {
-        const ref = this.$firebase
-          .firestore()
-          .collection('findPeople')
-          .doc(this.subscribedSchedule.scheduleId)
-        const refUser = this.$firebase
-          .firestore()
-          .collection('users')
-          .doc(participant.userId)
         try {
           const batch = await this.$firebase.firestore().batch()
-          batch.update(ref, {
+          batch.update(this.ref, {
             participants: this.$firebase.firestore.FieldValue.arrayRemove(
               participant.userId,
             ),
@@ -642,11 +431,11 @@ export default {
           if (
             this.subscribedSchedule.participants.includes(participant.userId)
           ) {
-            batch.update(ref, {
+            batch.update(this.ref, {
               vacant: this.$firebase.firestore.FieldValue.increment(1),
             })
           }
-          batch.update(refUser, {
+          batch.update(this.refUser.doc(participant.userId), {
             applyList: this.$firebase.firestore.FieldValue.arrayRemove(
               this.fireUser.uid,
             ),
@@ -663,6 +452,7 @@ export default {
     },
 
     async selectApplicant(applicant) {
+      if (this.subscribedSchedule.status === 3) return
       if (this.subscribedSchedule.organizer !== this.fireUser.uid) return
       if (this.subscribedSchedule.participants.includes(applicant.userId)) {
         alert('이미 참여한 게스트입니다!')
@@ -671,14 +461,9 @@ export default {
 
       const answer = window.confirm('게스트로 영입하시겠어요?')
       if (answer) {
-        const ref = this.$firebase
-          .firestore()
-          .collection('findPeople')
-          .doc(this.subscribedSchedule.scheduleId)
-
         try {
           const batch = await this.$firebase.firestore().batch()
-          batch.update(ref, {
+          batch.update(this.ref, {
             participants: this.$firebase.firestore.FieldValue.arrayUnion(
               applicant.userId,
             ),
@@ -727,7 +512,6 @@ export default {
       }
     }
   }
-
   .compelete-btn {
     max-height: 36px;
   }
