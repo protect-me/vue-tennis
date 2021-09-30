@@ -3,18 +3,21 @@
     class="find-people-detail-container"
     v-if="subscribedSchedule && subscribedSchedule.scheduleId"
   >
-    <div class="find-people-detail-content">
-      <div class="find-people-detail-header">
-        <TitleWithButton
-          titleText="게스트 모집 상세"
-          goBackButton
-          :editButton="fireUser.uid === schedule.organizer"
-          :icon="titleIcon"
-          @editButtonClicked="editButtonClicked"
-          @goBackButtonClicked="goBackButtonClicked"
-        />
-      </div>
+    <div class="find-people-detail-header">
+      <TitleWithButton
+        titleText="게스트 모집 상세"
+        goBackButton
+        :editButton="
+          fireUser.uid === schedule.organizer && subscribedSchedule.status !== 3
+        "
+        :icon="titleIcon"
+        @editButtonClicked="editButtonClicked"
+        @goBackButtonClicked="goBackButtonClicked"
+      />
       <v-divider class="my-3"></v-divider>
+    </div>
+
+    <div class="find-people-detail-content">
       <FindPeopleCard :schedule="subscribedSchedule" mode="detail" />
       <v-card>
         <v-card-text>
@@ -25,237 +28,20 @@
         </v-card-text>
       </v-card>
 
-      <div class="my-3" style="display: flex;">
-        <v-divider class="mt-3" />
-        <div class="mx-3">현재 참가자</div>
-        <v-divider class="mt-3" />
-      </div>
-
-      <v-container class="participants-container pa-0" v-if="participants">
-        <v-card
-          v-for="(participant, index) in participants"
-          :key="index"
-          :class="{
-            'participants-card': true,
-            'mb-1': true,
-            'mr-1': index % 2 === 0,
-            'ml-1': index % 2 === 1,
-          }"
-          :dark="participant.userId === fireUser.uid"
-          @click="selectParticipant(participant)"
-        >
-          <v-card-subtitle class="pt-2 px-2 pb-0">
-            {{ participant.nickName }}
-            <v-icon v-if="index === 0" small class="mb-1">
-              mdi-crown-outline
-            </v-icon>
-            <v-icon v-if="participant.userId === 'Ghost'" small class="mb-1">
-              mdi-ghost-outline
-            </v-icon>
-          </v-card-subtitle>
-
-          <v-card-text
-            v-if="participant.userId !== 'Ghost'"
-            class="pt-0 px-2 pb-2"
-          >
-            <div>
-              <span v-if="participant.sex">
-                {{ participant.sex === 1 ? '남' : '여' }}
-              </span>
-              <span class="mx-1">|</span>
-              <span v-if="participant.age">
-                {{ participant.age }}
-              </span>
-              <span class="mx-1">|</span>
-              <span
-                v-if="participant.location"
-                v-text="participant.location"
-              ></span>
-            </div>
-            <div align="right" class="mt-1">
-              <v-chip small>
-                <span>NTRP</span>
-                <span v-if="participant.ntrp" v-text="participant.ntrp"></span>
-              </v-chip>
-            </div>
-          </v-card-text>
-          <v-card-text
-            v-else-if="participant.userId === 'Ghost'"
-            class="pt-0 px-2 pb-2"
-          >
-            <div>-</div>
-            <div align="right" class="mt-1">
-              <v-chip small><span>NTRP</span></v-chip>
-            </div>
-          </v-card-text>
-        </v-card>
-
-        <v-card
-          flat
-          v-for="(vacant, index) in subscribedSchedule.vacant"
-          :key="participants.length + index"
-          :class="{
-            'participants-card': true,
-            'vacant-card': true,
-            'mb-1': true,
-            'mr-1': (participants.length + index) % 2 === 0,
-            'ml-1': (participants.length + index) % 2 === 1,
-          }"
-        ></v-card>
-      </v-container>
-
-      <div class="my-3" style="display: flex;">
-        <v-divider class="mt-3" />
-        <div class="mx-3">참가 신청자</div>
-        <v-divider class="mt-3" />
-      </div>
-
-      <v-container v-if="applicants && applicants.length === 0">
-        <v-card flat>
-          Notice. 참가 신청한 게스트가 없습니다 🎾
-        </v-card>
-      </v-container>
-
-      <v-container v-else class="applicants-container pa-0">
-        <v-card
-          v-for="(applicant, index) in applicants"
-          :key="index"
-          :class="{
-            'applicants-card': true,
-            'mb-1': true,
-            'mr-1': index % 2 === 0,
-            'ml-1': index % 2 === 1,
-          }"
-          @click="selectApplicant(applicant)"
-        >
-          <v-card-subtitle class="pt-2 px-2 pb-0">
-            {{ applicant.nickName }}
-          </v-card-subtitle>
-          <v-card-text class="pt-0 px-2 pb-2">
-            <div>
-              <span v-if="applicant.sex">
-                {{ applicant.sex === 1 ? '남' : '여' }}
-              </span>
-              <span class="mx-1">|</span>
-              <span v-if="applicant.age">
-                {{ applicant.age }}
-              </span>
-              <span class="mx-1">|</span>
-              <span
-                v-if="applicant.location"
-                v-text="applicant.location"
-              ></span>
-            </div>
-            <div v-if="applicant.comment">
-              <v-icon small class="mr-1 mb-1">mdi-bullhorn-outline</v-icon>
-              <span>{{ applicant.comment }}</span>
-            </div>
-            <div align="right" class="mt-1">
-              <v-chip small>
-                <span class="mr-1">NTRP</span>
-                <span v-if="applicant.ntrp" v-text="applicant.ntrp"></span>
-              </v-chip>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-container>
+      <FindPeopleDetailPeople
+        :subscribedSchedule="subscribedSchedule"
+        :participants="participants"
+        :applicants="applicants"
+      />
     </div>
 
     <v-spacer></v-spacer>
-    <v-btn
-      v-if="
-        schedule.organizer !== fireUser.uid &&
-        applicantsUserIdList &&
-        !applicantsUserIdList.includes(fireUser.uid)
-      "
-      class="compelete-btn"
-      block
-      color="primary"
-      @click="openApplyDialog"
-    >
-      참가 신청
-    </v-btn>
-    <v-btn
-      v-else-if="
-        schedule.organizer !== fireUser.uid &&
-        applicantsUserIdList &&
-        applicantsUserIdList.includes(fireUser.uid)
-      "
-      class="compelete-btn"
-      block
-      color="error"
-      @click="cancleApply"
-    >
-      참가 신청 취소
-    </v-btn>
-    <v-btn
-      v-else-if="
-        subscribedSchedule.organizer === fireUser.uid &&
-        subscribedSchedule.status === 1
-      "
-      class="compelete-btn"
-      block
-      color="error"
-      @click="confirmStatusClose"
-    >
-      게스트 모집 마감
-    </v-btn>
-    <v-btn
-      v-else-if="
-        subscribedSchedule.organizer === fireUser.uid &&
-        subscribedSchedule.status === 0
-      "
-      class="compelete-btn"
-      block
-      color="error"
-      @click="confirmStatusOpen"
-    >
-      게스트 모집
-    </v-btn>
 
-    <v-btn v-else class="compelete-btn" disabled></v-btn>
-
-    <v-bottom-sheet
-      v-if="applyDialogToggle"
-      v-model="applyDialogToggle"
-      @click:outside="closeApplyDialog"
-    >
-      <v-container>
-        <v-card>
-          <UserCard :user="user"></UserCard>
-          <v-card-text class="py-2">
-            <v-form ref="form" v-model="valid" lazy-validation>
-              <v-text-field
-                class="mb-3"
-                label="Comment"
-                v-model="comment"
-                type="text"
-                outlined
-                :rules="[rules.counter20]"
-              />
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <div style="display: flex; width: 100%;">
-              <v-btn
-                style="width: 125px;"
-                class="mr-3"
-                @click="closeApplyDialog"
-              >
-                취소
-              </v-btn>
-              <v-btn
-                style="flex-grow: 1;"
-                color="primary"
-                @click="registApplicant"
-              >
-                참가 요청 완료
-              </v-btn>
-            </div>
-          </v-card-actions>
-        </v-card>
-      </v-container>
-    </v-bottom-sheet>
+    <FindPeopleDetailActionBtn
+      :subscribedSchedule="subscribedSchedule"
+      :applicants="applicants"
+      :applicantsUserIdList="applicantsUserIdList"
+    />
   </v-container>
 </template>
 
@@ -264,17 +50,31 @@ import { mapState } from 'vuex'
 import TitleWithButton from '../../components/TitleWithButton'
 import FindPeopleCard from './FindPeopleCard'
 import UserCard from '../../components/UserCard'
+import FindPeopleDetailPeople from '../../components/FindPeopleDetailPeople'
+import FindPeopleDetailActionBtn from '../../components/FindPeopleDetailActionBtn'
 
 export default {
   components: {
     TitleWithButton,
     FindPeopleCard,
     UserCard,
+    FindPeopleDetailPeople,
+    FindPeopleDetailActionBtn,
   },
   mounted() {
     this.$nextTick(function () {
+      this.ref = this.$firebase
+        .firestore()
+        .collection('findPeople')
+        .doc(this.schedule.scheduleId)
       this.subscribe()
     })
+  },
+  async beforeDestroy() {
+    await this.$store.dispatch(
+      'setSelectedTab',
+      this.subscribedSchedule.status - 1,
+    )
   },
   destroyed() {
     if (this.unsubscribe) {
@@ -285,7 +85,6 @@ export default {
     return {
       unsubscribe: null,
       subscribedSchedule: {},
-
       titleIcon: '',
       applyDialogToggle: false,
       participants: [],
@@ -300,12 +99,8 @@ export default {
         age: 0,
       },
       organizerIndex: 0,
-      comment: '',
-      valid: false,
-      rules: {
-        counter20: (value) =>
-          (value && value.length <= 20) || '20자리 이하로 입력해주세요',
-      },
+      ref: null,
+      refUser: this.$firebase.firestore().collection('users'),
     }
   },
   computed: {
@@ -323,116 +118,72 @@ export default {
     },
   },
   methods: {
-    setTitleIcon() {
-      switch (this.subscribedSchedule.status) {
-        case 0:
-          this.titleIcon = 'mdi-door-closed'
-          break
-        case 2:
-          this.titleIcon = 'mdi-door-closed-lock'
-          break
-        default:
-          this.titleIcon = 'mdi-door-open'
-          break
-      }
-    },
     goBackButtonClicked() {
       this.$router.go(-1)
     },
     editButtonClicked() {
+      if (this.subscribedSchedule.status === 3) return
       console.log('editButtonClicked')
-      console.log(this.subscribedSchedule.status)
     },
-    openApplyDialog() {
-      this.applyDialogToggle = true
+    setTitleIcon() {
+      // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
+      switch (this.subscribedSchedule.status) {
+        case 1:
+          this.titleIcon = 'mdi-door-open'
+          break
+        case 2:
+          this.titleIcon = 'mdi-door-closed'
+          break
+        default:
+          this.titleIcon = 'mdi-door-closed-lock'
+          break
+      }
     },
-    closeApplyDialog() {
-      this.comment = ''
-      this.applyDialogToggle = false
+    checkStatus() {
+      function leftPad(value) {
+        return value >= 10 ? value : `0${value}`
+      }
+      const now = new Date()
+      const dateOfToday = `${now.getFullYear()}-${leftPad(
+        now.getMonth() + 1,
+      )}-${leftPad(now.getDate())}`
+      const currentTime = `${leftPad(now.getHours())}:${leftPad(
+        now.getMinutes(),
+      )}`
+      if (
+        this.subscribedSchedule.date < dateOfToday ||
+        (this.subscribedSchedule.date === dateOfToday &&
+          this.subscribedSchedule.endTime <= currentTime)
+      ) {
+        this.subscribedSchedule.status = 3
+      }
+      this.setTitleIcon()
     },
     subscribe() {
       if (this.unsubscribe) {
         this.unsubscribe()
       }
-      this.unsubscribe = this.$firebase
-        .firestore()
-        .collection('findPeople')
-        .doc(this.schedule.scheduleId)
-        .onSnapshot((sn) => {
-          if (sn.empty) {
-            this.subscribedSchedule = {}
-            return
-          }
-          this.subscribedSchedule = sn.data()
-          this.subscribedSchedule.scheduleId = this.schedule.scheduleId
-          this.initData()
-          this.setTitleIcon()
-        })
-    },
-    async confirmStatusOpen() {
-      if (
-        this.subscribedSchedule.status === 0 &&
-        this.subscribedSchedule.organizer === this.fireUser.uid
-      ) {
-        const answer = window.confirm('게스트 모집 상태로 변경할까요?')
-        if (answer) {
-          try {
-            await this.$firebase
-              .firestore()
-              .collection('findPeople')
-              .doc(this.subscribedSchedule.scheduleId)
-              .update({ status: 1 })
-            console.log('게스트 모집 상태 변경 성공')
-          } catch (err) {
-            alert('게스트 모집 상태 변경 실패', err.message)
-            console.log('게스트 모집 상태 변경 실패', err.message)
-          }
+      this.unsubscribe = this.ref.onSnapshot((sn) => {
+        if (sn.empty) {
+          this.subscribedSchedule = {}
+          return
         }
-      } else {
-        return
-      }
-    },
-    async confirmStatusClose() {
-      if (
-        this.subscribedSchedule.status === 1 &&
-        this.subscribedSchedule.organizer === this.fireUser.uid
-      ) {
-        const answer = window.confirm('게스트 모집을 마감할까요?')
-        if (answer) {
-          try {
-            await this.$firebase
-              .firestore()
-              .collection('findPeople')
-              .doc(this.subscribedSchedule.scheduleId)
-              .update({ status: 0 })
-            console.log('게스트 모집 마감 성공')
-          } catch (err) {
-            alert('게스트 모집 마감 실패', err.message)
-            console.log('게스트 모집 마감 실패', err.message)
-          }
-        }
-      } else {
-        return
-      }
+        this.subscribedSchedule = sn.data()
+        this.subscribedSchedule.scheduleId = this.schedule.scheduleId
+        this.initData()
+        this.checkStatus()
+      })
     },
     async initData() {
-      console.log('init', this.subscribedSchedule)
       this.participants = []
       this.applicants = []
       const participantsIdList = [
         this.subscribedSchedule.organizer,
         ...this.subscribedSchedule.participants,
       ]
-
-      // comment
       const applicantsUserIdListWithComment = {}
       const applicantsUserIdListWithCreatedAt = {}
-      const applicantsData = await this.$firebase
-        .firestore()
-        .collection('findPeople')
-        .doc(this.subscribedSchedule.scheduleId)
-        .collection('applicants')
-        .get()
+      const applicantsData = await this.ref.collection('applicants').get()
       this.applicantsUserIdList = applicantsData.docs.map((doc) => {
         applicantsUserIdListWithComment[doc.id] = doc.data().comment
         applicantsUserIdListWithCreatedAt[doc.id] = doc.data().createdAt
@@ -440,10 +191,7 @@ export default {
       })
 
       try {
-        const snapshot = await this.$firebase
-          .firestore()
-          .collection('users')
-          .get()
+        const snapshot = await this.refUser.get()
         this.participants = snapshot.docs
           .filter((value) => participantsIdList.includes(value.id))
           .map((value, index) => {
@@ -514,178 +262,11 @@ export default {
         }
       }
     },
-    async registApplicant() {
-      await this.$refs.form.validate()
-      if (!this.valid) return
-
-      try {
-        const ref = this.$firebase
-          .firestore()
-          .collection('findPeople')
-          .doc(this.subscribedSchedule.scheduleId)
-        const refUser = this.$firebase
-          .firestore()
-          .collection('users')
-          .doc(this.fireUser.uid)
-        const batch = await this.$firebase.firestore().batch()
-        batch.update(ref, {
-          applicantsCount: this.$firebase.firestore.FieldValue.increment(1),
-        })
-        batch.set(ref.collection('applicants').doc(this.fireUser.uid), {
-          comment: this.comment,
-          createdAt: new Date().getTime().toString(),
-        })
-        batch.update(refUser, {
-          applyList: this.$firebase.firestore.FieldValue.arrayUnion(
-            this.subscribedSchedule.scheduleId,
-          ),
-        })
-        await batch.commit()
-        console.log('참가 요청 성공')
-      } catch (err) {
-        alert('참가 요청 실패', err)
-        console.log('참가 요청 실패', err)
-      } finally {
-        this.closeApplyDialog()
-      }
-    },
-    async cancleApply() {
-      const answer = window.confirm('참가 요청을 취소하시겠어요?')
-      if (answer) {
-        const ref = this.$firebase
-          .firestore()
-          .collection('findPeople')
-          .doc(this.subscribedSchedule.scheduleId)
-        const refUser = this.$firebase
-          .firestore()
-          .collection('users')
-          .doc(this.fireUser.uid)
-        try {
-          const batch = await this.$firebase.firestore().batch()
-          batch.update(ref, {
-            applicantsCount: this.$firebase.firestore.FieldValue.increment(-1),
-            participants: this.$firebase.firestore.FieldValue.arrayRemove(
-              this.fireUser.uid,
-            ),
-          })
-          if (
-            this.subscribedSchedule.participants.includes(this.fireUser.uid)
-          ) {
-            batch.update(ref, {
-              vacant: this.$firebase.firestore.FieldValue.increment(1),
-            })
-          }
-          batch.delete(ref.collection('applicants').doc(this.fireUser.uid))
-          batch.update(refUser, {
-            applyList: this.$firebase.firestore.FieldValue.arrayRemove(
-              this.fireUser.uid,
-            ),
-          })
-          await batch.commit()
-          console.log('참가 요청 취소 성공')
-        } catch (err) {
-          alert('참가 요청 취소 실패', err)
-          console.log(err)
-        } finally {
-          const deleteIndex = this.applicants.findIndex(
-            (v) => (v.userId = this.fireUser.uid),
-          )
-          if (deleteIndex > 0) {
-            this.applicants.splice(deleteIndex, 1)
-          }
-        }
-      }
-    },
-    async selectParticipant(participant) {
-      if (this.subscribedSchedule.organizer !== this.fireUser.uid) return
-      if (participant.userId === 'Ghost') return
-
-      const answer = window.confirm('게스트를 방출하시겠어요?')
-      if (!answer) return
-      const answer2 = window.confirm('방출할 게스트에게 방출 사실을 알렸나요?')
-      if (answer && answer2) {
-        const ref = this.$firebase
-          .firestore()
-          .collection('findPeople')
-          .doc(this.subscribedSchedule.scheduleId)
-        const refUser = this.$firebase
-          .firestore()
-          .collection('users')
-          .doc(participant.userId)
-        try {
-          const batch = await this.$firebase.firestore().batch()
-          batch.update(ref, {
-            participants: this.$firebase.firestore.FieldValue.arrayRemove(
-              participant.userId,
-            ),
-          })
-          if (
-            this.subscribedSchedule.participants.includes(participant.userId)
-          ) {
-            batch.update(ref, {
-              vacant: this.$firebase.firestore.FieldValue.increment(1),
-            })
-          }
-          batch.update(refUser, {
-            applyList: this.$firebase.firestore.FieldValue.arrayRemove(
-              this.fireUser.uid,
-            ),
-          })
-          await batch.commit()
-          alert('방출된 게스트에게 방출 사실을 꼭 알리세요 🎾')
-          console.log('게스트 방출 성공')
-        } catch (err) {
-          alert('게스트 방출 실패', err)
-          console.log(err)
-        } finally {
-        }
-      }
-    },
-
-    async selectApplicant(applicant) {
-      if (this.subscribedSchedule.organizer !== this.fireUser.uid) return
-      if (this.subscribedSchedule.participants.includes(applicant.userId)) {
-        alert('이미 참여한 게스트입니다!')
-        return
-      }
-
-      const answer = window.confirm('게스트로 영입하시겠어요?')
-      if (answer) {
-        const ref = this.$firebase
-          .firestore()
-          .collection('findPeople')
-          .doc(this.subscribedSchedule.scheduleId)
-
-        try {
-          const batch = await this.$firebase.firestore().batch()
-          batch.update(ref, {
-            participants: this.$firebase.firestore.FieldValue.arrayUnion(
-              applicant.userId,
-            ),
-            vacant: this.$firebase.firestore.FieldValue.increment(-1),
-          })
-          await batch.commit()
-          console.log('게스트 영입 성공')
-          alert('영입된 게스트에게 영입 사실을 꼭 알리세요 🎾')
-        } catch (err) {
-          alert('게스트 영입 실패', err)
-          console.log(err)
-        }
-      }
-    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-/* .find-people-regist-content {
-    height: calc(100vh - 120px);
-    overflow: scroll;
-  }
-  .compelete-btn {
-    max-height: 36px;
-  } */
-
 .find-people-detail-container {
   height: calc(100vh - 48px);
   display: flex;
@@ -693,29 +274,7 @@ export default {
   .find-people-detail-content {
     height: calc(100vh - 120px);
     overflow: scroll;
-    .participants-container {
-      width: calc(100vw - 24px);
-      display: flex;
-      flex-wrap: wrap;
-      .participants-card {
-        width: calc(50% - 4px);
-      }
-      .vacant-card {
-        min-height: 89px;
-        border: 1px dashed grey;
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-    }
-    .applicants-container {
-      width: calc(100vw - 24px);
-      display: flex;
-      flex-wrap: wrap;
-      .applicants-card {
-        width: calc(50% - 4px);
-      }
-    }
   }
-
   .compelete-btn {
     max-height: 36px;
   }

@@ -12,10 +12,21 @@
       <div></div>
       <v-form v-if="user" ref="form" v-model="valid" lazy-validation>
         <div class="divide-column">
+          <v-card flat class="mb-3">
+            <v-card-subtitle>
+              <span>
+                Notice.
+                <br />
+                닉네임은 첫 회원 정보 수정 시에만 변경 가능합니다 🎾
+              </span>
+            </v-card-subtitle>
+          </v-card>
           <v-text-field
             v-model="form.nickName"
             label="닉네임"
             type="text"
+            :disabled="form.updateNickName"
+            :readonly="form.updateNickName"
             outlined
             :rules="[rules.required, rules.counter10, rules.banGhost]"
           />
@@ -112,6 +123,7 @@ export default {
         this.moveToMypage()
       } else {
         const info = this.$store.state.user
+        this.form.updateNickName = info.updateNickName
         this.form.nickName = info.nickName
         this.form.birth = info.birth
         this.form.location = info.location
@@ -125,6 +137,7 @@ export default {
   },
   data() {
     return {
+      isUpdatedNickName: true,
       isComplete: false,
       isProcessing: false,
       helpNtrpToggle: false,
@@ -205,6 +218,7 @@ export default {
     },
     async updateUserInfo() {
       try {
+        this.form.updateNickName = true
         this.form.updatedAt = Date.now()
         await this.$firebase
           .firestore()

@@ -13,7 +13,7 @@
     <div v-if="titleText" class="title-text title font-weight-black mr-2">
       {{ titleText }}
     </div>
-    <div v-if="icon" class="mt-1">
+    <div v-if="icon" class="ml-1 mt-1">
       <v-icon>{{ icon }}</v-icon>
     </div>
     <v-spacer></v-spacer>

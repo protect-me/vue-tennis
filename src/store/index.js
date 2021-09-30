@@ -12,6 +12,7 @@ export default new Vuex.Store({
     unsubscribeFindPeople: null,
     schedules: [],
     schedule: {},
+    selectedTab: null,
   },
   getters: {
     unsubscribeFindPeople(state) {
@@ -43,6 +44,16 @@ export default new Vuex.Store({
     },
     setUser({ commit }, payload) {
       commit('setUser', payload)
+    },
+    setSelectedTab({ commit }, payload) {
+      commit('updateState', {
+        selectedTab: payload,
+      })
+    },
+    setSchedule({ commit }, payload) {
+      commit('updateState', {
+        schedule: payload,
+      })
     },
     async setSchedules({ state, commit }) {
       if (state.loading) return // Loading 중일 경우 return
@@ -96,11 +107,6 @@ export default new Vuex.Store({
         console.log(err)
         commit('updateState', { loading: false })
       }
-    },
-    async setSchedule({ commit }, payload) {
-      commit('updateState', {
-        schedule: payload,
-      })
     },
   },
   modules: {},

@@ -97,7 +97,7 @@ export default {
           icon: 'mdi-laptop',
           to: 'OperationPolicy',
         },
-        // { text: '참가 내역', icon: 'mdi-folder' },
+        // { text: 'folder', icon: 'mdi-folder' },
         // { text: 'Offline', icon: 'mdi-check-circle' },
         // { text: 'Uploads', icon: 'mdi-upload' },
         // { text: 'Backups', icon: 'mdi-cloud-upload' },

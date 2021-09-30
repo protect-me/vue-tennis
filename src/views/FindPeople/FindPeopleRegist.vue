@@ -246,6 +246,9 @@ export default {
     HelpNtrp,
     TitleWithButton,
   },
+  async beforeDestroy() {
+    await this.$store.dispatch('setSelectedTab', 0)
+  },
   computed: {
     ...mapState(['fireUser', 'user']),
     startTimeNudgeLeft() {
@@ -299,7 +302,7 @@ export default {
         memo: '',
         createdAt: '',
         updatedAt: '',
-        status: 1,
+        status: 1, // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
       },
       dateMenu: false,
       startTimeMenu: false,
