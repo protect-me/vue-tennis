@@ -176,7 +176,7 @@ export default {
   },
   methods: {
     goBackButtonClicked() {
-      this.$router.go(-1)
+      this.$router.push('Mypage')
     },
     async apply() {
       if (this.isProcessing) {

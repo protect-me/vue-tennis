@@ -113,7 +113,8 @@ export default {
           return 'openSchedule'
         }
       } else if (this.subscribedSchedule.organizer !== this.fireUser.uid) {
-        if (this.subscribedSchedule.status === 2) {
+        const disalbedStatus = [2, 3]
+        if (disalbedStatus.includes(this.subscribedSchedule.status)) {
           this.btnColor = 'gray'
           this.btnText = '-'
           return 'disalbed'

@@ -21,10 +21,21 @@
       <FindPeopleCard :schedule="subscribedSchedule" mode="detail" />
       <v-card>
         <v-card-text>
-          <v-icon class="mr-1" small>mdi-forum-outline</v-icon>
-          open kakao talk link
-          <v-icon class="mr-1" small>mdi-link-varian</v-icon>
-          <span>{{ schedule.contact }}</span>
+          <div v-if="subscribedSchedule.contact" class="mb-1">
+            <span @click="copyContact">
+              <v-icon class="mr-2 mb-1" small>mdi-cellphone-message</v-icon>
+              <span>{{ subscribedSchedule.contact }}</span>
+              <v-icon class="ml-2 mb-1" small color="primary">
+                mdi-content-copy
+              </v-icon>
+            </span>
+          </div>
+          <div v-if="subscribedSchedule.openChatLink">
+            <v-icon class="mr-2" small>mdi-forum-outline</v-icon>
+            <a :href="subscribedSchedule.openChatLink" target="_blank">
+              <span>{{ subscribedSchedule.openChatLink }}</span>
+            </a>
+          </div>
         </v-card-text>
       </v-card>
 
@@ -42,6 +53,18 @@
       :applicants="applicants"
       :applicantsUserIdList="applicantsUserIdList"
     />
+
+    <v-bottom-sheet
+      v-if="editDialogToggle"
+      v-model="editDialogToggle"
+      fullscreen
+    >
+      <FindPeopleRegist
+        :subscribedSchedule="subscribedSchedule"
+        mode="edit"
+        @closeButtonClicked="closeEditDialog"
+      />
+    </v-bottom-sheet>
   </v-container>
 </template>
 
@@ -52,6 +75,7 @@ import FindPeopleCard from './FindPeopleCard'
 import UserCard from '../../components/UserCard'
 import FindPeopleDetailPeople from '../../components/FindPeopleDetailPeople'
 import FindPeopleDetailActionBtn from '../../components/FindPeopleDetailActionBtn'
+import FindPeopleRegist from './FindPeopleRegist'
 
 export default {
   components: {
@@ -60,6 +84,7 @@ export default {
     UserCard,
     FindPeopleDetailPeople,
     FindPeopleDetailActionBtn,
+    FindPeopleRegist,
   },
   mounted() {
     this.$nextTick(function () {
@@ -86,7 +111,7 @@ export default {
       unsubscribe: null,
       subscribedSchedule: {},
       titleIcon: '',
-      applyDialogToggle: false,
+      editDialogToggle: false,
       participants: [],
       applicants: [],
       applicantsUserIdList: [],
@@ -118,12 +143,15 @@ export default {
     },
   },
   methods: {
+    closeEditDialog() {
+      this.editDialogToggle = false
+    },
     goBackButtonClicked() {
-      this.$router.go(-1)
+      this.$router.push('FindPeopleHome')
     },
     editButtonClicked() {
       if (this.subscribedSchedule.status === 3) return
-      console.log('editButtonClicked')
+      this.editDialogToggle = true
     },
     setTitleIcon() {
       // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
@@ -261,6 +289,15 @@ export default {
           })
         }
       }
+    },
+    copyContact() {
+      const tempEl = document.createElement('textarea')
+      tempEl.value = this.subscribedSchedule.contact
+      document.body.appendChild(tempEl)
+      tempEl.select()
+      document.execCommand('copy')
+      document.body.removeChild(tempEl)
+      alert('연락처가 클립보드로 복사되었습니다 🎾')
     },
   },
 }

@@ -31,6 +31,14 @@
     >
       Edit
     </v-btn>
+    <v-btn
+      v-if="closeButton"
+      @click="$emit('closeButtonClicked')"
+      color="error"
+      icon
+    >
+      <v-icon>mdi-close</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -50,6 +58,10 @@ export default {
       default: false,
     },
     editButton: {
+      type: Boolean,
+      default: false,
+    },
+    closeButton: {
       type: Boolean,
       default: false,
     },

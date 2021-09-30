@@ -16,7 +16,7 @@
       </v-tab>
     </v-tabs>
     <v-tabs-items class="tabs-item" v-model="tab" v-if="schedules">
-      <v-tab-item>
+      <v-tab-item class="tab-item">
         <FindPeopleOpen :schedules="schedulesOpen"></FindPeopleOpen>
       </v-tab-item>
       <v-tab-item>
@@ -145,9 +145,12 @@ export default {
 .find-people-container {
   height: calc(100vh - 48px);
   .tabs-item {
-    padding: 2px;
+    padding: 0px 2px;
     height: calc(100vh - 180px);
     overflow: scroll;
+    .tab-item {
+      margin-top: 5px;
+    }
   }
 }
 </style>

@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     goBackButtonClicked() {
-      this.$router.go(-1)
+      this.$router.push('Mypage')
     },
     async initData() {
       if (this.user.findPeopleList.length === 0) return
@@ -74,7 +74,7 @@ export default {
               scheduleId: id,
               organizer: item.organizer,
               organizerNickName: item.organizerNickName,
-              name: item.name,
+              courtName: item.courtName,
               courtType: item.courtType,
               date: item.date,
               startTime: item.startTime,

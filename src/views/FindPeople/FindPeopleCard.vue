@@ -32,7 +32,7 @@
         <div class="divide-column">
           <div>
             <v-icon class="mr-1 mb-1" small>mdi-map-marker-outline</v-icon>
-            <span>{{ schedule.name }}</span>
+            <span>{{ schedule.courtName }}</span>
             <span>-{{ schedule.courtType }}</span>
           </div>
           <div>
