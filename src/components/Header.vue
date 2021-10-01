@@ -3,13 +3,13 @@
     <v-app-bar dark dense max-height="48px">
       <v-toolbar-title>
         <router-link to="/" class="white--text" style="text-decoration: none;">
-          🎾 👟
+          🎾
         </router-link>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
+      <!-- <v-btn icon>
         <router-link
           to="FindCourt"
           class="white--text"
@@ -17,7 +17,8 @@
         >
           <v-icon>mdi-stadium</v-icon>
         </router-link>
-      </v-btn>
+      </v-btn> -->
+
       <v-btn icon>
         <router-link
           to="FindPeopleHome"

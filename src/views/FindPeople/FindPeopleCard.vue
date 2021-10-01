@@ -44,7 +44,7 @@
         <div class="divide-column">
           <div>
             <v-icon class="mr-1 mb-1" small>
-              mdi-crown
+              mdi-crown-outline
             </v-icon>
             <span>{{ schedule.organizerNickName }}</span>
           </div>

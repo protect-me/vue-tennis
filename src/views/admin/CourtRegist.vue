@@ -82,12 +82,11 @@
           hide-details
         />
         <v-textarea
-          class="mb-3"
           label="메모"
           v-model="form.memo"
           type="text"
           outlined
-          hide-details
+          counter="100"
           no-resize
         />
       </v-form>

@@ -19,10 +19,10 @@
       <v-tab-item class="tab-item">
         <FindPeopleOpen :schedules="schedulesOpen"></FindPeopleOpen>
       </v-tab-item>
-      <v-tab-item>
+      <v-tab-item class="tab-item">
         <FindPeopleClose :schedules="schedulesClose"></FindPeopleClose>
       </v-tab-item>
-      <v-tab-item>
+      <v-tab-item class="tab-item">
         <FindPeopleComplete :schedules="schedulesComplete"></FindPeopleComplete>
       </v-tab-item>
 
@@ -144,12 +144,12 @@ export default {
 <style lang="scss" scoped>
 .find-people-container {
   height: calc(100vh - 48px);
-  .tabs-item {
+  .v-tabs-items {
     padding: 0px 2px;
     height: calc(100vh - 180px);
     overflow: scroll;
     .tab-item {
-      margin-top: 5px;
+      margin-top: 10px;
     }
   }
 }

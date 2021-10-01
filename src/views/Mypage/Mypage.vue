@@ -73,7 +73,7 @@ export default {
       selectedItem: 0,
       items: [
         {
-          text: '정보 수정',
+          text: '회원 정보 수정',
           icon: 'mdi-badge-account-horizontal-outline',
           to: 'EditUserInfo',
         },
@@ -141,9 +141,11 @@ export default {
       }
     },
     logout() {
-      this.$firebase.auth().signOut()
-
-      alert('로그아웃 되었습니다')
+      const answer = window.confirm('로그아웃 하시겠습니까?')
+      if (answer) {
+        this.$firebase.auth().signOut()
+        alert('로그아웃 되었습니다')
+      }
     },
   },
 }

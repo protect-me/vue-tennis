@@ -205,8 +205,7 @@
           />
         </div>
         <v-text-field
-          class="mb-3 mr-3"
-          label="오픈카톡"
+          label="오픈 채팅방 링크"
           v-model="form.openChatLink"
           type="text"
           hint="'오픈 채팅방 링크 공유'로 복사한 내용 그대로 붙여넣으세요 🎾"
@@ -215,7 +214,7 @@
         <!-- hide-details -->
         <v-textarea
           class="mb-3"
-          label="기타"
+          label="메모"
           v-model="form.memo"
           type="text"
           outlined
@@ -300,10 +299,10 @@ export default {
         required: (value) => !!value || '필수 기입',
         counter: (value) => value.length <= 100 || '100자 이하로 입력해주세요',
         vacantCount: (value) =>
-          (value <= 10 && value >= 0) || '0~10 사이의 숫자를 입력해주세요',
+          (value <= 10 && value >= 1) || '1~10 사이의 숫자를 입력해주세요',
         totalCount: (value) =>
           (value <= 10 && value >= 0 && value >= Number(this.form.vacant)) ||
-          '0~10 사이의 숫자를 입력해주세요',
+          '1~10 사이의 숫자를 입력해주세요',
         beforeToday: (value) => {
           const inputDate = new Date(value)
           const today = new Date().setHours(0)
@@ -413,7 +412,7 @@ export default {
         this.isProcessing = false
         return
       }
-      if (!this.form.contact || !this.form.openChatLink) {
+      if (!this.form.contact && !this.form.openChatLink) {
         alert('연락처 혹은 오픈채팅방 링크를 입력해주세요!')
         this.isProcessing = false
         return

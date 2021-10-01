@@ -19,7 +19,7 @@
 
     <div class="find-people-detail-content">
       <FindPeopleCard :schedule="subscribedSchedule" mode="detail" />
-      <v-card>
+      <v-card v-if="subscribedSchedule.status !== 3">
         <v-card-text>
           <div v-if="subscribedSchedule.contact" class="mb-1">
             <span @click="copyContact">

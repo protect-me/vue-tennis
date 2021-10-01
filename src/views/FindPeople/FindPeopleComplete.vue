@@ -1,10 +1,11 @@
 <template>
   <div>
-    <v-card>
+    <v-card class="mb-2">
       <v-card-subtitle>
         <span>Notice. 최근 30일 이내의 데이터만 노출됩니다 🎾</span>
       </v-card-subtitle>
     </v-card>
+
     <FindPeopleCard
       v-for="(schedule, index) in schedules"
       :key="index"
