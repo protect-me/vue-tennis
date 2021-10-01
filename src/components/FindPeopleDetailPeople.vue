@@ -197,7 +197,7 @@ export default {
             })
           }
           batch.update(this.refUser.doc(participant.userId), {
-            applyList: this.$firebase.firestore.FieldValue.arrayRemove(
+            applicantsList: this.$firebase.firestore.FieldValue.arrayRemove(
               this.fireUser.uid,
             ),
           })
