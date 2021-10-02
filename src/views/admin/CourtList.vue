@@ -93,7 +93,7 @@ export default {
           text: '코트명',
           align: 'start',
           // sortable: false,
-          value: 'name',
+          value: 'courtName',
         },
         { text: '위치', value: 'address' },
         { text: '', value: 'addressJibun', sortable: false },
@@ -120,7 +120,7 @@ export default {
             const item = value.data()
             return {
               courtId: id,
-              name: item.name,
+              courtName: item.courtName,
               address: item.address,
               addressJibun: item.addressJibun,
               addressSigungu: item.addressSigungu,

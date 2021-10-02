@@ -113,7 +113,8 @@ export default {
           return 'openSchedule'
         }
       } else if (this.subscribedSchedule.organizer !== this.fireUser.uid) {
-        if (this.subscribedSchedule.status === 2) {
+        const disalbedStatus = [2, 3]
+        if (disalbedStatus.includes(this.subscribedSchedule.status)) {
           this.btnColor = 'gray'
           this.btnText = '-'
           return 'disalbed'
@@ -193,25 +194,23 @@ export default {
       if (answer) {
         try {
           const batch = await this.$firebase.firestore().batch()
+          // 참여 요청자 카운트 --
           batch.update(this.ref, {
             applicantsCount: this.$firebase.firestore.FieldValue.increment(-1),
-            participants: this.$firebase.firestore.FieldValue.arrayRemove(
-              this.fireUser.uid,
-            ),
           })
+          batch.delete(this.ref.collection('applicants').doc(this.fireUser.uid))
+
+          // 참여 요청자가 참가자로 등록되어 있을 경우 제거 후 vacant update
           if (
             this.subscribedSchedule.participants.includes(this.fireUser.uid)
           ) {
             batch.update(this.ref, {
               vacant: this.$firebase.firestore.FieldValue.increment(1),
+              participants: this.$firebase.firestore.FieldValue.arrayRemove(
+                this.fireUser.uid,
+              ),
             })
           }
-          batch.delete(this.ref.collection('applicants').doc(this.fireUser.uid))
-          batch.update(this.refUser.doc(this.fireUser.uid), {
-            applyList: this.$firebase.firestore.FieldValue.arrayRemove(
-              this.fireUser.uid,
-            ),
-          })
           await batch.commit()
           console.log('참가 요청 취소 성공')
         } catch (err) {
@@ -237,22 +236,16 @@ export default {
     async registApplicant() {
       await this.$refs.form.validate()
       if (!this.valid) return
-
       try {
-        const ref = this.ref
-        const refUser = this.refUser.doc(this.fireUser.uid)
+        // 중요: firebase functions 처리 속도가 매우 느린 관계로
+        // applicants, applicantsList를 현 위치에서 update => subscribe => re-render
         const batch = await this.$firebase.firestore().batch()
-        batch.update(ref, {
+        batch.update(this.ref, {
           applicantsCount: this.$firebase.firestore.FieldValue.increment(1),
         })
-        batch.set(ref.collection('applicants').doc(this.fireUser.uid), {
+        batch.set(this.ref.collection('applicants').doc(this.fireUser.uid), {
           comment: this.comment,
           createdAt: new Date().getTime().toString(),
-        })
-        batch.update(refUser, {
-          applyList: this.$firebase.firestore.FieldValue.arrayUnion(
-            this.subscribedSchedule.scheduleId,
-          ),
         })
         await batch.commit()
         console.log('참가 요청 성공')
@@ -260,6 +253,7 @@ export default {
         alert('참가 요청 실패', err)
         console.log('참가 요청 실패', err)
       } finally {
+        this.comment = ''
         this.closeApplyDialog()
       }
     },

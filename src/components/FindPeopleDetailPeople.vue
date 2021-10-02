@@ -85,9 +85,11 @@
       <v-divider class="mt-3" />
     </div>
 
-    <v-container v-if="applicants && applicants.length === 0">
-      <v-card flat>
-        Notice. 참가 신청한 게스트가 없습니다 🎾
+    <v-container v-if="applicants && applicants.length === 0" class="pa-0">
+      <v-card>
+        <v-card-text>
+          Notice. 참가 신청한 게스트가 없습니다 🎾
+        </v-card-text>
       </v-card>
     </v-container>
 
@@ -195,7 +197,7 @@ export default {
             })
           }
           batch.update(this.refUser.doc(participant.userId), {
-            applyList: this.$firebase.firestore.FieldValue.arrayRemove(
+            applicantsList: this.$firebase.firestore.FieldValue.arrayRemove(
               this.fireUser.uid,
             ),
           })

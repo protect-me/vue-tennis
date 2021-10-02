@@ -48,6 +48,7 @@
           <v-text-field
             v-model="form.birth"
             label="생년 (e.g. 1988)"
+            hint="다른 회원에게는 연령대로만 표시됩니다.(e.g. 30대)"
             type="number"
             max="4"
             outlined
@@ -176,7 +177,7 @@ export default {
   },
   methods: {
     goBackButtonClicked() {
-      this.$router.go(-1)
+      this.$router.push('Mypage')
     },
     async apply() {
       if (this.isProcessing) {

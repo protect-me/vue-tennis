@@ -27,6 +27,8 @@ exports.createUser = functions.auth.user().onCreate(async (user) => {
     findPeopleList: [],
     applicationList: [],
     participationList: [],
+    alertApplicationToggle: false,
+    alertParticipationToggle: false,
     updateNickName: false,
   }
   await fdb.collection('users').doc(uid).set(userInfo) // set user at Firestore
@@ -39,3 +41,146 @@ exports.deleteUser = functions.auth.user().onDelete(async (user) => {
   await db.ref('users').child(uid).remove()
   await fdb.collection('users').doc(uid).delete()
 })
+
+// user => new collection => id: new Date toString / scheduleId:xxx, status: n
+// [alertList status]
+// 1: 신규 게스트 참여 요청
+// 2: 참가자 참여 취소
+// 3: 게스트 영입
+// 4: 게스트 방출
+
+exports.createApplicants = functions.firestore
+  .document('findPeople/{scheduleId}/applicants/{applicantsId}')
+  .onCreate(async (snap, context) => {
+    try {
+      const refSchedule = fdb
+        .collection('findPeople')
+        .doc(context.params.scheduleId)
+      const schedule = await refSchedule.get()
+      if (!schedule) return
+      const organizer = schedule.data().organizer
+      const refOrganizer = fdb.collection('users').doc(organizer)
+      const refApplicant = fdb
+        .collection('users')
+        .doc(context.params.applicantsId)
+      const batch = fdb.batch()
+
+      // update 참여 신청자의 참여 요청 리스트
+      batch.update(refApplicant, {
+        applicationList: admin.firestore.FieldValue.arrayUnion(
+          context.params.scheduleId,
+        ),
+      })
+      // update 방장의 알림 ON
+      batch.update(refOrganizer, {
+        alertApplicationToggle: true,
+      })
+      // set 방장의 알림 리스트
+      const id = new Date().getTime().toString()
+      batch.set(
+        refOrganizer.collection('alertList').doc(id),
+        {
+          scheduleId: context.params.scheduleId,
+          applicantsId: context.params.applicantsId,
+          status: 1,
+        }, // 신규 게스트 참여 요청 알림
+      )
+
+      await batch.commit()
+    } catch (err) {
+      console.log(err)
+    }
+  })
+
+exports.deleteApplicants = functions.firestore
+  .document('findPeople/{scheduleId}/applicants/{applicantsId}')
+  .onDelete(async (snap, context) => {
+    try {
+      const refSchedule = fdb
+        .collection('findPeople')
+        .doc(context.params.scheduleId)
+      const schedule = await refSchedule.get()
+      if (!schedule) return
+      const organizer = schedule.data().organizer
+      const refApplicant = fdb
+        .collection('users')
+        .doc(context.params.applicantsId)
+      const refOrganizer = fdb.collection('users').doc(organizer)
+
+      const batch = fdb.batch()
+      // update 참여 신청자의 참여 요청 리스트
+      batch.update(refApplicant, {
+        applicationList: admin.firestore.FieldValue.arrayRemove(
+          context.params.applicantsId,
+        ),
+      })
+      // update 방장의 알림 On
+      batch.update(refOrganizer, {
+        alertApplicationToggle: true,
+      })
+      // set 방장의 알림 리스트
+      const id = new Date().getTime().toString()
+      batch.set(refOrganizer.collection('alertList').doc(id), {
+        scheduleId: context.params.scheduleId,
+        applicantsId: context.params.applicantsId,
+        status: 2,
+      })
+      await batch.commit()
+    } catch (err) {
+      console.log(err)
+    }
+  })
+
+exports.updateParticipants = functions.firestore
+  .document('findPeople/{scheduleId}')
+  .onUpdate(async (change, context) => {
+    try {
+      const nv = change.after.data()
+      const nvLen = nv.participants.length
+      const ov = change.before.data()
+      const ovLen = ov.participants.length
+      let recruit = null
+      if (nvLen === ovLen) return
+      else if (nvLen > ovLen) recruit = true
+      else if (nvLen < ovLen) recruit = false
+      let guest = null
+      let status = 0
+
+      if (recruit) {
+        guest = nv.participants.filter((x) => !ov.participants.includes(x))[0] // 영입
+        status = 3
+      } else {
+        guest = ov.participants.filter((x) => !nv.participants.includes(x))[0] // 방출
+        status = 4
+      }
+      const refApplicant = fdb.collection('users').doc(guest)
+      const batch = fdb.batch()
+      // update 참가 게스트의 알림 ON
+      batch.update(refApplicant, {
+        alertParticipationToggle: true,
+      })
+      // update 참가 요청자의 참가 리스트(추가/제거)
+      if (recruit) {
+        batch.update(refApplicant, {
+          participationList: admin.firestore.FieldValue.arrayUnion(
+            context.params.scheduleId,
+          ),
+        })
+      } else {
+        batch.update(refApplicant, {
+          participationList: admin.firestore.FieldValue.arrayRemove(
+            context.params.scheduleId,
+          ),
+        })
+      }
+      const id = new Date().getTime().toString()
+      batch.set(refApplicant.collection('alertList').doc(id), {
+        scheduleId: context.params.scheduleId,
+        applicantsId: guest,
+        status: status,
+      })
+      await batch.commit()
+    } catch (err) {
+      console.log(err)
+    }
+  })

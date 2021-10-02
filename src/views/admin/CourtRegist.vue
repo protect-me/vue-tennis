@@ -66,7 +66,7 @@
         <v-text-field
           class="mb-3"
           label="코트명"
-          v-model="form.name"
+          v-model="form.courtName"
           type="text"
           outlined
           hide-details
@@ -82,18 +82,24 @@
           hide-details
         />
         <v-textarea
-          class="mb-3"
           label="메모"
           v-model="form.memo"
           type="text"
           outlined
-          hide-details
+          counter="100"
           no-resize
         />
       </v-form>
     </v-card>
     <v-spacer></v-spacer>
-    <v-btn class="compelete-btn" block color="primary" @click="apply">
+    <v-btn
+      class="compelete-btn"
+      block
+      color="primary"
+      @click="apply"
+      :disabled="isProcessing"
+      :loading="isProcessing"
+    >
       신규 등록
     </v-btn>
 
@@ -143,7 +149,8 @@ export default {
       addressDialogToggle: false,
       courtTypeHelpToggle: false,
       form: {
-        name: '',
+        courtId: '',
+        courtName: '',
         address: '',
         addressSigungu: '',
         addressLocal: '',
@@ -194,7 +201,7 @@ export default {
   },
   methods: {
     goBackButtonClicked() {
-      this.$router.go(-1)
+      this.$router.push('CourtList')
     },
     openAddressDialog() {
       console.log('openAddressDialog')
@@ -245,7 +252,7 @@ export default {
         return
       }
       this.isProcessing = true
-      if (!this.form.name) {
+      if (!this.form.courtName) {
         alert('코트명을 확인해주세요')
         this.isProcessing = false
         return
@@ -260,8 +267,14 @@ export default {
     },
     async registNewCourt() {
       try {
-        this.form.createdAt = Date.now()
-        await this.$firebase.firestore().collection('courts').add(this.form)
+        this.form.createdAt = new Date()
+        const id = this.form.createdAt.getTime().toString()
+
+        await this.$firebase
+          .firestore()
+          .collection('courts')
+          .doc(id)
+          .set(this.form)
         console.log('등록 성공')
       } catch (err) {
         alert('등록에 실패했습니다.', err.message)

@@ -22,14 +22,29 @@
       @click="$emit('registNewButtonClicked')"
       color="primary"
     >
-      NEW
+      등록
     </v-btn>
     <v-btn
       v-if="editButton"
       @click="$emit('editButtonClicked')"
       color="primary"
     >
-      Edit
+      수정
+    </v-btn>
+    <v-btn
+      v-if="deleteButton"
+      @click="$emit('deleteButtonClicked')"
+      color="error"
+    >
+      삭제
+    </v-btn>
+    <v-btn
+      v-if="closeButton"
+      @click="$emit('closeButtonClicked')"
+      color="error"
+      icon
+    >
+      <v-icon>mdi-close</v-icon>
     </v-btn>
   </div>
 </template>
@@ -50,6 +65,14 @@ export default {
       default: false,
     },
     editButton: {
+      type: Boolean,
+      default: false,
+    },
+    deleteButton: {
+      type: Boolean,
+      default: false,
+    },
+    closeButton: {
       type: Boolean,
       default: false,
     },
