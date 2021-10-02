@@ -63,6 +63,7 @@
         :subscribedSchedule="subscribedSchedule"
         mode="edit"
         @closeButtonClicked="closeEditDialog"
+        @deleteButtonClicked="deleteSchedule"
       />
     </v-bottom-sheet>
   </v-container>
@@ -288,6 +289,17 @@ export default {
             }, 500)
           })
         }
+      }
+    },
+    async deleteSchedule() {
+      if (this.subscribedSchedule.participants.length >= 1) {
+        alert('참가자가 있을 경우 게스트 모집을 삭제할 수 없습니다.')
+        return
+      }
+      const answer = window.confirm(
+        '되돌릴 수 없는 작업입니다. 모집 공고를 삭제하시겠습니까?',
+      )
+      if (answer) {
       }
     },
     copyContact() {

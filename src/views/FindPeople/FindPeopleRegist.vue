@@ -170,8 +170,8 @@
             label="구하는 인원(명)"
             v-model="form.vacant"
             type="number"
-            outlined
             hide-details
+            outlined
             :rules="[rules.required, rules.vacantCount]"
           />
           <v-text-field
@@ -211,7 +211,6 @@
           hint="'오픈 채팅방 링크 공유'로 복사한 내용 그대로 붙여넣으세요 🎾"
           outlined
         />
-        <!-- hide-details -->
         <v-textarea
           class="mb-3"
           label="메모"
@@ -225,17 +224,26 @@
       </v-form>
     </v-card>
     <v-spacer></v-spacer>
-    <v-btn
-      class="compelete-btn"
-      block
-      color="primary"
-      @click="completeBtnClicked"
-      :disabled="isProcessing"
-      :loading="isProcessing"
-    >
-      <span v-if="mode === 'regist'">신규 등록</span>
-      <span v-else-if="mode === 'edit'">수정 내용 저장</span>
-    </v-btn>
+    <div style="display: flex;">
+      <v-btn
+        color="error"
+        style="width: calc(35% - 12px); margin-right: 12px;"
+        @click="deleteButtonClicked"
+      >
+        <span>삭제</span>
+      </v-btn>
+      <v-btn
+        class="compelete-btn"
+        style="width: 65%;"
+        color="primary"
+        @click="completeBtnClicked"
+        :disabled="isProcessing"
+        :loading="isProcessing"
+      >
+        <span v-if="mode === 'regist'">신규 등록</span>
+        <span v-else-if="mode === 'edit'">수정 내용 저장</span>
+      </v-btn>
+    </div>
 
     <v-dialog v-if="courtDialogToggle" v-model="courtDialogToggle" fullscreen>
       <v-card>
@@ -296,13 +304,13 @@ export default {
       isProcessing: false,
       valid: true,
       rules: {
-        required: (value) => !!value || '필수 기입',
+        required: (value) => !!value || value === 0 || '필수 기입',
         counter: (value) => value.length <= 100 || '100자 이하로 입력해주세요',
         vacantCount: (value) =>
-          (value <= 10 && value >= 1) || '1~10 사이의 숫자를 입력해주세요',
+          (value <= 10 && value >= 0) || '0~10 사이의 숫자를 입력해주세요',
         totalCount: (value) =>
-          (value <= 10 && value >= 0 && value >= Number(this.form.vacant)) ||
-          '1~10 사이의 숫자를 입력해주세요',
+          (value <= 10 && value >= 2 && value >= Number(this.form.vacant)) ||
+          '2~10 사이의 숫자를 입력해주세요',
         beforeToday: (value) => {
           const inputDate = new Date(value)
           const today = new Date().setHours(0)
@@ -347,6 +355,19 @@ export default {
     closeButtonClicked() {
       this.$emit('closeButtonClicked')
     },
+    deleteButtonClicked() {
+      this.$emit('deleteButtonClicked')
+      this.closeButtonClicked()
+    },
+    goBackButtonClicked() {
+      this.$router.push('FindPeopleHome')
+    },
+    openCourtDialog() {
+      this.courtDialogToggle = true
+    },
+    closeCourtDialog() {
+      this.courtDialogToggle = false
+    },
     async initData() {
       try {
         const snapshot = await this.$firebase
@@ -360,7 +381,6 @@ export default {
         alert('코트 타입 정보 확인 불가', err)
         console.log(err)
       }
-
       this.selectedNtrp = Number(this.subscribedSchedule.ntrp) * 2 - 1 || 7
       this.form = {
         organizer: this.subscribedSchedule.organizer,
@@ -383,15 +403,6 @@ export default {
         status: this.subscribedSchedule.status, // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
       }
       this.$forceUpdate()
-    },
-    goBackButtonClicked() {
-      this.$router.push('FindPeopleHome')
-    },
-    openCourtDialog() {
-      this.courtDialogToggle = true
-    },
-    closeCourtDialog() {
-      this.courtDialogToggle = false
     },
     selectCourt(item) {
       this.selectedCourt = item
@@ -419,11 +430,6 @@ export default {
       }
       this.updateFindPeople()
     },
-    // 카카오톡 오픈채팅을 시작해 보세요.
-    // 링크를 선택하면 카카오톡이 실행됩니다.
-    // 서울 테니스 클럽
-    // https://open.kakao.com/o/gljlLBCd
-
     async updateFindPeople() {
       try {
         const openChatLinkIndex = this.form.openChatLink.indexOf(
@@ -520,5 +526,9 @@ export default {
 }
 .find-people-regist-container.edit-mode {
   height: 100vh;
+  .find-people-regist-content {
+    height: calc(100vh - 60px);
+    overflow: scroll;
+  }
 }
 </style>

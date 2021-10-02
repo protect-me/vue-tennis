@@ -22,14 +22,21 @@
       @click="$emit('registNewButtonClicked')"
       color="primary"
     >
-      NEW
+      등록
     </v-btn>
     <v-btn
       v-if="editButton"
       @click="$emit('editButtonClicked')"
       color="primary"
     >
-      Edit
+      수정
+    </v-btn>
+    <v-btn
+      v-if="deleteButton"
+      @click="$emit('deleteButtonClicked')"
+      color="error"
+    >
+      삭제
     </v-btn>
     <v-btn
       v-if="closeButton"
@@ -58,6 +65,10 @@ export default {
       default: false,
     },
     editButton: {
+      type: Boolean,
+      default: false,
+    },
+    deleteButton: {
       type: Boolean,
       default: false,
     },
