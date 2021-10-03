@@ -190,3 +190,77 @@ exports.updateParticipants = functions.firestore
       console.log(err)
     }
   })
+
+// 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
+exports.scheduledFunction = functions.pubsub
+  .schedule('every 10 minutes')
+  .onRun(async (context) => {
+    function leftPad(value) {
+      return value >= 10 ? value : `0${value}`
+    }
+    const curr = new Date()
+    const utc = curr.getTime() + curr.getTimezoneOffset() * 60 * 1000
+    const KR_TIME_DIFF = 9 * 60 * 60 * 1000
+    const now = new Date(utc + KR_TIME_DIFF)
+    const dateOfToday = `${now.getFullYear()}-${leftPad(
+      now.getMonth() + 1,
+    )}-${leftPad(now.getDate())}`
+    const currentTime = `${leftPad(now.getHours())}:${leftPad(
+      now.getMinutes(),
+    )}`
+    try {
+      const snapshot = await fdb.collection('findPeople').get()
+      // exceptStatusPast
+      const schedules = snapshot.docs
+        .filter((value) => {
+          return value.data().status !== 4
+        })
+        .map((value) => {
+          const item = value.data()
+          return {
+            scheduleId: value.id,
+            date: item.date,
+            startTime: item.startTime,
+            endTime: item.endTime,
+            status: item.status,
+          }
+        })
+      const updateStatus3to4 = []
+      const updateStatusNto3 = []
+      const length = schedules.length
+
+      for (let i = 0; i < length; i++) {
+        const schedule = schedules[i]
+        const scheduleDateFormat = new Date(schedules[i].date)
+        const elapsedDate = (now - scheduleDateFormat) / 86400000 // / 1000 / 60 / 60 / 24
+        if (elapsedDate > 30 && schedule.status === 3) {
+          // 30일 경과
+          updateStatus3to4.push(schedule.scheduleId)
+        } else if (
+          (schedule.date < dateOfToday ||
+            (schedule.date === dateOfToday &&
+              schedule.endTime <= currentTime)) &&
+          (schedule.status === 1 || schedule.status === 2)
+        ) {
+          // 날짜가 지났거나 || 같은 날이어도 종료시간이 지난 모집
+          updateStatusNto3.push(schedule.scheduleId)
+        }
+      }
+      const updateStatus3to4Length = updateStatus3to4.length
+      for (let i = 0; i < updateStatus3to4Length; i++) {
+        await fdb
+          .collection('findPeople')
+          .doc(updateStatus3to4[i])
+          .update({ status: 4 })
+      }
+      const updateStatusNto3Length = updateStatusNto3.length
+      for (let i = 0; i < updateStatusNto3Length; i++) {
+        await fdb
+          .collection('findPeople')
+          .doc(updateStatusNto3[i])
+          .update({ status: 3 })
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  })

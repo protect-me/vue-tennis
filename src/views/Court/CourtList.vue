@@ -9,7 +9,7 @@
       <TitleWithButton
         titleText="코트 리스트"
         :registNewButton="mode === 'view'"
-        @registNewButtonClicked="moveToRegist"
+        @registNewButtonClicked="goToRegist"
       />
       <v-divider class="my-3"></v-divider>
     </v-card>
@@ -38,7 +38,7 @@
         {{ item.addressSigungu }} {{ item.addressLocal }}
       </template>
       <template v-slot:[`item.addressJibun`]="{ item }">
-        <v-icon v-if="mode === 'view'" class="mr-2" @click="moveToDetail(item)">
+        <v-icon v-if="mode === 'view'" class="mr-2" @click="goToDetail(item)">
           mdi-arrow-right-bold-circle-outline
         </v-icon>
         <v-icon
@@ -128,19 +128,19 @@ export default {
               lat: item.lat,
               lng: item.lng,
               count: item.count,
-              type: item.type,
+              types: item.types,
               courtTypes: item.courtTypes,
               memo: item.memo,
             }
           })
         })
     },
-    moveToRegist() {
-      console.log('moveToRegist')
+    goToRegist() {
       this.$router.push('CourtRegist')
     },
-    moveToDetail(item) {
-      console.log(item)
+    async goToDetail(item) {
+      await this.$store.dispatch('setCourt', item)
+      this.$router.push('CourtDetail')
     },
     selectCourt(item) {
       this.$emit('selectCourt', item)

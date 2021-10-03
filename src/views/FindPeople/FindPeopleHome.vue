@@ -96,41 +96,21 @@ export default {
       this.schedulesOpen = []
       this.schedulesClose = []
       this.schedulesComplete = []
-
-      // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
       const length = this.schedules.length
-      function leftPad(value) {
-        return value >= 10 ? value : `0${value}`
-      }
-
-      const now = new Date()
-      const dateOfToday = `${now.getFullYear()}-${leftPad(
-        now.getMonth() + 1,
-      )}-${leftPad(now.getDate())}`
-      const currentTime = `${leftPad(now.getHours())}:${leftPad(
-        now.getMinutes(),
-      )}`
-
       for (let i = 0; i < length; i++) {
         const schedule = this.schedules[i]
-        const scheduleDateFormat = new Date(this.schedules[i].date)
-        const elapsedDate = (now - scheduleDateFormat) / 86400000 // / 1000 / 60 / 60 / 24
-
-        // 30일을 경과한 모집 => Continue
-        // To Do: snapshot에서 부터 filtering 해오기
-        if (elapsedDate > 30) {
-          continue
-        } else if (
-          schedule.date < dateOfToday ||
-          (schedule.date === dateOfToday && schedule.endTime <= currentTime)
-        ) {
-          // 30일 이내 ~ 종료시간이 지난 모집 => Complete
-          schedule.status = 3 // status를 3으로 변경 후 push
-          this.schedulesComplete.push(schedule)
-        } else if (schedule.status === 2) {
-          this.schedulesClose.push(schedule)
-        } else if (schedule.status === 1) {
-          this.schedulesOpen.push(schedule)
+        switch (schedule.status) {
+          case 4:
+            break
+          case 3:
+            this.schedulesComplete.push(schedule)
+            break
+          case 2:
+            this.schedulesClose.push(schedule)
+            break
+          case 1:
+            this.schedulesOpen.push(schedule)
+            break
         }
       }
     },

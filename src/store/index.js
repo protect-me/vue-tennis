@@ -12,6 +12,7 @@ export default new Vuex.Store({
     unsubscribeFindPeople: null,
     schedules: [],
     schedule: {},
+    court: {},
     selectedTab: null,
   },
   getters: {
@@ -48,6 +49,11 @@ export default new Vuex.Store({
     setSelectedTab({ commit }, payload) {
       commit('updateState', {
         selectedTab: payload,
+      })
+    },
+    setCourt({ commit }, payload) {
+      commit('updateState', {
+        court: payload,
       })
     },
     setSchedule({ commit }, payload) {
