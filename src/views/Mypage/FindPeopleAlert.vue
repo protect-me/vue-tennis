@@ -1,9 +1,9 @@
 <template>
-  <v-container class="find-people-record-container">
+  <v-container class="find-people-alert-container">
     <v-card flat>
-      <div class="find-people-record-header">
+      <div class="find-people-alert-header">
         <TitleWithButton
-          titleText="게스트 참가 요청 기록"
+          titleText="참가 요청/취소 알림"
           goBackButton
           @goBackButtonClicked="goBackButtonClicked"
         />
@@ -16,11 +16,12 @@
         v-for="(schedule, index) in schedules"
         :key="index"
         :schedule="schedule"
+        :alertStatus="schedule.alertStatus"
+        :createdAt="schedule.createdAt"
       ></FindPeopleCard>
-
       <v-card v-if="schedules && schedules.length === 0" flat>
         <v-card-text class="mt-12" align="center">
-          게스트 참가를 요청한 기록이 없습니다 🎾
+          참가 요청/취소 알림이 없습니다 🎾
         </v-card-text>
       </v-card>
     </div>
@@ -58,21 +59,30 @@ export default {
       this.$router.push('Mypage')
     },
     async initData() {
-      if (this.user.applicationList.length === 0) return
-      const idList = this.user.applicationList
       try {
+        const alertList = await this.$firebase
+          .firestore()
+          .collection('users')
+          .doc(this.fireUser.uid)
+          .collection('FindPeopleAlert')
+          .orderBy('createdAt')
+          .get()
+        const alertScheduleIdList = alertList.docs.map(
+          (value) => value.data().scheduleId,
+        )
         const snapshot = await this.$firebase
           .firestore()
           .collection('findPeople')
           .orderBy('date')
           .orderBy('startTime')
           .get()
-        this.schedules = snapshot.docs
-          .filter((value) => idList.includes(value.id))
+        const scheduleList = {}
+        snapshot.docs
+          .filter((value) => alertScheduleIdList.includes(value.id))
           .map((value) => {
             const id = value.id
             const item = value.data()
-            return {
+            scheduleList[id] = {
               scheduleId: id,
               organizer: item.organizer,
               organizerNickName: item.organizerNickName,
@@ -93,23 +103,32 @@ export default {
               status: item.status,
             }
           })
+        this.schedules = alertList.docs.map((value) => {
+          const id = value.id
+          const item = value.data()
+          return {
+            id: id,
+            applicantsId: item.applicantsId,
+            scheduleId: item.scheduleId,
+            createdAt: item.createdAt,
+            alertStatus: item.alertStatus,
+            ...scheduleList[item.scheduleId],
+          }
+        })
+        if (this.user.alertApplicationToggle) {
+          await this.$firebase
+            .firestore()
+            .collection('users')
+            .doc(this.fireUser.uid)
+            .update({ alertApplicationToggle: false })
+        }
       } catch (err) {
-        alert('데이터를 가져오는데 실패했습니다.', err)
+        alert('참가 요청/취소 알림을 가져오는게 실패했습니다.', err)
         console.log(err)
-      } finally {
-        console.log(this.schedules)
       }
     },
   },
 }
 </script>
 
-<style lang="scss" scoped>
-.find-people-record-container {
-  height: calc(100vh - 48px);
-  .result {
-    height: calc(100vh - 140px);
-    overflow: scroll;
-  }
-}
-</style>
+<style></style>

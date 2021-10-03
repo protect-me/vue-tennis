@@ -76,13 +76,15 @@ exports.createApplicants = functions.firestore
         alertApplicationToggle: true,
       })
       // set 방장의 알림 리스트
-      const id = new Date().getTime().toString()
+      const createdAt = new Date()
+      const id = createdAt.getTime().toString()
       batch.set(
-        refOrganizer.collection('alertList').doc(id),
+        refOrganizer.collection('FindPeopleAlert').doc(id),
         {
           scheduleId: context.params.scheduleId,
           applicantsId: context.params.applicantsId,
-          status: 1,
+          createdAt: createdAt,
+          alertStatus: 1,
         }, // 신규 게스트 참여 요청 알림
       )
 
@@ -119,11 +121,13 @@ exports.deleteApplicants = functions.firestore
         alertApplicationToggle: true,
       })
       // set 방장의 알림 리스트
-      const id = new Date().getTime().toString()
-      batch.set(refOrganizer.collection('alertList').doc(id), {
+      const createdAt = new Date()
+      const id = createdAt.getTime().toString()
+      batch.set(refOrganizer.collection('FindPeopleAlert').doc(id), {
         scheduleId: context.params.scheduleId,
         applicantsId: context.params.applicantsId,
-        status: 2,
+        createdAt: createdAt,
+        alertStatus: 2,
       })
       await batch.commit()
     } catch (err) {
@@ -144,14 +148,14 @@ exports.updateParticipants = functions.firestore
       else if (nvLen > ovLen) recruit = true
       else if (nvLen < ovLen) recruit = false
       let guest = null
-      let status = 0
+      let alertStatus = 0
 
       if (recruit) {
         guest = nv.participants.filter((x) => !ov.participants.includes(x))[0] // 영입
-        status = 3
+        alertStatus = 3
       } else {
         guest = ov.participants.filter((x) => !nv.participants.includes(x))[0] // 방출
-        status = 4
+        alertStatus = 4
       }
       const refApplicant = fdb.collection('users').doc(guest)
       const batch = fdb.batch()
@@ -173,11 +177,13 @@ exports.updateParticipants = functions.firestore
           ),
         })
       }
-      const id = new Date().getTime().toString()
-      batch.set(refApplicant.collection('alertList').doc(id), {
+      const createdAt = new Date()
+      const id = createdAt.getTime().toString()
+      batch.set(refApplicant.collection('FindCourtAlert').doc(id), {
         scheduleId: context.params.scheduleId,
         applicantsId: guest,
-        status: status,
+        createdAt: createdAt,
+        alertStatus: alertStatus,
       })
       await batch.commit()
     } catch (err) {

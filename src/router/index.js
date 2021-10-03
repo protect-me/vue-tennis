@@ -31,13 +31,13 @@ const routes = [
   {
     path: '/courtlist',
     name: 'CourtList',
-    component: () => import('../views/admin/CourtList.vue'),
+    component: () => import('../views/Court/CourtList.vue'),
   },
   {
     path: '/courtregist',
     name: 'CourtRegist',
     beforeEnter: onlyAuthUser,
-    component: () => import('../views/admin/CourtRegist.vue'),
+    component: () => import('../views/Court/CourtRegist.vue'),
   },
   {
     path: '/findpeoplehome',
@@ -76,6 +76,21 @@ const routes = [
     path: '/findpeoplerecord',
     name: 'FindPeopleRecord',
     component: () => import('../views/Mypage/FindPeopleRecord.vue'),
+  },
+  {
+    path: '/findpeoplealert',
+    name: 'FindPeopleAlert',
+    component: () => import('../views/Mypage/FindPeopleAlert.vue'),
+  },
+  {
+    path: '/findcourtrecord',
+    name: 'FindCourtRecord',
+    component: () => import('../views/Mypage/FindCourtRecord.vue'),
+  },
+  {
+    path: '/findcourtalert',
+    name: 'FindCourtAlert',
+    component: () => import('../views/Mypage/FindCourtAlert.vue'),
   },
   {
     path: '/operationpolicy',

@@ -29,23 +29,89 @@
       </div>
     </v-card>
 
-    <v-list nav class="mt-5">
+    <!-- 게스트 모집 -->
+    <v-list-group
+      :value="user && user.alertApplicationToggle"
+      no-action
+      class="mt-5"
+    >
+      <template v-slot:activator>
+        <v-list-item-icon>
+          <v-icon>mdi-account-search-outline</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>
+            게스트 모집
+          </v-list-item-title>
+        </v-list-item-content>
+      </template>
+
+      <v-list-item
+        v-for="(item, index) in findPeopleGroup"
+        :key="index"
+        link
+        :to="item.to"
+      >
+        <v-list-item-content>
+          <v-list-item-title
+            v-if="(item.type === 'alert' && user && user.alertApplicationToggle)"
+          >
+            <v-badge color="pink" dot>
+              <span>{{ item.text }}</span>
+            </v-badge>
+          </v-list-item-title>
+          <v-list-item-title v-else v-text="item.text"></v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list-group>
+
+    <!-- 게스트 요청 -->
+    <v-list-group :value="user && user.alertParticipationToggle" no-action>
+      <template v-slot:activator>
+        <v-list-item-icon>
+          <v-icon>mdi-calendar-search</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>
+            게스트 참가
+          </v-list-item-title>
+        </v-list-item-content>
+      </template>
+
+      <v-list-item
+        v-for="(item, index) in applyRecordGroup"
+        :key="index"
+        link
+        :to="item.to"
+      >
+        <v-list-item-title
+          v-if="(item.type === 'alert' && user && user.alertParticipationToggle)"
+        >
+          <v-badge color="pink" dot>
+            <span>{{ item.text }}</span>
+          </v-badge>
+        </v-list-item-title>
+        <v-list-item-title v-else v-text="item.text"></v-list-item-title>
+      </v-list-item>
+    </v-list-group>
+
+    <v-list nav>
       <v-list-item-group v-model="selectedItem" color="primary">
+        <!-- 회원 정보 수정 / 운영 정책 -->
         <v-list-item v-for="(item, i) in items" :key="i" :to="item.to">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
           </v-list-item-icon>
-
           <v-list-item-content>
             <v-list-item-title v-text="item.text"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
+        <!-- 로그아웃 -->
         <v-list-item v-if="fireUser" @click="logout">
           <v-list-item-icon>
             <v-icon>mdi-logout-variant</v-icon>
           </v-list-item-icon>
-
           <v-list-item-content>
             <v-list-item-title>로그아웃</v-list-item-title>
           </v-list-item-content>
@@ -78,29 +144,38 @@ export default {
           to: 'EditUserInfo',
         },
         {
-          text: '게스트 모집 내역',
-          icon: 'mdi-account-search-outline',
-          to: 'FindPeopleRecord',
-        },
-        {
-          text: '참가 요청 내역',
-          icon: 'mdi-account-heart-outline',
-          to: 'FindCourtRecord',
-        },
-        {
-          text: '참가 확정 내역',
-          icon: 'mdi-account-check-outline',
-          to: 'FindCourtRecord',
-        },
-        {
           text: '운영 정책',
           icon: 'mdi-laptop',
           to: 'OperationPolicy',
         },
-        // { text: 'folder', icon: 'mdi-folder' },
-        // { text: 'Offline', icon: 'mdi-check-circle' },
-        // { text: 'Uploads', icon: 'mdi-upload' },
-        // { text: 'Backups', icon: 'mdi-cloud-upload' },
+      ],
+      findPeopleGroup: [
+        {
+          text: '게스트 모집 기록',
+          icon: 'mdi-account-search-outline',
+          type: '',
+          to: 'FindPeopleRecord',
+        },
+        {
+          text: '참가 요청/취소 알림',
+          icon: 'mdi-account-search-outline',
+          type: 'alert',
+          to: 'FindPeopleAlert',
+        },
+      ],
+      applyRecordGroup: [
+        {
+          text: '게스트 참가 요청 기록',
+          icon: 'mdi-account-heart-outline',
+          type: '',
+          to: 'FindCourtRecord',
+        },
+        {
+          text: '영입/방출 알림',
+          icon: 'mdi-account-check-outline',
+          type: 'alert',
+          to: 'FindCourtAlert',
+        },
       ],
     }
   },

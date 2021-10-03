@@ -224,26 +224,18 @@
       </v-form>
     </v-card>
     <v-spacer></v-spacer>
-    <div style="display: flex;">
-      <v-btn
-        color="error"
-        style="width: calc(35% - 12px); margin-right: 12px;"
-        @click="deleteButtonClicked"
-      >
-        <span>삭제</span>
-      </v-btn>
-      <v-btn
-        class="compelete-btn"
-        style="width: 65%;"
-        color="primary"
-        @click="completeBtnClicked"
-        :disabled="isProcessing"
-        :loading="isProcessing"
-      >
-        <span v-if="mode === 'regist'">신규 등록</span>
-        <span v-else-if="mode === 'edit'">수정 내용 저장</span>
-      </v-btn>
-    </div>
+    <v-btn
+      class="compelete-btn"
+      style="width: 65%;"
+      color="primary"
+      block
+      @click="completeBtnClicked"
+      :disabled="isProcessing"
+      :loading="isProcessing"
+    >
+      <span v-if="mode === 'regist'">신규 등록</span>
+      <span v-else-if="mode === 'edit'">수정 내용 저장</span>
+    </v-btn>
 
     <v-dialog v-if="courtDialogToggle" v-model="courtDialogToggle" fullscreen>
       <v-card>
@@ -263,7 +255,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import CourtList from '../admin/CourtList'
+import CourtList from '../Court/CourtList'
 import HelpNtrp from '../../components/HelpNtrp'
 import TitleWithButton from '../../components/TitleWithButton'
 
