@@ -168,26 +168,6 @@ export default {
           break
       }
     },
-    checkStatus() {
-      function leftPad(value) {
-        return value >= 10 ? value : `0${value}`
-      }
-      const now = new Date()
-      const dateOfToday = `${now.getFullYear()}-${leftPad(
-        now.getMonth() + 1,
-      )}-${leftPad(now.getDate())}`
-      const currentTime = `${leftPad(now.getHours())}:${leftPad(
-        now.getMinutes(),
-      )}`
-      if (
-        this.subscribedSchedule.date < dateOfToday ||
-        (this.subscribedSchedule.date === dateOfToday &&
-          this.subscribedSchedule.endTime <= currentTime)
-      ) {
-        this.subscribedSchedule.status = 3
-      }
-      this.setTitleIcon()
-    },
     subscribe() {
       if (this.unsubscribe) {
         this.unsubscribe()
@@ -200,7 +180,7 @@ export default {
         this.subscribedSchedule = sn.data()
         this.subscribedSchedule.scheduleId = this.schedule.scheduleId
         this.initData()
-        this.checkStatus()
+        this.setTitleIcon()
       })
     },
     async initData() {

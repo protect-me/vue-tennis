@@ -44,7 +44,6 @@
             :rules="[rules.required]"
           ></v-select>
         </div>
-
         <div class="divide-column">
           <v-menu
             v-model="dateMenu"
@@ -136,6 +135,13 @@
             ></v-time-picker>
           </v-menu>
         </div>
+        <v-card flat class="mb-3">
+          <v-card-text class="py-0 px-3">
+            <div align="center">Notice. 오전/오후를 꼭 확인해주세요</div>
+            <div align="center">시간에서 분 단위는 내림처리 됩니다 🎾</div>
+            <div align="center">e.g. 47분 ⇒ 40분</div>
+          </v-card-text>
+        </v-card>
 
         <div
           class="mb-3"
@@ -288,6 +294,19 @@ export default {
     startTimeNudgeLeft() {
       let vMenuWidth = (window.innerWidth - 36) / 3
       return `${(290 - vMenuWidth) / 2}px`
+    },
+  },
+  watch: {
+    form: {
+      deep: true,
+      handler() {
+        if (Number(this.form.startTime.slice(3)) % 10 > 0) {
+          this.form.startTime = this.form.startTime.slice(0, 4) + '0'
+        }
+        if (Number(this.form.endTime.slice(3)) % 10 > 0) {
+          this.form.endTime = this.form.endTime.slice(0, 4) + '0'
+        }
+      },
     },
   },
   data() {

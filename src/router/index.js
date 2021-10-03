@@ -34,6 +34,11 @@ const routes = [
     component: () => import('../views/Court/CourtList.vue'),
   },
   {
+    path: '/courtdetail',
+    name: 'CourtDetail',
+    component: () => import('../views/Court/CourtDetail.vue'),
+  },
+  {
     path: '/courtregist',
     name: 'CourtRegist',
     beforeEnter: onlyAuthUser,
