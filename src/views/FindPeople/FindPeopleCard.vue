@@ -1,70 +1,97 @@
 <template>
-  <v-card class="find-people-card-container" @click="goToDetail">
-    <div class="left">
-      <v-card-title class="title-container mb-0 pa-2">
-        <div class="title-year">{{ scheduleDate.year }}</div>
-        <div class="title-etc">
-          <div class="title-month">{{ scheduleDate.month }}</div>
-          <div class="title-date">{{ scheduleDate.date }}</div>
+  <div>
+    <v-card v-if="alertStatus !== 0" flat>
+      <v-card-text style="display: flex;" class="pl-2 pb-2">
+        <div class="mr-7">
+          <v-chip
+            v-if="[1, 3].includes(alertStatus)"
+            dark
+            outlined
+            color="primary"
+          >
+            <span>{{ alertStatus === 1 ? '참가 요청' : '영입' }}</span>
+          </v-chip>
+          <v-chip
+            v-else-if="[2, 4].includes(alertStatus)"
+            outlined
+            color="error"
+          >
+            <span>{{ alertStatus === 2 ? '참가 요청 취소' : '방출' }}</span>
+          </v-chip>
         </div>
-      </v-card-title>
-      <v-card-subtitle class="ma-0">
-        {{ scheduleDate.dayOfWeek }}요일
-      </v-card-subtitle>
-    </div>
-
-    <div class="right">
-      <v-card-text class="right-wrapper">
-        <div class="divide-column">
-          <div>
-            <v-icon class="mr-1 mb-1" small>
-              mdi-clock-time-four-outline
-            </v-icon>
-            <span>{{ schedule.startTime }} ~ {{ schedule.endTime }}</span>
-          </div>
-          <div>
-            <v-icon class="mr-1 mb-1" small>mdi-sofa-single-outline</v-icon>
-            <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
-            <span>{{ schedule.total }}</span>
-          </div>
-        </div>
-
-        <div class="divide-column">
-          <div>
-            <v-icon class="mr-1 mb-1" small>mdi-map-marker-outline</v-icon>
-            <span>{{ schedule.courtName }}</span>
-            <span>-{{ schedule.courtType }}</span>
-          </div>
-          <div>
-            <v-icon class="mr-1 mb-1" small>mdi-tennis</v-icon>
-            <span>NTRP {{ schedule.ntrp }}</span>
-          </div>
-        </div>
-
-        <div class="divide-column">
-          <div>
-            <v-icon class="mr-1 mb-1" small>
-              mdi-crown-outline
-            </v-icon>
-            <span>{{ schedule.organizerNickName }}</span>
-          </div>
-          <div>
-            <v-icon class="mr-1 mb-1" small>mdi-cash-multiple</v-icon>
-            <span>{{ Number(schedule.cost).toLocaleString('ko-KR') }}</span>
-          </div>
-        </div>
-
-        <div class="memo">
-          <div class="memo-icon">
-            <v-icon class="mr-1 mb-1" small>mdi-bullhorn-outline</v-icon>
-          </div>
-          <div class="memo-text">
-            <span>{{ schedule.memo }}</span>
-          </div>
+        <div style="margin-top: 6px;">
+          {{ new Date(createdAt.toDate()).toDateString() }} -
+          {{ new Date(createdAt.toDate()).toLocaleTimeString() }}
         </div>
       </v-card-text>
-    </div>
-  </v-card>
+    </v-card>
+    <v-card class="find-people-card-container" @click="goToDetail">
+      <div class="left">
+        <v-card-title class="title-container mb-0 pa-2">
+          <div class="title-year">{{ scheduleDate.year }}</div>
+          <div class="title-etc">
+            <div class="title-month">{{ scheduleDate.month }}</div>
+            <div class="title-date">{{ scheduleDate.date }}</div>
+          </div>
+        </v-card-title>
+        <v-card-subtitle class="ma-0">
+          {{ scheduleDate.dayOfWeek }}요일
+        </v-card-subtitle>
+      </div>
+
+      <div class="right">
+        <v-card-text class="right-wrapper">
+          <div class="divide-column">
+            <div>
+              <v-icon class="mr-1 mb-1" small>
+                mdi-clock-time-four-outline
+              </v-icon>
+              <span>{{ schedule.startTime }} ~ {{ schedule.endTime }}</span>
+            </div>
+            <div>
+              <v-icon class="mr-1 mb-1" small>mdi-sofa-single-outline</v-icon>
+              <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
+              <span>{{ schedule.total }}</span>
+            </div>
+          </div>
+
+          <div class="divide-column">
+            <div>
+              <v-icon class="mr-1 mb-1" small>mdi-map-marker-outline</v-icon>
+              <span>{{ schedule.courtName }}</span>
+              <span>-{{ schedule.courtType }}</span>
+            </div>
+            <div>
+              <v-icon class="mr-1 mb-1" small>mdi-tennis</v-icon>
+              <span>NTRP {{ schedule.ntrp }}</span>
+            </div>
+          </div>
+
+          <div class="divide-column">
+            <div>
+              <v-icon class="mr-1 mb-1" small>
+                mdi-crown-outline
+              </v-icon>
+              <span>{{ schedule.organizerNickName }}</span>
+            </div>
+            <div>
+              <v-icon class="mr-1 mb-1" small>mdi-cash-multiple</v-icon>
+              <span>{{ Number(schedule.cost).toLocaleString('ko-KR') }}</span>
+            </div>
+          </div>
+
+          <div class="memo">
+            <div class="memo-icon">
+              <v-icon class="mr-1 mb-1" small>mdi-bullhorn-outline</v-icon>
+            </div>
+            <div class="memo-text">
+              <span>{{ schedule.memo }}</span>
+            </div>
+          </div>
+        </v-card-text>
+      </div>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -77,6 +104,14 @@ export default {
     mode: {
       type: String,
       default: 'list', // list || detail
+    },
+    alertStatus: {
+      type: Number,
+      default: 0,
+    },
+    createdAt: {
+      type: Object,
+      default: () => ({}),
     },
   },
   computed: {

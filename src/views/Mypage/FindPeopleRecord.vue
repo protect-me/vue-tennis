@@ -3,7 +3,7 @@
     <v-card flat>
       <div class="find-people-record-header">
         <TitleWithButton
-          titleText="게스트 모집 내역"
+          titleText="게스트 모집 기록"
           goBackButton
           @goBackButtonClicked="goBackButtonClicked"
         />
@@ -20,7 +20,7 @@
 
       <v-card v-if="schedules && schedules.length === 0" flat>
         <v-card-text class="mt-12" align="center">
-          모집 중인 데이터가 없습니다 🎾
+          게스트를 모집한 기록이 없습니다 🎾
         </v-card-text>
       </v-card>
     </div>
@@ -64,6 +64,8 @@ export default {
         const snapshot = await this.$firebase
           .firestore()
           .collection('findPeople')
+          .orderBy('date')
+          .orderBy('startTime')
           .get()
         this.schedules = snapshot.docs
           .filter((value) => idList.includes(value.id))
