@@ -71,6 +71,8 @@ export default new Vuex.Store({
         const unsubscribeFindPeople = await firebase
           .firestore()
           .collection('findPeople')
+          .where('status', '!=', 4)
+          .orderBy('status')
           .orderBy('date')
           .orderBy('startTime')
           .onSnapshot((snapshot) => {

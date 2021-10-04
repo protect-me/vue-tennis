@@ -9,16 +9,6 @@
 
       <v-spacer></v-spacer>
 
-      <!-- <v-btn icon>
-        <router-link
-          to="FindCourt"
-          class="white--text"
-          style="text-decoration: none;"
-        >
-          <v-icon>mdi-stadium</v-icon>
-        </router-link>
-      </v-btn> -->
-
       <v-btn icon>
         <router-link
           to="FindPeopleHome"
@@ -31,11 +21,21 @@
 
       <v-btn icon>
         <router-link
+          to="Map"
+          class="white--text"
+          style="text-decoration: none;"
+        >
+          <v-icon>mdi-map-search-outline</v-icon>
+        </router-link>
+      </v-btn>
+
+      <v-btn icon>
+        <router-link
           to="CourtList"
           class="white--text"
           style="text-decoration: none;"
         >
-          <v-icon>mdi-magnify</v-icon>
+          <v-icon>mdi-stadium</v-icon>
         </router-link>
       </v-btn>
 

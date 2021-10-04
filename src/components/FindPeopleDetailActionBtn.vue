@@ -234,6 +234,11 @@ export default {
       this.applyDialogToggle = false
     },
     async registApplicant() {
+      if (this.user && !this.user.updateNickName) {
+        alert('회원 정보를 확인해주세요!')
+        this.$router.push('Mypage')
+        return
+      }
       await this.$refs.form.validate()
       if (!this.valid) return
       try {

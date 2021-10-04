@@ -53,8 +53,8 @@ export default {
     TitleWithButton,
   },
   mounted() {
-    this.$nextTick(function () {
-      this.$store.dispatch('setSchedules')
+    this.$nextTick(async function () {
+      await this.$store.dispatch('setSchedules')
       this.tab = this.selectedTab
     })
   },
@@ -75,7 +75,6 @@ export default {
   },
   data() {
     return {
-      findPeoples: [],
       tab: null,
       items: [
         { tab: '모집', icon: 'mdi-door-open', content: 'FindPeopleOpen' },
@@ -115,7 +114,12 @@ export default {
       }
     },
     moveToRegist() {
-      this.$router.push('FindPeopleRegist')
+      if (this.user && this.user.updateNickName) {
+        this.$router.push('FindPeopleRegist')
+      } else {
+        alert('회원 정보를 확인해주세요!')
+        this.$router.push('Mypage')
+      }
     },
   },
 }

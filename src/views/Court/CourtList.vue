@@ -7,7 +7,7 @@
   >
     <v-card flat>
       <TitleWithButton
-        titleText="코트 리스트"
+        titleText="테니스장 리스트"
         :registNewButton="mode === 'view'"
         @registNewButtonClicked="goToRegist"
       />
@@ -65,13 +65,13 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import TitleWithButton from '../../components/TitleWithButton'
 
 export default {
   components: {
     TitleWithButton,
   },
-
   props: {
     mode: {
       type: String,
@@ -83,6 +83,9 @@ export default {
   },
   unmounted() {
     if (this.unsubscribe) this.unsubscribe()
+  },
+  computed: {
+    ...mapState(['fireUser', 'user']),
   },
   data() {
     return {
@@ -136,7 +139,12 @@ export default {
         })
     },
     goToRegist() {
-      this.$router.push('CourtRegist')
+      if (this.user && this.user.updateNickName) {
+        this.$router.push('CourtRegist')
+      } else {
+        alert('회원 정보를 확인해주세요!')
+        this.$router.push('Mypage')
+      }
     },
     async goToDetail(item) {
       await this.$store.dispatch('setCourt', item)
