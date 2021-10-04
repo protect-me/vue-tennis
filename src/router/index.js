@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Map from '../views/Map.vue'
+import Home from '../views/Home.vue'
 import store from '@/store'
 
 Vue.use(VueRouter)
@@ -25,8 +25,13 @@ const onlyAuthUserForMypage = (to, from, next) => {
 const routes = [
   {
     path: '/',
-    name: 'Map',
-    component: Map,
+    name: 'Home',
+    component: Home,
+  },
+  {
+    path: '/map',
+    name: 'map',
+    component: () => import('../views/Map.vue'),
   },
   {
     path: '/courtlist',

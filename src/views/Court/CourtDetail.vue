@@ -8,25 +8,25 @@
       />
       <v-divider class="my-3"></v-divider>
     </div>
-    <div class="find-people-detail-content">
+    <div class="court-detail-content" v-if="court">
       <v-card>
         <v-card-text>
           <div>
-            <span>총 코트 수 :</span>
+            <span>총 코트 수:</span>
             <span>{{ court.courtTypes.length }}</span>
           </div>
           <div>
-            <span>주소 :</span>
+            <span>주소:</span>
             <span>{{ court.address }}</span>
           </div>
           <div>
-            <span>유형 :</span>
+            <span>유형:</span>
             <v-chip small v-for="(type, index) in court.types" :key="index">
               {{ type }}
             </v-chip>
           </div>
           <div>
-            <span>코트 :</span>
+            <span>코트:</span>
             <v-chip
               small
               v-for="(courType, index) in court.courtTypes"
@@ -38,7 +38,11 @@
           <div>{{ court.memo }}</div>
         </v-card-text>
       </v-card>
-      <v-divider class="my-5" />
+      <div class="my-5" style="display: flex;">
+        <v-divider class="mt-3" />
+        <div class="mx-3">게스트 모집 중인 공고</div>
+        <v-divider class="mt-3" />
+      </div>
       <FindPeopleCard
         v-for="(schedule, index) in schedules"
         :key="index"
@@ -89,7 +93,11 @@ export default {
           .orderBy('startTime')
           .get()
         this.schedules = snapshot.docs
-          .filter((value) => value.data().courtId === this.court.courtId)
+          .filter(
+            (value) =>
+              value.data().courtId === this.court.courtId &&
+              value.data().status === 1,
+          )
           .map((value) => {
             const id = value.id
             const item = value.data()
@@ -129,9 +137,9 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: scroll;
-  /* .court-detail-content {
+  .court-detail-content {
     height: calc(100vh - 120px);
     overflow: scroll;
-  } */
+  }
 }
 </style>

@@ -157,7 +157,6 @@ export default {
         addressJibun: '',
         lat: 0,
         lng: 0,
-        count: 0,
         types: [],
         courtTypes: ['1', '2', '3'],
         memo: '',
