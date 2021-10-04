@@ -1,18 +1,30 @@
-# vue-tennis
+# 🎾 vue-tennis
+
+## Specs
+Vue.js : v2 + Firebase + Vuetify + Netlify : Deploy
+
+## Link
+https://tennis9in.netlify.app (모바일 화면 권장)
+
+## Project Summary
+https://velog.io/@protect-me/vue-tennis-summary
+
+## Developement Log
+https://velog.io/@protect-me/vue-tennis-log
 
 ## Project setup
 ```
-yarn install
+npm install --save
 ```
 
 ### Compiles and hot-reloads for development
 ```
-yarn serve
+npm install serve
 ```
 
 ### Compiles and minifies for production
 ```
-yarn build
+npm install build
 ```
 
 ### Customize configuration
