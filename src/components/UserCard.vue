@@ -11,7 +11,7 @@
         {{ user.nickName || user.displayName }}
       </v-card-title>
       <v-card-subtitle class="pb-2 pl-0">
-        {{ user.email }}
+        {{ userEmail }}
       </v-card-subtitle>
 
       <v-card-text class="py-0 pl-0">
@@ -52,6 +52,14 @@ export default {
   computed: {
     userAge() {
       return Math.floor((new Date().getFullYear() - this.user.birth) / 10) * 10
+    },
+    userEmail() {
+      const spread = this.user.email.split('@')
+      const starId = [...spread[0]].map((v, i) => {
+        if (i < 2) return v
+        else return '*'
+      })
+      return starId.join('') + '@' + spread[1]
     },
   },
 }
