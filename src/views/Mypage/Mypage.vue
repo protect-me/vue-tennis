@@ -226,4 +226,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.mypage-container {
+  height: calc(100vh - 48px);
+}
+</style>

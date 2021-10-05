@@ -6,11 +6,19 @@
       </v-card-subtitle>
     </v-card>
 
-    <FindPeopleCard
-      v-for="(schedule, index) in schedules"
-      :key="index"
-      :schedule="schedule"
-    ></FindPeopleCard>
+    <transition-group
+      name="fade"
+      @before-enter="beforeEnter"
+      @after-enter="afterEnter"
+      @enter-cancelled="afterEnter"
+    >
+      <FindPeopleCard
+        v-for="(schedule, index) in schedules"
+        :key="schedule.scheduleId"
+        :data-index="index"
+        :schedule="schedule"
+      ></FindPeopleCard>
+    </transition-group>
 
     <v-card v-if="schedules && schedules.length === 0" flat>
       <v-card-text class="mt-12" align="center">
@@ -33,11 +41,24 @@ export default {
   components: {
     FindPeopleCard,
   },
-  data() {
-    return {}
+  methods: {
+    beforeEnter(el) {
+      el.style.transitionDelay = 200 * parseInt(el.dataset.index, 10) + 'ms'
+    },
+    afterEnter(el) {
+      el.style.transitionDelay = ''
+    },
   },
-  methods: {},
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
