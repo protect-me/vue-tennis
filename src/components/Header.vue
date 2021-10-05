@@ -15,7 +15,9 @@
           class="white--text"
           style="text-decoration: none;"
         >
-          <v-icon>mdi-account-group-outline</v-icon>
+          <v-icon :color="checkRoute('FindPeopleHome')">
+            mdi-account-group-outline
+          </v-icon>
         </router-link>
       </v-btn>
 
@@ -25,7 +27,9 @@
           class="white--text"
           style="text-decoration: none;"
         >
-          <v-icon>mdi-map-search-outline</v-icon>
+          <v-icon :color="checkRoute('Map')">
+            mdi-map-search-outline
+          </v-icon>
         </router-link>
       </v-btn>
 
@@ -35,17 +39,21 @@
           class="white--text"
           style="text-decoration: none;"
         >
-          <v-icon>mdi-stadium</v-icon>
+          <v-icon :color="checkRoute('CourtList')">
+            mdi-stadium
+          </v-icon>
         </router-link>
       </v-btn>
 
       <v-btn icon>
         <router-link
-          to="/Mypage"
+          to="Mypage"
           class="white--text"
           style="text-decoration: none;"
         >
-          <v-icon>mdi-account-circle-outline</v-icon>
+          <v-icon :color="checkRoute('Mypage')">
+            mdi-account-circle-outline
+          </v-icon>
         </router-link>
       </v-btn>
     </v-app-bar>
@@ -54,10 +62,20 @@
 
 <script>
 export default {
-  data() {
-    return {}
+  methods: {
+    checkRoute(rt) {
+      if (this.$route.name === rt) {
+        return 'white'
+      } else {
+        return 'grey'
+      }
+    },
   },
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.not-active {
+  color: grey;
+}
+</style>
