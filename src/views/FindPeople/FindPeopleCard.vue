@@ -37,6 +37,7 @@
         <v-card-subtitle
           :class="{
             'ma-0': true,
+            'font-weight-medium': true,
             sat: scheduleDate.dayOfWeek === '토',
             sun: scheduleDate.dayOfWeek === '일',
           }"
@@ -95,7 +96,7 @@
             <div class="memo-icon">
               <v-icon class="mr-1 mb-1" small>mdi-bullhorn-outline</v-icon>
             </div>
-            <div class="memo-text">
+            <div :class="{ 'memo-text': true, expand: mode === 'detail' }">
               <span>{{ schedule.memo }}</span>
             </div>
           </div>
@@ -168,8 +169,7 @@ export default {
       }
     }
     .sat {
-      color: #3F51B5
-;
+      color: #3f51b5;
     }
     .sun {
       color: #f44336;
@@ -192,6 +192,10 @@ export default {
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
+        }
+        .memo-text.expand {
+          display: block;
+          height: auto;
         }
       }
     }

@@ -224,7 +224,7 @@
           type="text"
           outlined
           no-resize
-          counter="100"
+          counter="300"
           :rules="[rules.counter]"
         />
       </v-form>
@@ -316,7 +316,7 @@ export default {
       valid: true,
       rules: {
         required: (value) => !!value || value === 0 || '필수 기입',
-        counter: (value) => value.length <= 100 || '100자 이하로 입력해주세요',
+        counter: (value) => value.length <= 300 || '300자 이하로 입력해주세요',
         vacantCount: (value) =>
           (value <= 10 && value >= 0) || '0~10 사이의 숫자를 입력해주세요',
         totalCount: (value) =>
