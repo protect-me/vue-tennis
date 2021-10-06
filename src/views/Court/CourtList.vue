@@ -18,6 +18,7 @@
       :headers="headers"
       :items="courts"
       :search="search"
+      :loading="loading"
       hide-default-footer
       mobile-breakpoint="1"
       disable-pagination
@@ -90,6 +91,7 @@ export default {
   data() {
     return {
       unsubscribe: null,
+      loading: true,
       courts: [],
       headers: [
         {
@@ -109,6 +111,7 @@ export default {
   },
   methods: {
     subscribe() {
+      this.loading = true
       // .orderBy('createdAt', 'desc')
       this.unsubscribe = this.$firebase
         .firestore()
@@ -137,6 +140,7 @@ export default {
             }
           })
         })
+      this.loading = false
     },
     goToRegist() {
       if (this.user && this.user.updateNickName) {

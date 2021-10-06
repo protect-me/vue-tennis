@@ -446,7 +446,13 @@ export default {
         const openChatLinkIndex = this.form.openChatLink.indexOf(
           'https://open.kakao.com/o/',
         )
-        this.form.openChatLink = this.form.openChatLink.slice(openChatLinkIndex)
+        if (openChatLinkIndex > 0) {
+          this.form.openChatLink = this.form.openChatLink.slice(
+            openChatLinkIndex,
+          )
+        } else {
+          this.form.openChatLink = ''
+        }
         this.form.ntrp = (this.selectedNtrp + 1) / 2
         this.form.total = Number(this.form.total)
         this.form.vacant = Number(this.form.vacant)
