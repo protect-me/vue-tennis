@@ -131,4 +131,14 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.find-court-alert-container {
+  background-color: white;
+  width: 100%;
+  height: calc(100vh - 48px);
+  .result {
+    height: calc(100vh - 130px);
+    overflow: scroll;
+  }
+}
+</style>

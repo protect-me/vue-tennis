@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     beforeEnter(el) {
-      el.style.transitionDelay = 200 * parseInt(el.dataset.index, 10) + 'ms'
+      el.style.transitionDelay = 300 * parseInt(el.dataset.index, 10) + 'ms'
     },
     afterEnter(el) {
       el.style.transitionDelay = ''
