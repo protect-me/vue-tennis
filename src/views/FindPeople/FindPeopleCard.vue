@@ -34,7 +34,13 @@
             <div class="title-date">{{ scheduleDate.date }}</div>
           </div>
         </v-card-title>
-        <v-card-subtitle class="ma-0">
+        <v-card-subtitle
+          :class="{
+            'ma-0': true,
+            sat: scheduleDate.dayOfWeek === '토',
+            sun: scheduleDate.dayOfWeek === '일',
+          }"
+        >
           {{ scheduleDate.dayOfWeek }}요일
         </v-card-subtitle>
       </div>
@@ -49,9 +55,13 @@
               <span>{{ schedule.startTime }} ~ {{ schedule.endTime }}</span>
             </div>
             <div>
-              <v-icon class="mr-1 mb-1" small>mdi-sofa-single-outline</v-icon>
-              <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
-              <span>{{ schedule.total }}</span>
+              <v-icon class="mr-1 mb-1" small>mdi-tennis</v-icon>
+              <span>
+                NTRP
+                {{
+                  schedule.ntrp % 1 === 0 ? schedule.ntrp + '.0' : schedule.ntrp
+                }}
+              </span>
             </div>
           </div>
 
@@ -62,8 +72,9 @@
               <span>-{{ schedule.courtType }}</span>
             </div>
             <div>
-              <v-icon class="mr-1 mb-1" small>mdi-tennis</v-icon>
-              <span>NTRP {{ schedule.ntrp }}</span>
+              <v-icon class="mr-1 mb-1" small>mdi-sofa-single-outline</v-icon>
+              <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
+              <span>{{ schedule.total }}</span>
             </div>
           </div>
 
@@ -155,6 +166,13 @@ export default {
           margin-top: -10px;
         }
       }
+    }
+    .sat {
+      color: #3F51B5
+;
+    }
+    .sun {
+      color: #f44336;
     }
   }
   .right {
