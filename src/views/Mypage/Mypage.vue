@@ -10,21 +10,42 @@
         </v-avatar>
         <div
           class="mr-10"
-          style="display: flex; justify-content: center; align-items: center;"
+          style="
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          "
         >
-          <v-btn
-            :disabled="isProcessing"
-            @click="loginWithGoogle"
-            :loading="isProcessing"
-            color="primary"
-          >
-            <v-icon left dark>
-              mdi-google-plus
-            </v-icon>
-            <span>
-              구글 로그인
-            </span>
-          </v-btn>
+          <div>
+            <v-btn
+              @click="loginWithGoogle"
+              :disabled="isProcessing"
+              :loading="isProcessing"
+              color="primary"
+              class="mb-3"
+              width="140px"
+            >
+              <v-icon left dark>
+                mdi-google-plus
+              </v-icon>
+              <span>구글 로그인</span>
+            </v-btn>
+          </div>
+          <div>
+            <v-btn
+              @click="loginWithKakao"
+              :disabled="isProcessing"
+              :loading="isProcessing"
+              color="rgba(252,228,77)"
+              width="140px"
+            >
+              <v-icon left dark small>
+                mdi-message-outline
+              </v-icon>
+              <span>카카오 로그인</span>
+            </v-btn>
+          </div>
         </div>
       </div>
     </v-card>
@@ -108,12 +129,21 @@
         </v-list-item>
 
         <!-- 로그아웃 -->
-        <v-list-item v-if="fireUser" @click="logout">
+        <!-- <v-list-item v-if="fireUser" @click="logout"> -->
+        <v-list-item @click="logout">
           <v-list-item-icon>
             <v-icon>mdi-logout-variant</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>로그아웃</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item @click="check">
+          <v-list-item-icon>
+            <v-icon>mdi-logout-variant</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>check</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-item-group>
@@ -124,6 +154,13 @@
 <script>
 import UserCard from '../../components/UserCard'
 import { mapState } from 'vuex'
+// import firebase from 'firebase'
+// import KakaoAuth from '@/shared/KakaoAuth'
+
+if (!window.Kakao.isInitialized()) {
+  window.Kakao.init(process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY)
+  window.Kakao.isInitialized()
+}
 
 export default {
   components: {
@@ -188,6 +225,16 @@ export default {
     },
   },
   methods: {
+    check() {
+      const protocol = location.protocol
+      const hostName = location.hostname
+      const port = location.port
+
+      let url = protocol + '//' + hostName + (port ? ':' + port : '')
+      // url += '/#/signupfinish';
+      url += '/mypage/callback/kakaotalk'
+      console.log('?????', url)
+    },
     async loginWithGoogle() {
       if (this.isProcessing) return
       this.isProcessing = true
@@ -204,6 +251,47 @@ export default {
         this.isProcessing = false
       }
     },
+    loginWithKakao() {
+      const protocol = location.protocol
+      const hostName = location.hostname
+      const port = location.port
+
+      let url = protocol + '//' + hostName + (port ? ':' + port : '')
+      // url += '/#/signupfinish';
+      url += '/mypage/callback/kakaotalk'
+      console.log('?????', url)
+
+      // const auth = new KakaoAuth();
+      // auth.auth();
+      window.Kakao.Auth.authorize({
+        redirectUri: url,
+        // , state:""
+        // , scope:""
+        throughTalk: true,
+      })
+    },
+    // async loginWithKakao() {
+    //   try {
+    //     if (!Kakao) {
+    //       alert('로그인 실패')
+    //       console.log('Kakao 인스턴스가 존재하지 않습니다.')
+    //     } else if (Kakao.Auth.getAccessToken()) {
+    //       console.log('이미 로그인 되어있습니다.')
+    //     }
+    //     await Kakao.Auth.login({
+    //       success: (auth) => {
+    //         console.log('로그인 성공', auth)
+    //         // this.getFirebaseJwt(auth.access_token)
+    //       },
+    //       fail: (err) => {
+    //         console.log(err)
+    //       },
+    //     })
+    //   } catch (err) {
+    //     alert('로그인 실패')
+    //     console.error(err)
+    //   }
+    // },
     checkAdditionalInfo() {
       if (
         this.user &&
@@ -218,7 +306,14 @@ export default {
     logout() {
       const answer = window.confirm('로그아웃 하시겠습니까?')
       if (answer) {
-        this.$firebase.auth().signOut()
+        if (Kakao.Auth.getAccessToken()) {
+          Kakao.Auth.logout(() => {
+            console.log('카카오 로그아웃 성공')
+          })
+        } else {
+          this.$firebase.auth().signOut()
+          console.log('구글 로그아웃 성공')
+        }
         alert('로그아웃 되었습니다')
       }
     },

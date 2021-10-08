@@ -3,6 +3,9 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import store from '@/store'
 
+// Containers
+const BlankContainer = () => import('@/views/Mypage/BlankContainer')
+
 Vue.use(VueRouter)
 
 const onlyAuthUser = (to, from, next) => {
@@ -106,6 +109,19 @@ const routes = [
     path: '/operationpolicy',
     name: 'OperationPolicy',
     component: () => import('../views/Mypage/OperationPolicy.vue'),
+  },
+  {
+    path: '/mypage/callback',
+    name: 'callback',
+    redirect: '/mypage',
+    component: BlankContainer,
+    children: [
+      {
+        path: 'kakaotalk',
+        name: 'callback-kakaotalk',
+        component: () => import('@/views/Mypage/callback/KakaoTalk'),
+      },
+    ],
   },
   {
     path: '*',

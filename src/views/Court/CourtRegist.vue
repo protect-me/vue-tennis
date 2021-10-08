@@ -230,7 +230,7 @@ export default {
         queryString
       axios.defaults.withCredentials = false
       axios.defaults.headers.common['Authorization'] =
-        'KakaoAK ' + process.env.VUE_APP_KAKAO_ADDRESS_REST_API_KEY
+        'KakaoAK ' + process.env.VUE_APP_KAKAO_REST_API_KEY
       axios.defaults.headers.post['Content-Type'] =
         'application/x-www-form-urlencoded'
       await axios

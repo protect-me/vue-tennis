@@ -2,13 +2,20 @@ import Vue from 'vue'
 import store from '../store'
 import firebase from 'firebase/app'
 import firebaseConfig from '../../firebaseConfig'
+import firebaseDefault from 'firebase'
 
 import 'firebase/auth'
 import 'firebase/firebase-database'
 import 'firebase/firebase-firestore'
 import 'firebase/firebase-storage'
 
-firebase.initializeApp(firebaseConfig)
+firebaseDefault.initializeApp(firebaseConfig)
+
+if (window.location.hostname === 'localhost') {
+  firebaseDefault.firestore().settings({ host: 'localhost:8080', ssl: false })
+  firebaseDefault.functions().useFunctionsEmulator('http://localhost:5001')
+}
+
 let unsubscribe = null
 
 Vue.prototype.$firebase = firebase
