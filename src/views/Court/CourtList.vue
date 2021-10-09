@@ -71,7 +71,7 @@
       :disabled="!fireUser"
       @click="reportBtnClicked"
     >
-      <v-icon>mdi-pencil</v-icon>
+      <v-icon small>mdi-pencil</v-icon>
     </v-btn>
   </v-container>
 </template>

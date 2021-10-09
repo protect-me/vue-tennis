@@ -65,9 +65,11 @@ export default {
         content: '',
         createdAt: '',
         userId: '',
+        status: 1,
       },
       valid: true,
       isProcessing: false,
+      isComplete: false,
       rules: {
         required: (value) => !!value || value === 0 || '필수 기입',
         counter: (value) =>
@@ -83,7 +85,7 @@ export default {
       textarea.style.height = calcH
     },
     goBackButtonClicked() {
-      this.$router.push('CourtList')
+      this.$router.go(-1)
     },
     async apply() {
       if (this.isProcessing) {
@@ -121,9 +123,27 @@ export default {
         console.log('등록 실패', err.message)
       } finally {
         this.isProcessing = false
+        this.isComplete = true
       }
-      this.$router.push('CourtList')
+      this.$router.go(-1)
     },
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.isComplete) {
+      alert('감사한 마음을 담아 피드백을 적극 반영하겠습니다 🎾')
+      next()
+    } else if (this.form.content.length === 0) {
+      next()
+    } else {
+      const answer = window.confirm(
+        '저장되지 않은 작업이 있습니다! 정말 나갈까요?',
+      )
+      if (answer) {
+        next()
+      } else {
+        next(false)
+      }
+    }
   },
 }
 </script>
