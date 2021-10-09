@@ -50,6 +50,12 @@ const routes = [
     component: () => import('../views/Court/CourtRegist.vue'),
   },
   {
+    path: '/courtreport',
+    name: 'CourtReport',
+    beforeEnter: onlyAuthUser,
+    component: () => import('../views/Court/CourtReport.vue'),
+  },
+  {
     path: '/findpeoplehome',
     name: 'FindPeopleHome',
     component: () => import('../views/FindPeople/FindPeopleHome.vue'),

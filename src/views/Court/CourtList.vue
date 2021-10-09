@@ -62,6 +62,17 @@
     >
       취소
     </v-btn>
+    <v-btn
+      id="report"
+      elevation="2"
+      fab
+      small
+      color="secondary"
+      :disabled="!fireUser"
+      @click="reportBtnClicked"
+    >
+      <v-icon>mdi-pencil</v-icon>
+    </v-btn>
   </v-container>
 </template>
 
@@ -97,14 +108,10 @@ export default {
         {
           text: '코트명',
           align: 'start',
-          // sortable: false,
           value: 'courtName',
         },
         { text: '위치', value: 'address' },
         { text: '', value: 'addressJibun', sortable: false },
-        // { text: 'Carbs (g)', value: 'carbs' },
-        // { text: 'Protein (g)', value: 'protein' },
-        // { text: 'Iron (%)', value: 'iron' },
       ],
       search: '',
     }
@@ -112,10 +119,10 @@ export default {
   methods: {
     subscribe() {
       this.loading = true
-      // .orderBy('createdAt', 'desc')
       this.unsubscribe = this.$firebase
         .firestore()
         .collection('courts')
+        .orderBy('createdAt', 'desc')
         .onSnapshot((snapshot) => {
           if (snapshot.empty) {
             this.courts = []
@@ -160,6 +167,12 @@ export default {
     closeSelectDialog() {
       this.$emit('closeSelectDialog')
     },
+    reportBtnClicked() {
+      const answer = window.confirm('수정 요청을 하시겠습니까?')
+      if (answer) {
+        this.$router.push('CourtReport')
+      }
+    },
   },
 }
 </script>
@@ -176,5 +189,11 @@ export default {
 }
 td {
   padding: 0px 8px !important;
+}
+#report {
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  margin: 16px;
 }
 </style>

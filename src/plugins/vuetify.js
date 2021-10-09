@@ -7,7 +7,7 @@ import ko from 'vuetify/es5/locale/ko'
 Vue.use(Vuetify)
 
 const theme = {
-  dark: false,
+  // dark: false,
   themes: {
     light: {
       // primary: "#344059",
@@ -20,7 +20,7 @@ const theme = {
       // background: "#f9f9f9",
 
       primary: '#485c60', //'rgba(72,92,96)'
-      secondary: '##667456', // 'rgba(102,116,86)',
+      secondary: '#667456', // 'rgba(102,116,86)',
 
       accent: '#ecb558',
       info: '#4E7DA6',
