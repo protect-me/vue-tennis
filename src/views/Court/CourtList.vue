@@ -164,7 +164,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .court-list-container {
   width: 100%;
   height: calc(100vh - 48px);
@@ -173,5 +173,8 @@ export default {
 }
 .court-list-container.fullscreen {
   height: 100vh;
+}
+td {
+  padding: 0px 8px !important;
 }
 </style>

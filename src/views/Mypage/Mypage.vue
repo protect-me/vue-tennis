@@ -144,7 +144,7 @@ export default {
           to: 'EditUserInfo',
         },
         {
-          text: '운영 정책',
+          text: '약관 및 정책',
           icon: 'mdi-laptop',
           to: 'OperationPolicy',
         },

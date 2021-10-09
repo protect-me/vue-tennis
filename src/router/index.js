@@ -85,21 +85,25 @@ const routes = [
   {
     path: '/findpeoplerecord',
     name: 'FindPeopleRecord',
+    beforeEnter: onlyAuthUserForMypage,
     component: () => import('../views/Mypage/FindPeopleRecord.vue'),
   },
   {
     path: '/findpeoplealert',
     name: 'FindPeopleAlert',
+    beforeEnter: onlyAuthUserForMypage,
     component: () => import('../views/Mypage/FindPeopleAlert.vue'),
   },
   {
     path: '/findcourtrecord',
     name: 'FindCourtRecord',
+    beforeEnter: onlyAuthUserForMypage,
     component: () => import('../views/Mypage/FindCourtRecord.vue'),
   },
   {
     path: '/findcourtalert',
     name: 'FindCourtAlert',
+    beforeEnter: onlyAuthUserForMypage,
     component: () => import('../views/Mypage/FindCourtAlert.vue'),
   },
   {
