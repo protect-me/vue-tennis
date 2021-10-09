@@ -9,7 +9,7 @@
         />
       </div>
       <v-divider class="my-3"></v-divider>
-      <v-form>
+      <v-form ref="form" v-model="valid" lazy-validation>
         <div class="subtitle mb-3">
           <span>
             타입 선택
@@ -70,6 +70,7 @@
           type="text"
           outlined
           hide-details
+          :rules="[rules.required]"
         />
         <v-text-field
           class="mb-3"
@@ -80,6 +81,7 @@
           type="text"
           outlined
           hide-details
+          :rules="[rules.required]"
         />
         <v-textarea
           label="메모"
@@ -134,6 +136,7 @@
 
 <script>
 import axios from 'axios'
+import { mapState } from 'vuex'
 import { VueDaumPostcode } from 'vue-daum-postcode'
 import TitleWithButton from '../../components/TitleWithButton'
 
@@ -142,8 +145,12 @@ export default {
     VueDaumPostcode,
     TitleWithButton,
   },
+  computed: {
+    ...mapState(['fireUser', 'user']),
+  },
   data() {
     return {
+      valid: true,
       isComplete: false,
       isProcessing: false,
       addressDialogToggle: false,
@@ -160,6 +167,7 @@ export default {
         types: [],
         courtTypes: ['1', '2', '3'],
         memo: '',
+        userId: '',
         createdAt: '',
         updatedAt: '',
       },
@@ -196,6 +204,9 @@ export default {
         },
       ],
       courtTypesItems: ['1', '2', '3', '4', '5', 'A', 'B', 'C', 'D', 'E'],
+      rules: {
+        required: (value) => !!value || value === 0 || '필수 기입',
+      },
     }
   },
   methods: {
@@ -203,11 +214,9 @@ export default {
       this.$router.push('CourtList')
     },
     openAddressDialog() {
-      console.log('openAddressDialog')
       this.addressDialogToggle = true
     },
     openCourtTypeHelp() {
-      console.log('openCourtTypeHelp')
       this.courtTypeHelpToggle = true
     },
     addressSelected(selectedAddress) {
@@ -219,18 +228,16 @@ export default {
       } else if (selectedAddress.jibunAddress) {
         this.form.addressJibun = selectedAddress.jibunAddress
       }
-      console.log('selectedAddress', selectedAddress)
       this.addressDialogToggle = false
     },
     async getLatLng() {
-      console.log('getLatLng')
       let queryString = this.form.address
       let URL =
         'https://dapi.kakao.com/v2/local/search/address.json?query=' +
         queryString
       axios.defaults.withCredentials = false
       axios.defaults.headers.common['Authorization'] =
-        'KakaoAK ' + process.env.VUE_APP_KAKAO_ADDRESS_REST_API_KEY
+        'KakaoAK ' + process.env.VUE_APP_KAKAO_REST_API_KEY
       axios.defaults.headers.post['Content-Type'] =
         'application/x-www-form-urlencoded'
       await axios
@@ -245,14 +252,25 @@ export default {
         })
     },
     async apply() {
-      console.log('apply')
       if (this.isProcessing) {
         console.log('isProcessing!')
         return
       }
+      if (!this.fireUser.uid) {
+        alert('회원 정보가 확인되지 않습니다. 다시 로그인해주세요!')
+        return
+      }
       this.isProcessing = true
-      if (!this.form.courtName) {
-        alert('코트명을 확인해주세요')
+      this.form.userId = this.fireUser.uid
+
+      await this.$refs.form.validate()
+      if (!this.valid) {
+        console.log('please check validation!')
+        this.isProcessing = false
+        return
+      }
+      if (this.form.types.length === 0 || this.form.courtTypes.length === 0) {
+        alert('경기장 타입 혹은 코트 타입을 확인해주세요')
         this.isProcessing = false
         return
       }
@@ -266,7 +284,7 @@ export default {
     },
     async registNewCourt() {
       try {
-        this.form.createdAt = new Date()
+        this.form.this.form.createdAt = new Date()
         const id = this.form.createdAt.getTime().toString()
 
         await this.$firebase

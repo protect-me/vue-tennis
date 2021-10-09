@@ -2,7 +2,7 @@
   <v-container class="home-container">
     <v-card flat>
       <v-card-title>
-        🎉 Seoul Tennis Club Open 🎉
+        Tennis-9-In OPEN 🎉
       </v-card-title>
       <v-divider class="mb-5"></v-divider>
     </v-card>
