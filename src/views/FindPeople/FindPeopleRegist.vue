@@ -23,9 +23,10 @@
       <v-divider class="my-3"></v-divider>
       <v-card class="mb-3">
         <v-card-text class="pa-2">
-          <div align="center">Notice. 오전/오후를 꼭 확인해주세요</div>
-          <div align="center">시간에서 분 단위는 '내림' 처리됩니다 🎾</div>
-          <div align="center">e.g. 47분 ⇒ 40분</div>
+          <div>Notice.</div>
+          <div>1. 시간 오전/오후 필수 확인 🎾</div>
+          <div>2. 분 단위 '내림' 처리(e.g. 47분 ⇒ 40분)</div>
+          <div>3. 구하는 인원과 총 인원이 같을 경우 '양도' 🎾</div>
         </v-card-text>
       </v-card>
 

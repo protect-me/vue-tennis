@@ -16,7 +16,7 @@
           style="text-decoration: none;"
         >
           <v-icon :color="checkRoute('FindPeopleHome')">
-            mdi-account-group-outline
+            mdi-account-search-outline
           </v-icon>
         </router-link>
       </v-btn>

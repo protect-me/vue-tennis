@@ -50,6 +50,23 @@
         <v-card-text class="right-wrapper">
           <div class="divide-column">
             <div>
+              <v-icon class="mr-1 mb-1" small>mdi-map-marker-outline</v-icon>
+              <span>{{ schedule.courtName }}</span>
+              <span>-{{ schedule.courtType }}</span>
+            </div>
+            <div v-if="schedule && schedule.total !== schedule.vacant">
+              <v-icon class="mr-1 mb-1" small>mdi-sofa-single-outline</v-icon>
+              <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
+              <span>{{ schedule.total }}</span>
+            </div>
+            <div v-else-if="schedule && schedule.total === schedule.vacant">
+              <v-icon class="mr-1 mb-1" small>mdi-hands-pray</v-icon>
+              <span>양도</span>
+            </div>
+          </div>
+
+          <div class="divide-column">
+            <div>
               <v-icon class="mr-1 mb-1" small>
                 mdi-clock-time-four-outline
               </v-icon>
@@ -63,19 +80,6 @@
                   schedule.ntrp % 1 === 0 ? schedule.ntrp + '.0' : schedule.ntrp
                 }}
               </span>
-            </div>
-          </div>
-
-          <div class="divide-column">
-            <div>
-              <v-icon class="mr-1 mb-1" small>mdi-map-marker-outline</v-icon>
-              <span>{{ schedule.courtName }}</span>
-              <span>-{{ schedule.courtType }}</span>
-            </div>
-            <div>
-              <v-icon class="mr-1 mb-1" small>mdi-sofa-single-outline</v-icon>
-              <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
-              <span>{{ schedule.total }}</span>
             </div>
           </div>
 
