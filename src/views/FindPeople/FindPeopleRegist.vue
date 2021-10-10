@@ -21,6 +21,105 @@
         />
       </div>
       <v-divider class="my-3"></v-divider>
+      <v-card class="mb-3">
+        <v-card-text class="pa-2">
+          <div align="center">Notice. 오전/오후를 꼭 확인해주세요</div>
+          <div align="center">시간에서 분 단위는 '내림' 처리됩니다 🎾</div>
+          <div align="center">e.g. 47분 ⇒ 40분</div>
+        </v-card-text>
+      </v-card>
+
+      <div class="divide-column">
+        <v-menu
+          v-model="dateMenu"
+          :close-on-content-click="false"
+          offset-y
+          transition="scale-transition"
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              bottom
+              left
+              class="mb-3 mr-3"
+              outlined
+              v-model="form.date"
+              label="일시"
+              readonly
+              hide-details
+              v-bind="attrs"
+              v-on="on"
+              :rules="[rules.required, rules.beforeToday]"
+            ></v-text-field>
+          </template>
+          <v-date-picker
+            locale="ko-KR"
+            v-model="form.date"
+            @input="dateMenu = false"
+            full-width
+          ></v-date-picker>
+        </v-menu>
+
+        <v-menu
+          bottom
+          :nudge-left="startTimeNudgeLeft"
+          v-model="startTimeMenu"
+          :close-on-content-click="false"
+          offset-y
+          transition="scale-transition"
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              class="mb-3 mr-3"
+              outlined
+              v-model="form.startTime"
+              label="시작"
+              readonly
+              hide-details
+              v-bind="attrs"
+              v-on="on"
+              :rules="[rules.required]"
+            ></v-text-field>
+          </template>
+          <v-time-picker
+            ampm-in-title
+            v-model="form.startTime"
+            :max="form.endTime"
+            @input="startTimeMenu = false"
+          ></v-time-picker>
+        </v-menu>
+        <v-menu
+          bottom
+          left
+          v-model="endTimeMenu"
+          :close-on-content-click="false"
+          offset-y
+          transition="scale-transition"
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              class="mb-3"
+              outlined
+              v-model="form.endTime"
+              label="종료"
+              readonly
+              hide-details
+              v-bind="attrs"
+              v-on="on"
+              :rules="[rules.required]"
+            ></v-text-field>
+          </template>
+          <v-time-picker
+            ampm-in-title
+            v-model="form.endTime"
+            :min="form.startTime"
+            @input="endTimeMenu = false"
+          ></v-time-picker>
+        </v-menu>
+      </div>
+
       <v-form ref="form" v-model="valid" lazy-validation>
         <div class="divide-column">
           <v-text-field
@@ -44,104 +143,6 @@
             :rules="[rules.required]"
           ></v-select>
         </div>
-        <div class="divide-column">
-          <v-menu
-            v-model="dateMenu"
-            :close-on-content-click="false"
-            offset-y
-            transition="scale-transition"
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                bottom
-                left
-                class="mb-3 mr-3"
-                outlined
-                v-model="form.date"
-                label="일시"
-                readonly
-                hide-details
-                v-bind="attrs"
-                v-on="on"
-                :rules="[rules.required, rules.beforeToday]"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              locale="ko-KR"
-              v-model="form.date"
-              @input="dateMenu = false"
-              full-width
-            ></v-date-picker>
-          </v-menu>
-
-          <v-menu
-            bottom
-            :nudge-left="startTimeNudgeLeft"
-            v-model="startTimeMenu"
-            :close-on-content-click="false"
-            offset-y
-            transition="scale-transition"
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                class="mb-3 mr-3"
-                outlined
-                v-model="form.startTime"
-                label="시작"
-                readonly
-                hide-details
-                v-bind="attrs"
-                v-on="on"
-                :rules="[rules.required]"
-              ></v-text-field>
-            </template>
-            <v-time-picker
-              ampm-in-title
-              v-model="form.startTime"
-              :max="form.endTime"
-              @input="startTimeMenu = false"
-            ></v-time-picker>
-          </v-menu>
-
-          <v-menu
-            bottom
-            left
-            v-model="endTimeMenu"
-            :close-on-content-click="false"
-            offset-y
-            transition="scale-transition"
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                class="mb-3"
-                outlined
-                v-model="form.endTime"
-                label="종료"
-                readonly
-                hide-details
-                v-bind="attrs"
-                v-on="on"
-                :rules="[rules.required]"
-              ></v-text-field>
-            </template>
-            <v-time-picker
-              ampm-in-title
-              v-model="form.endTime"
-              :min="form.startTime"
-              @input="endTimeMenu = false"
-            ></v-time-picker>
-          </v-menu>
-        </div>
-        <v-card flat class="mb-3">
-          <v-card-text class="py-0 px-3">
-            <div align="center">Notice. 오전/오후를 꼭 확인해주세요</div>
-            <div align="center">시간에서 분 단위는 내림처리 됩니다 🎾</div>
-            <div align="center">e.g. 47분 ⇒ 40분</div>
-          </v-card-text>
-        </v-card>
 
         <div
           class="mb-3"
