@@ -11,31 +11,51 @@
     <div class="court-detail-content" v-if="court">
       <v-card>
         <v-card-text>
-          <div>
-            <span>총 코트 수:</span>
-            <span>{{ court.courtTypes.length }}</span>
+          <div
+            class="detail-row"
+            style="
+              display: flex;
+              justify-content: space-between;
+              flex-wrap: wrap;
+            "
+          >
+            <div>코트 타입</div>
+            <div>
+              <v-chip
+                small
+                class="ml-2"
+                v-for="(type, index) in court.types"
+                :key="index"
+              >
+                {{ type }}
+              </v-chip>
+            </div>
           </div>
-          <div>
-            <span>주소:</span>
-            <span>{{ court.address }}</span>
+
+          <div class="detail-row" style="">
+            <div>코트({{ court.courtTypes.length }})</div>
+            <div>
+              <v-chip
+                small
+                class="ml-2"
+                v-for="(courType, index) in court.courtTypes"
+                :key="index"
+              >
+                {{ courType }}
+              </v-chip>
+            </div>
           </div>
-          <div>
-            <span>유형:</span>
-            <v-chip small v-for="(type, index) in court.types" :key="index">
-              {{ type }}
-            </v-chip>
+
+          <div class="detail-row">
+            <div>주소</div>
+            <div>{{ court.address }}</div>
           </div>
-          <div>
-            <span>코트:</span>
-            <v-chip
-              small
-              v-for="(courType, index) in court.courtTypes"
-              :key="index"
-            >
-              {{ courType }}
-            </v-chip>
+
+          <v-divider class="my-1"></v-divider>
+
+          <div class="detail-row">
+            {{ court.memo }}
           </div>
-          <div>{{ court.memo }}</div>
         </v-card-text>
       </v-card>
       <div class="my-5" style="display: flex;">
@@ -140,6 +160,12 @@ export default {
   .court-detail-content {
     height: calc(100vh - 120px);
     overflow: scroll;
+    .detail-row {
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
   }
 }
 </style>

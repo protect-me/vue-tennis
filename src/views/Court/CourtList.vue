@@ -18,6 +18,7 @@
       :headers="headers"
       :items="courts"
       :search="search"
+      :loading="loading"
       hide-default-footer
       mobile-breakpoint="1"
       disable-pagination
@@ -61,6 +62,17 @@
     >
       취소
     </v-btn>
+    <v-btn
+      id="report"
+      elevation="2"
+      fab
+      small
+      color="secondary"
+      :disabled="!fireUser"
+      @click="reportBtnClicked"
+    >
+      <v-icon small>mdi-pencil</v-icon>
+    </v-btn>
   </v-container>
 </template>
 
@@ -90,29 +102,27 @@ export default {
   data() {
     return {
       unsubscribe: null,
+      loading: true,
       courts: [],
       headers: [
         {
           text: '코트명',
           align: 'start',
-          // sortable: false,
           value: 'courtName',
         },
         { text: '위치', value: 'address' },
         { text: '', value: 'addressJibun', sortable: false },
-        // { text: 'Carbs (g)', value: 'carbs' },
-        // { text: 'Protein (g)', value: 'protein' },
-        // { text: 'Iron (%)', value: 'iron' },
       ],
       search: '',
     }
   },
   methods: {
     subscribe() {
-      // .orderBy('createdAt', 'desc')
+      this.loading = true
       this.unsubscribe = this.$firebase
         .firestore()
         .collection('courts')
+        .orderBy('createdAt', 'desc')
         .onSnapshot((snapshot) => {
           if (snapshot.empty) {
             this.courts = []
@@ -137,6 +147,7 @@ export default {
             }
           })
         })
+      this.loading = false
     },
     goToRegist() {
       if (this.user && this.user.updateNickName) {
@@ -156,11 +167,17 @@ export default {
     closeSelectDialog() {
       this.$emit('closeSelectDialog')
     },
+    reportBtnClicked() {
+      const answer = window.confirm('수정 요청을 하시겠습니까?')
+      if (answer) {
+        this.$router.push('CourtReport')
+      }
+    },
   },
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .court-list-container {
   width: 100%;
   height: calc(100vh - 48px);
@@ -169,5 +186,14 @@ export default {
 }
 .court-list-container.fullscreen {
   height: 100vh;
+}
+td {
+  padding: 0px 8px !important;
+}
+#report {
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  margin: 16px;
 }
 </style>

@@ -96,8 +96,6 @@ export default {
       } catch (err) {
         alert('데이터를 가져오는데 실패했습니다.', err)
         console.log(err)
-      } finally {
-        console.log(this.schedules)
       }
     },
   },

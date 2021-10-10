@@ -34,7 +34,14 @@
             <div class="title-date">{{ scheduleDate.date }}</div>
           </div>
         </v-card-title>
-        <v-card-subtitle class="ma-0">
+        <v-card-subtitle
+          :class="{
+            'ma-0': true,
+            'font-weight-medium': true,
+            sat: scheduleDate.dayOfWeek === '토',
+            sun: scheduleDate.dayOfWeek === '일',
+          }"
+        >
           {{ scheduleDate.dayOfWeek }}요일
         </v-card-subtitle>
       </div>
@@ -43,27 +50,36 @@
         <v-card-text class="right-wrapper">
           <div class="divide-column">
             <div>
+              <v-icon class="mr-1 mb-1" small>mdi-map-marker-outline</v-icon>
+              <span>{{ schedule.courtName }}</span>
+              <span>-{{ schedule.courtType }}</span>
+            </div>
+            <div v-if="schedule && schedule.total !== schedule.vacant">
+              <v-icon class="mr-1 mb-1" small>mdi-sofa-single-outline</v-icon>
+              <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
+              <span>{{ schedule.total }}</span>
+            </div>
+            <div v-else-if="schedule && schedule.total === schedule.vacant">
+              <v-icon class="mr-1 mb-1" small>mdi-hands-pray</v-icon>
+              <span>양도</span>
+            </div>
+          </div>
+
+          <div class="divide-column">
+            <div>
               <v-icon class="mr-1 mb-1" small>
                 mdi-clock-time-four-outline
               </v-icon>
               <span>{{ schedule.startTime }} ~ {{ schedule.endTime }}</span>
             </div>
             <div>
-              <v-icon class="mr-1 mb-1" small>mdi-sofa-single-outline</v-icon>
-              <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
-              <span>{{ schedule.total }}</span>
-            </div>
-          </div>
-
-          <div class="divide-column">
-            <div>
-              <v-icon class="mr-1 mb-1" small>mdi-map-marker-outline</v-icon>
-              <span>{{ schedule.courtName }}</span>
-              <span>-{{ schedule.courtType }}</span>
-            </div>
-            <div>
               <v-icon class="mr-1 mb-1" small>mdi-tennis</v-icon>
-              <span>NTRP {{ schedule.ntrp }}</span>
+              <span>
+                NTRP
+                {{
+                  schedule.ntrp % 1 === 0 ? schedule.ntrp + '.0' : schedule.ntrp
+                }}
+              </span>
             </div>
           </div>
 
@@ -84,7 +100,7 @@
             <div class="memo-icon">
               <v-icon class="mr-1 mb-1" small>mdi-bullhorn-outline</v-icon>
             </div>
-            <div class="memo-text">
+            <div :class="{ 'memo-text': true, expand: mode === 'detail' }">
               <span>{{ schedule.memo }}</span>
             </div>
           </div>
@@ -156,6 +172,12 @@ export default {
         }
       }
     }
+    .sat {
+      color: #3f51b5;
+    }
+    .sun {
+      color: #f44336;
+    }
   }
   .right {
     flex-grow: 1;
@@ -174,6 +196,10 @@ export default {
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
+        }
+        .memo-text.expand {
+          display: block;
+          height: auto;
         }
       }
     }

@@ -78,7 +78,7 @@ export default {
       const script = document.createElement('script')
       /* global kakao */
       script.onload = () => kakao.maps.load(this.initMap)
-      script.src = `http://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.VUE_APP_KAKAO_MAP_JAVASCRIPT_KEY}`
+      script.src = `http://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.VUE_APP_KAKAO_JAVASCRIPT_KEY}`
       document.head.appendChild(script)
     },
     initMarkers() {
@@ -125,9 +125,17 @@ export default {
           position: latlng, // 마커를 표시할 위치
           image: normalImage, // 마커 이미지
         })
+
+        let cropedCourtName = ''
+        const cropIndex = this.courts[i].courtName.indexOf('테니스장')
+        if (cropIndex > 0) {
+          cropedCourtName = this.courts[i].courtName.slice(0, cropIndex).trim()
+        } else {
+          cropedCourtName = this.courts[i].courtName
+        }
         var basicInfo = `<div class="customoverlay">
               <div class="customoverlay-count">
-              ${this.courts[i].courtName}:${this.courts[i].count}
+              ${cropedCourtName}:${this.courts[i].count}
               </div>
           </div>`
         var customOverlay = new kakao.maps.CustomOverlay({

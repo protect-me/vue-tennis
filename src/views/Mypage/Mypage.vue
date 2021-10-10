@@ -137,18 +137,7 @@ export default {
       addtionalUserInfoToggle: false,
       isProcessing: false,
       selectedItem: 0,
-      items: [
-        {
-          text: '회원 정보 수정',
-          icon: 'mdi-badge-account-horizontal-outline',
-          to: 'EditUserInfo',
-        },
-        {
-          text: '운영 정책',
-          icon: 'mdi-laptop',
-          to: 'OperationPolicy',
-        },
-      ],
+
       findPeopleGroup: [
         {
           text: '게스트 모집 기록',
@@ -175,6 +164,23 @@ export default {
           icon: 'mdi-account-check-outline',
           type: 'alert',
           to: 'FindCourtAlert',
+        },
+      ],
+      items: [
+        {
+          text: '회원 정보 수정',
+          icon: 'mdi-badge-account-horizontal-outline',
+          to: 'EditUserInfo',
+        },
+        {
+          text: '약관 및 정책',
+          icon: 'mdi-laptop',
+          to: 'OperationPolicy',
+        },
+        {
+          text: '피드백',
+          icon: 'mdi-bullhorn-outline',
+          to: 'CourtReport',
         },
       ],
     }

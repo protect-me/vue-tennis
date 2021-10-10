@@ -25,14 +25,6 @@
       <v-tab-item class="tab-item">
         <FindPeopleComplete :schedules="schedulesComplete"></FindPeopleComplete>
       </v-tab-item>
-
-      <v-tab-item v-for="item in items" :key="item.tab">
-        <component
-          v-if="schedules"
-          v-bind:is="item.content"
-          :schedules="schedules"
-        ></component>
-      </v-tab-item>
     </v-tabs-items>
   </v-container>
 </template>

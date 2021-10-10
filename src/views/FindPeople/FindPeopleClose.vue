@@ -14,7 +14,15 @@
       ></FindPeopleCard>
     </transition-group>
 
-    <v-card v-if="schedules && schedules.length === 0" flat>
+    <v-card v-if="loading" flat>
+      <v-card-text class="mt-12" align="center">
+        <v-progress-circular
+          indeterminate
+          color="blue-grey"
+        ></v-progress-circular>
+      </v-card-text>
+    </v-card>
+    <v-card v-else-if="schedules && schedules.length === 0" flat>
       <v-card-text class="mt-12" align="center">
         마감된 데이터가 없습니다 🎾
       </v-card-text>
@@ -23,6 +31,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import FindPeopleCard from './FindPeopleCard'
 
 export default {
@@ -34,6 +43,9 @@ export default {
   },
   components: {
     FindPeopleCard,
+  },
+  computed: {
+    ...mapState(['loading']),
   },
   methods: {
     beforeEnter(el) {
