@@ -38,8 +38,8 @@
           :class="{
             'ma-0': true,
             'font-weight-medium': true,
-            sat: scheduleDate.dayOfWeek === '토',
-            sun: scheduleDate.dayOfWeek === '일',
+            fontBlue: scheduleDate.dayOfWeek === '토',
+            fontRed: scheduleDate.dayOfWeek === '일',
           }"
         >
           {{ scheduleDate.dayOfWeek }}요일
@@ -48,6 +48,43 @@
 
       <div class="right">
         <v-card-text class="right-wrapper">
+          <div class="divide-column">
+            <div>
+              <v-icon class="mr-1 mb-1" small>mdi-map-marker-outline</v-icon>
+              <span>{{ schedule.courtName }}</span>
+              <span>-{{ schedule.courtType }}</span>
+            </div>
+            <div
+              v-if="schedule && !schedule.assignment"
+              class="font-weight-medium"
+              :class="{
+                fontBlue: schedule.total > schedule.vacant,
+                fontRed: schedule.total <= schedule.vacant,
+              }"
+            >
+              <v-icon
+                :class="{
+                  fontBlue: schedule.total > schedule.vacant,
+                  fontRed: schedule.total <= schedule.vacant,
+                }"
+                class="mr-1 mb-1"
+                small
+              >
+                mdi-sofa-single-outline
+              </v-icon>
+              <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
+              <span>{{ schedule.total }}</span>
+            </div>
+            <div v-else-if="schedule && schedule.assignment">
+              <v-icon class="mr-1 mb-1 fontRed" x-small>
+                mdi-hands-pray
+              </v-icon>
+              <span class="font-weight-medium fontRed">
+                양도
+              </span>
+            </div>
+          </div>
+
           <div class="divide-column">
             <div>
               <v-icon class="mr-1 mb-1" small>
@@ -63,19 +100,6 @@
                   schedule.ntrp % 1 === 0 ? schedule.ntrp + '.0' : schedule.ntrp
                 }}
               </span>
-            </div>
-          </div>
-
-          <div class="divide-column">
-            <div>
-              <v-icon class="mr-1 mb-1" small>mdi-map-marker-outline</v-icon>
-              <span>{{ schedule.courtName }}</span>
-              <span>-{{ schedule.courtType }}</span>
-            </div>
-            <div>
-              <v-icon class="mr-1 mb-1" small>mdi-sofa-single-outline</v-icon>
-              <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
-              <span>{{ schedule.total }}</span>
             </div>
           </div>
 
@@ -168,12 +192,6 @@ export default {
         }
       }
     }
-    .sat {
-      color: #3f51b5;
-    }
-    .sun {
-      color: #f44336;
-    }
   }
   .right {
     flex-grow: 1;
@@ -200,5 +218,11 @@ export default {
       }
     }
   }
+}
+.fontBlue {
+  color: #3f51b5;
+}
+.fontRed {
+  color: #f44336;
 }
 </style>
