@@ -26,7 +26,6 @@
           <div>Notice.</div>
           <div>1. 시간 오전/오후 필수 확인 🎾</div>
           <div>2. 분 단위 '내림' 처리(e.g. 47분 ⇒ 40분)</div>
-          <div>3. 구하는 인원과 총 인원이 같을 경우 '양도' 🎾</div>
         </v-card-text>
       </v-card>
 
@@ -173,6 +172,24 @@
         </div>
 
         <div class="divide-column">
+          <div
+            class="mr-3 mb-3"
+            align="center"
+            style="border: 1px solid rgb(182, 182, 182); border-radius: 4px;"
+          >
+            <div style="color: rgb(117, 117, 117);" class="mx-auto">
+              양도
+            </div>
+            <v-switch
+              class="mt-0 ml-2"
+              x-small
+              color="primary"
+              hide-details
+              dense
+              v-model="form.assignment"
+            ></v-switch>
+          </div>
+
           <v-text-field
             class="mb-3 mr-3"
             label="구하는 인원(명)"
@@ -180,7 +197,7 @@
             type="number"
             hide-details
             outlined
-            :rules="[rules.required, rules.vacantCount]"
+            :disabled="form.assignment"
           />
           <v-text-field
             class="mb-3"
@@ -189,7 +206,7 @@
             type="number"
             outlined
             hide-details
-            :rules="[rules.required, rules.totalCount]"
+            :disabled="form.assignment"
           />
         </div>
 
@@ -237,7 +254,7 @@
       style="width: 65%;"
       color="primary"
       block
-      @click="completeBtnClicked"
+      @click="apply"
       :disabled="isProcessing"
       :loading="isProcessing"
     >
@@ -319,11 +336,6 @@ export default {
       rules: {
         required: (value) => !!value || value === 0 || '필수 기입',
         counter: (value) => value.length <= 300 || '300자 이하로 입력해주세요',
-        vacantCount: (value) =>
-          (value <= 10 && value >= 0) || '0~10 사이의 숫자를 입력해주세요',
-        totalCount: (value) =>
-          (value <= 10 && value >= 2 && value >= Number(this.form.vacant)) ||
-          '2~10 사이의 숫자를 입력해주세요',
         beforeToday: (value) => {
           const inputDate = new Date(value)
           const today = new Date().setHours(0)
@@ -351,6 +363,7 @@ export default {
         ntrp: '',
         vacant: '',
         total: '',
+        assignment: false,
         openChatLink: '',
         contact: '',
         cost: '',
@@ -405,6 +418,7 @@ export default {
         date: this.subscribedSchedule.date,
         startTime: this.subscribedSchedule.startTime,
         endTime: this.subscribedSchedule.endTime,
+        assignment: this.subscribedSchedule.assignment,
         vacant: this.subscribedSchedule.vacant,
         total: this.subscribedSchedule.total,
         contact: this.subscribedSchedule.contact,
@@ -424,17 +438,37 @@ export default {
       this.courtTypes = item.courtTypes
       if (this.selectedCourt) this.closeCourtDialog()
     },
-    async completeBtnClicked() {
+    async apply() {
       if (this.isProcessing) {
         console.log('is processing!')
         return
       }
       this.isProcessing = true
       await this.$refs.form.validate()
+
+      if (!this.form.date || !this.form.startTime || !this.form.endTime) {
+        alert('일시 및 시간을 확인해주세요!')
+        return
+      }
       if (!this.valid) {
         console.log('please check validation!')
         this.isProcessing = false
         return
+      }
+      if (!this.form.assignment) {
+        if (
+          this.form.vacant > 10 ||
+          this.form.vacant < 0 ||
+          this.form.total > 10 ||
+          this.form.total < 0 ||
+          this.form.total < this.form.vacant
+        ) {
+          alert('입력한 인원을 확인해주세요!')
+          return
+        }
+      } else {
+        this.form.vacant = 1
+        this.form.total = 2
       }
       if (!this.form.contact && !this.form.openChatLink) {
         alert('연락처 혹은 오픈채팅방 링크를 입력해주세요!')

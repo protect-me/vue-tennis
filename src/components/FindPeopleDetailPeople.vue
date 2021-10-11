@@ -1,8 +1,23 @@
 <template>
   <div>
-    <div class="my-3" style="display: flex;">
+    <div
+      v-if="subscribedSchedule && !subscribedSchedule.assignment"
+      class="my-3"
+      style="display: flex;"
+    >
       <v-divider class="mt-3" />
       <div class="mx-3">현재 참가자</div>
+      <v-divider class="mt-3" />
+    </div>
+    <div
+      v-else-if="subscribedSchedule && subscribedSchedule.assignment"
+      class="my-3"
+      style="display: flex;"
+    >
+      <v-divider class="mt-3" />
+      <div class="mx-3">양도인</div>
+      <v-divider class="mt-3" />
+      <div class="mx-3">양수인</div>
       <v-divider class="mt-3" />
     </div>
 
@@ -79,9 +94,22 @@
       ></v-card>
     </v-container>
 
-    <div class="my-3" style="display: flex;">
+    <div
+      v-if="subscribedSchedule && !subscribedSchedule.assignment"
+      class="my-3"
+      style="display: flex;"
+    >
       <v-divider class="mt-3" />
       <div class="mx-3">참가 신청자</div>
+      <v-divider class="mt-3" />
+    </div>
+    <div
+      v-else-if="subscribedSchedule && subscribedSchedule.assignment"
+      class="my-3"
+      style="display: flex;"
+    >
+      <v-divider class="mt-3" />
+      <div class="mx-3">양수 신청자</div>
       <v-divider class="mt-3" />
     </div>
 

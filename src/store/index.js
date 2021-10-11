@@ -94,6 +94,7 @@ export default new Vuex.Store({
                 startTime: item.startTime,
                 endTime: item.endTime,
                 ntrp: item.ntrp,
+                assignment: item.assignment,
                 vacant: item.vacant,
                 total: item.total,
                 contact: item.contact,
