@@ -148,7 +148,6 @@ export default {
     },
     goBackButtonClicked() {
       this.$router.go(-1)
-      // this.$router.push('FindPeopleHome')
     },
     editButtonClicked() {
       if (this.subscribedSchedule.status === 3) return

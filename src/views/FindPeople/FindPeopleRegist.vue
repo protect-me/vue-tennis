@@ -386,7 +386,7 @@ export default {
       this.closeButtonClicked()
     },
     goBackButtonClicked() {
-      this.$router.push('FindPeopleHome')
+      this.$router.push({ name: 'FindPeopleHome' })
     },
     openCourtDialog() {
       this.courtDialogToggle = true
@@ -528,7 +528,7 @@ export default {
         this.isProcessing = false
         this.isComplete = true
         if (this.mode === 'regist') {
-          this.$router.push('FindPeopleHome')
+          this.$router.push({ name: 'FindPeopleHome' })
         } else if (this.mode === 'edit') {
           this.closeButtonClicked()
         }

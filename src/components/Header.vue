@@ -3,7 +3,9 @@
     <v-app-bar dark dense max-height="48px">
       <v-toolbar-title>
         <router-link to="/" class="white--text" style="text-decoration: none;">
-          🎾
+          <div class="pr-2">
+            🎾
+          </div>
         </router-link>
       </v-toolbar-title>
 
@@ -11,7 +13,7 @@
 
       <v-btn icon>
         <router-link
-          to="FindPeopleHome"
+          to="/findpeoplehome"
           class="white--text"
           style="text-decoration: none;"
         >
@@ -23,7 +25,7 @@
 
       <v-btn icon>
         <router-link
-          to="Map"
+          to="/map"
           class="white--text"
           style="text-decoration: none;"
         >
@@ -35,7 +37,7 @@
 
       <v-btn icon>
         <router-link
-          to="CourtList"
+          to="/courtlist"
           class="white--text"
           style="text-decoration: none;"
         >
@@ -47,7 +49,7 @@
 
       <v-btn icon>
         <router-link
-          to="Mypage"
+          to="/mypage"
           class="white--text"
           style="text-decoration: none;"
         >

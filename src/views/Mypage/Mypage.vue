@@ -218,7 +218,7 @@ export default {
           !this.user.location ||
           !this.user.ntrp)
       ) {
-        this.$router.push('EditUserInfo')
+        this.$router.push({ name: 'EditUserInfo' })
       }
     },
     logout() {

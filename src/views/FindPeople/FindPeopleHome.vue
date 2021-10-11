@@ -107,10 +107,10 @@ export default {
     },
     moveToRegist() {
       if (this.user && this.user.updateNickName) {
-        this.$router.push('FindPeopleRegist')
+        this.$router.push({ name: 'FindPeopleRegist' })
       } else {
         alert('회원 정보를 확인해주세요!')
-        this.$router.push('Mypage')
+        this.this.$router.push({ name: 'Mypage' })
       }
     },
   },

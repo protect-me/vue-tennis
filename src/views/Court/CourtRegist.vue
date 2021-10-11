@@ -211,7 +211,7 @@ export default {
   },
   methods: {
     goBackButtonClicked() {
-      this.$router.push('CourtList')
+      this.$router.push({ name: 'CourtList' })
     },
     openAddressDialog() {
       this.addressDialogToggle = true
@@ -286,6 +286,7 @@ export default {
       try {
         this.form.this.form.createdAt = new Date()
         const id = this.form.createdAt.getTime().toString()
+        this.form.courtId = id
 
         await this.$firebase
           .firestore()
@@ -301,7 +302,7 @@ export default {
         this.isComplete = true
       }
 
-      this.$router.push('CourtList')
+      this.$router.push({ name: 'CourtList' })
     },
   },
   beforeRouteLeave(to, from, next) {

@@ -162,7 +162,7 @@ export default {
     },
     async goToDetail(item) {
       await this.$store.dispatch('setCourt', item)
-      this.$router.push('CourtDetail')
+      this.$router.push(`/courtdetail/${item.courtId}`)
     },
   },
 }

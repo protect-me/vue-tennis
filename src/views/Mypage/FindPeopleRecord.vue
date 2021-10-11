@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     goBackButtonClicked() {
-      this.$router.push('Mypage')
+      this.this.$router.push({ name: 'Mypage' })
     },
     async initData() {
       if (this.user.findPeopleList.length === 0) return

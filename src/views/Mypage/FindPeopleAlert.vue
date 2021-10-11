@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     goBackButtonClicked() {
-      this.$router.push('Mypage')
+      this.this.$router.push({ name: 'Mypage' })
     },
     async initData() {
       try {

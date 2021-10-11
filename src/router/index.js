@@ -39,7 +39,7 @@ const routes = [
     component: () => import('../views/Court/CourtList.vue'),
   },
   {
-    path: '/courtdetail',
+    path: '/courtdetail/:courtId',
     name: 'CourtDetail',
     component: () => import('../views/Court/CourtDetail.vue'),
   },
