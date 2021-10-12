@@ -286,15 +286,11 @@ export default {
         ) {
           this.$nextTick().then(() => {
             setTimeout(() => {
-              this.confirmStatusClose()
+              this.$refs.findPeopleActions.closeSchedule()
             }, 500)
           })
         }
       }
-    },
-    confirmStatusClose() {
-      const answer = window.confirm('게스트 모집을 마감하시겠습니까?')
-      if (answer) this.$refs.findPeopleActions.closeSchedule()
     },
     copyContact() {
       const tempEl = document.createElement('textarea')
