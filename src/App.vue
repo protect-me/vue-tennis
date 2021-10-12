@@ -2,11 +2,10 @@
   <v-app>
     <Header></Header>
     <v-main>
-      <transition name="fade">
-        <router-view />
-      </transition>
+      <!-- <transition name="fade"> -->
+      <router-view />
+      <!-- </transition> -->
     </v-main>
-    <!-- </v-sheet> -->
   </v-app>
 </template>
 
@@ -24,12 +23,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.fade-enter-active,
+/* .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
 }
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
-}
+} */
 </style>

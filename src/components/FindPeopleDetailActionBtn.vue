@@ -236,7 +236,7 @@ export default {
     async registApplicant() {
       if (this.user && !this.user.updateNickName) {
         alert('회원 정보를 확인해주세요!')
-        this.$router.push('Mypage')
+        this.$router.push({ name: 'Mypage' })
         return
       }
       await this.$refs.form.validate()

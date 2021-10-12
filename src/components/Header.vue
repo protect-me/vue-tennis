@@ -3,7 +3,9 @@
     <v-app-bar dark dense max-height="48px">
       <v-toolbar-title>
         <router-link to="/" class="white--text" style="text-decoration: none;">
-          🎾
+          <div class="pr-2">
+            🎾
+          </div>
         </router-link>
       </v-toolbar-title>
 
@@ -11,11 +13,19 @@
 
       <v-btn icon>
         <router-link
-          to="FindPeopleHome"
+          to="/findpeoplehome"
           class="white--text"
           style="text-decoration: none;"
         >
-          <v-icon :color="checkRoute('FindPeopleHome')">
+          <v-icon
+            :color="
+              checkRoute([
+                'FindPeopleHome',
+                'FindPeopleDetail',
+                'FindPeopleRegist',
+              ])
+            "
+          >
             mdi-account-search-outline
           </v-icon>
         </router-link>
@@ -23,11 +33,11 @@
 
       <v-btn icon>
         <router-link
-          to="Map"
+          to="/map"
           class="white--text"
           style="text-decoration: none;"
         >
-          <v-icon :color="checkRoute('Map')">
+          <v-icon :color="checkRoute(['Map'])">
             mdi-map-search-outline
           </v-icon>
         </router-link>
@@ -35,11 +45,15 @@
 
       <v-btn icon>
         <router-link
-          to="CourtList"
+          to="/courtlist"
           class="white--text"
           style="text-decoration: none;"
         >
-          <v-icon :color="checkRoute('CourtList')">
+          <v-icon
+            :color="
+              checkRoute(['CourtList', 'CourtDetail', 'CourtRegist', 'Report'])
+            "
+          >
             mdi-stadium
           </v-icon>
         </router-link>
@@ -47,11 +61,23 @@
 
       <v-btn icon>
         <router-link
-          to="Mypage"
+          to="/mypage"
           class="white--text"
           style="text-decoration: none;"
         >
-          <v-icon :color="checkRoute('Mypage')">
+          <v-icon
+            :color="
+              checkRoute([
+                'Mypage',
+                'EditUserInfo',
+                'FindCourtAlert',
+                'FindCourtRecord',
+                'FindPeopleAlert',
+                'FindPeopleRecord',
+                'OperationPolicy',
+              ])
+            "
+          >
             mdi-account-circle-outline
           </v-icon>
         </router-link>
@@ -63,8 +89,8 @@
 <script>
 export default {
   methods: {
-    checkRoute(rt) {
-      if (this.$route.name === rt) {
+    checkRoute(routeArray) {
+      if (routeArray.includes(this.$route.name)) {
         return 'white'
       } else {
         return 'grey'

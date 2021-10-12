@@ -39,7 +39,7 @@ const routes = [
     component: () => import('../views/Court/CourtList.vue'),
   },
   {
-    path: '/courtdetail',
+    path: '/courtdetail/:courtId',
     name: 'CourtDetail',
     component: () => import('../views/Court/CourtDetail.vue'),
   },
@@ -50,10 +50,9 @@ const routes = [
     component: () => import('../views/Court/CourtRegist.vue'),
   },
   {
-    path: '/courtreport',
-    name: 'CourtReport',
-    beforeEnter: onlyAuthUser,
-    component: () => import('../views/Court/CourtReport.vue'),
+    path: '/report',
+    name: 'Report',
+    component: () => import('../views/Mypage/Report.vue'),
   },
   {
     path: '/findpeoplehome',
@@ -67,7 +66,7 @@ const routes = [
     component: () => import('../views/FindPeople/FindPeopleRegist.vue'),
   },
   {
-    path: '/findpeopledetail',
+    path: '/findpeopledetail/:scheduleId',
     name: 'FindPeopleDetail',
     beforeEnter: onlyAuthUser,
     component: () => import('../views/FindPeople/FindPeopleDetail.vue'),

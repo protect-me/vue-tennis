@@ -71,7 +71,7 @@
       :disabled="!fireUser"
       @click="reportBtnClicked"
     >
-      <v-icon small>mdi-pencil</v-icon>
+      <v-icon small>mdi-bullhorn-outline</v-icon>
     </v-btn>
   </v-container>
 </template>
@@ -151,15 +151,15 @@ export default {
     },
     goToRegist() {
       if (this.user && this.user.updateNickName) {
-        this.$router.push('CourtRegist')
+        this.$router.push({ name: 'CourtRegist' })
       } else {
         alert('회원 정보를 확인해주세요!')
-        this.$router.push('Mypage')
+        this.$router.push({ name: 'Mypage' })
       }
     },
     async goToDetail(item) {
       await this.$store.dispatch('setCourt', item)
-      this.$router.push('CourtDetail')
+      this.$router.push(`/courtdetail/${item.courtId}`)
     },
     selectCourt(item) {
       this.$emit('selectCourt', item)
@@ -170,7 +170,7 @@ export default {
     reportBtnClicked() {
       const answer = window.confirm('수정 요청을 하시겠습니까?')
       if (answer) {
-        this.$router.push('CourtReport')
+        this.$router.push({ name: 'Report' })
       }
     },
   },

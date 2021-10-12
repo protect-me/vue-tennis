@@ -1,5 +1,5 @@
 <template>
-  <v-container class="court-detail-container">
+  <v-container class="court-detail-container" v-if="court && court.courtId">
     <div class="court-detail-header">
       <TitleWithButton
         :titleText="court.courtName"
@@ -33,7 +33,7 @@
           </div>
 
           <div class="detail-row" style="">
-            <div>코트({{ court.courtTypes.length }})</div>
+            <div>코트({{ court.courtTypes && court.courtTypes.length }})</div>
             <div>
               <v-chip
                 small
@@ -88,36 +88,53 @@ export default {
     FindPeopleCard,
   },
   mounted() {
+    this.court = this.$store.state.court
     this.$nextTick(function () {
-      this.initData()
+      if (!this.court.courtId) this.initCourtData()
+      this.initSchedulesData()
     })
   },
   computed: {
-    ...mapState(['fireUser', 'user', 'court']),
+    ...mapState(['fireUser', 'user']),
+    courtId() {
+      return this.$route.params.courtId
+    },
   },
   data() {
     return {
       schedules: [],
+      court: {},
     }
   },
   methods: {
     goBackButtonClicked() {
       this.$router.go(-1)
     },
-    async initData() {
+    async initCourtData() {
+      try {
+        const courtInfo = await this.$firebase
+          .firestore()
+          .collection('courts')
+          .doc(this.courtId)
+          .get()
+        this.court = courtInfo.data()
+      } catch (err) {
+        alert('court 정보 확인 실패', err)
+        console.log(err)
+      }
+    },
+    async initSchedulesData() {
       try {
         const snapshot = await this.$firebase
           .firestore()
           .collection('findPeople')
           .orderBy('date')
           .orderBy('startTime')
+          .where('status', '==', 1)
           .get()
+
         this.schedules = snapshot.docs
-          .filter(
-            (value) =>
-              value.data().courtId === this.court.courtId &&
-              value.data().status === 1,
-          )
+          .filter((value) => value.data().courtId === this.courtId)
           .map((value) => {
             const id = value.id
             const item = value.data()
@@ -143,7 +160,7 @@ export default {
             }
           })
       } catch (err) {
-        alert('에러 발생', err)
+        alert('schedule 정보 확인 실패', err)
         console.log(err)
       }
     },
