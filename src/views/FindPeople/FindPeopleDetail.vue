@@ -58,6 +58,7 @@
       :subscribedSchedule="subscribedSchedule"
       :applicants="applicants"
       :applicantsUserIdList="applicantsUserIdList"
+      ref="findPeopleActions"
     />
 
     <v-bottom-sheet
@@ -278,7 +279,11 @@ export default {
         this.applicants.sort((a, b) => {
           return a.createdAt - b.createdAt
         })
-        if (this.subscribedSchedule.vacant === 0) {
+        if (
+          this.subscribedSchedule.vacant === 0 &&
+          this.subscribedSchedule.status === 1 &&
+          this.subscribedSchedule.organizer === this.fireUser.uid
+        ) {
           this.$nextTick().then(() => {
             setTimeout(() => {
               this.confirmStatusClose()
@@ -286,6 +291,10 @@ export default {
           })
         }
       }
+    },
+    confirmStatusClose() {
+      const answer = window.confirm('게스트 모집을 마감하시겠습니까?')
+      if (answer) this.$refs.findPeopleActions.closeSchedule()
     },
     copyContact() {
       const tempEl = document.createElement('textarea')
