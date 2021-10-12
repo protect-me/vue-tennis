@@ -14,13 +14,13 @@ const onlyAuthUser = (to, from, next) => {
   }
 }
 
-const onlyAuthUserForMypage = (to, from, next) => {
-  if (store.state.fireUser) {
-    next()
-  } else {
-    alert('로그인을 해주세요 🎾')
-  }
-}
+// const onlyAuthUserForMypage = (to, from, next) => {
+//   if (store.state.fireUser) {
+//     next()
+//   } else {
+//     alert('로그인을 해주세요 🎾')
+//   }
+// }
 
 const routes = [
   {
@@ -84,31 +84,31 @@ const routes = [
   {
     path: '/edituserinfo',
     name: 'EditUserInfo',
-    beforeEnter: onlyAuthUserForMypage,
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/EditUserInfo.vue'),
   },
   {
     path: '/findpeoplerecord',
     name: 'FindPeopleRecord',
-    beforeEnter: onlyAuthUserForMypage,
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/FindPeopleRecord.vue'),
   },
   {
     path: '/findpeoplealert',
     name: 'FindPeopleAlert',
-    beforeEnter: onlyAuthUserForMypage,
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/FindPeopleAlert.vue'),
   },
   {
     path: '/findcourtrecord',
     name: 'FindCourtRecord',
-    beforeEnter: onlyAuthUserForMypage,
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/FindCourtRecord.vue'),
   },
   {
     path: '/findcourtalert',
     name: 'FindCourtAlert',
-    beforeEnter: onlyAuthUserForMypage,
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/FindCourtAlert.vue'),
   },
   {

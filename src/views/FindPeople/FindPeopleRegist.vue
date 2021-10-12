@@ -5,22 +5,22 @@
       'edit-mode': mode === 'edit',
     }"
   >
+    <div class="find-people-regist-header">
+      <TitleWithButton
+        v-if="mode === 'regist'"
+        titleText="게스트 모집 등록"
+        goBackButton
+        @goBackButtonClicked="goBackButtonClicked"
+      />
+      <TitleWithButton
+        v-else-if="mode === 'edit'"
+        titleText="게스트 모집 수정"
+        closeButton
+        @closeButtonClicked="closeButtonClicked"
+      />
+    </div>
+    <v-divider class="my-3"></v-divider>
     <v-card flat class="find-people-regist-content">
-      <div class="find-people-regist-header">
-        <TitleWithButton
-          v-if="mode === 'regist'"
-          titleText="게스트 모집 등록"
-          goBackButton
-          @goBackButtonClicked="goBackButtonClicked"
-        />
-        <TitleWithButton
-          v-else-if="mode === 'edit'"
-          titleText="게스트 모집 수정"
-          closeButton
-          @closeButtonClicked="closeButtonClicked"
-        />
-      </div>
-      <v-divider class="my-3"></v-divider>
       <v-card class="mb-3">
         <v-card-text class="pa-2">
           <div>Notice.</div>
@@ -29,98 +29,98 @@
         </v-card-text>
       </v-card>
 
-      <div class="divide-column">
-        <v-menu
-          v-model="dateMenu"
-          :close-on-content-click="false"
-          offset-y
-          transition="scale-transition"
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              bottom
-              left
-              class="mb-3 mr-3"
-              outlined
-              v-model="form.date"
-              label="일시"
-              readonly
-              hide-details
-              v-bind="attrs"
-              v-on="on"
-              :rules="[rules.required, rules.beforeToday]"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            locale="ko-KR"
-            v-model="form.date"
-            @input="dateMenu = false"
-            full-width
-          ></v-date-picker>
-        </v-menu>
-
-        <v-menu
-          bottom
-          :nudge-left="startTimeNudgeLeft"
-          v-model="startTimeMenu"
-          :close-on-content-click="false"
-          offset-y
-          transition="scale-transition"
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              class="mb-3 mr-3"
-              outlined
-              v-model="form.startTime"
-              label="시작"
-              readonly
-              hide-details
-              v-bind="attrs"
-              v-on="on"
-              :rules="[rules.required]"
-            ></v-text-field>
-          </template>
-          <v-time-picker
-            ampm-in-title
-            v-model="form.startTime"
-            :max="form.endTime"
-            @input="startTimeMenu = false"
-          ></v-time-picker>
-        </v-menu>
-        <v-menu
-          bottom
-          left
-          v-model="endTimeMenu"
-          :close-on-content-click="false"
-          offset-y
-          transition="scale-transition"
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              class="mb-3"
-              outlined
-              v-model="form.endTime"
-              label="종료"
-              readonly
-              hide-details
-              v-bind="attrs"
-              v-on="on"
-              :rules="[rules.required]"
-            ></v-text-field>
-          </template>
-          <v-time-picker
-            ampm-in-title
-            v-model="form.endTime"
-            :min="form.startTime"
-            @input="endTimeMenu = false"
-          ></v-time-picker>
-        </v-menu>
-      </div>
-
       <v-form ref="form" v-model="valid" lazy-validation>
+        <div class="divide-column">
+          <v-menu
+            v-model="dateMenu"
+            :close-on-content-click="false"
+            offset-y
+            transition="scale-transition"
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                bottom
+                left
+                class="mb-3 mr-3"
+                outlined
+                v-model="form.date"
+                label="일시"
+                readonly
+                hide-details
+                v-bind="attrs"
+                v-on="on"
+                :rules="[rules.required, rules.beforeToday]"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              locale="ko-KR"
+              v-model="form.date"
+              @input="dateMenu = false"
+              full-width
+            ></v-date-picker>
+          </v-menu>
+
+          <v-menu
+            bottom
+            :nudge-left="startTimeNudgeLeft"
+            v-model="startTimeMenu"
+            :close-on-content-click="false"
+            offset-y
+            transition="scale-transition"
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                class="mb-3 mr-3"
+                outlined
+                v-model="form.startTime"
+                label="시작"
+                readonly
+                hide-details
+                v-bind="attrs"
+                v-on="on"
+                :rules="[rules.required]"
+              ></v-text-field>
+            </template>
+            <v-time-picker
+              ampm-in-title
+              v-model="form.startTime"
+              :max="form.endTime"
+              @input="startTimeMenu = false"
+            ></v-time-picker>
+          </v-menu>
+          <v-menu
+            bottom
+            left
+            v-model="endTimeMenu"
+            :close-on-content-click="false"
+            offset-y
+            transition="scale-transition"
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                class="mb-3"
+                outlined
+                v-model="form.endTime"
+                label="종료"
+                readonly
+                hide-details
+                v-bind="attrs"
+                v-on="on"
+                :rules="[rules.required]"
+              ></v-text-field>
+            </template>
+            <v-time-picker
+              ampm-in-title
+              v-model="form.endTime"
+              :min="form.startTime"
+              @input="endTimeMenu = false"
+            ></v-time-picker>
+          </v-menu>
+        </div>
+
         <div class="divide-column">
           <v-text-field
             style="width: 60%;"
@@ -446,10 +446,6 @@ export default {
       this.isProcessing = true
       await this.$refs.form.validate()
 
-      if (!this.form.date || !this.form.startTime || !this.form.endTime) {
-        alert('일시 및 시간을 확인해주세요!')
-        return
-      }
       if (!this.valid) {
         console.log('please check validation!')
         this.isProcessing = false
@@ -565,9 +561,8 @@ export default {
   height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-
   .find-people-regist-content {
-    height: calc(100vh - 120px);
+    height: calc(100vh - 133px);
     overflow: scroll;
   }
   .compelete-btn {

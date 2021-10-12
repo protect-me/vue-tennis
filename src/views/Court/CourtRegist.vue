@@ -1,14 +1,14 @@
 <template>
   <v-container class="court-regist-container">
-    <v-card flat>
-      <div class="court-regist-header">
-        <TitleWithButton
-          titleText="신규 코트 등록"
-          goBackButton
-          @goBackButtonClicked="goBackButtonClicked"
-        />
-      </div>
-      <v-divider class="my-3"></v-divider>
+    <div class="court-regist-header">
+      <TitleWithButton
+        titleText="신규 코트 등록"
+        goBackButton
+        @goBackButtonClicked="goBackButtonClicked"
+      />
+    </div>
+    <v-divider class="my-3"></v-divider>
+    <v-card flat class="court-regist-content">
       <v-form ref="form" v-model="valid" lazy-validation>
         <div class="subtitle mb-3">
           <span>
@@ -328,6 +328,10 @@ export default {
   height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
+  .court-regist-content {
+    height: calc(100vh - 133px);
+    overflow: scroll;
+  }
   .compelete-btn {
     max-height: 36px;
   }

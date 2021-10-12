@@ -1,17 +1,15 @@
 <template>
   <v-container class="find-people-record-container">
-    <v-card flat>
-      <div class="find-people-record-header">
-        <TitleWithButton
-          titleText="게스트 참가 요청 기록"
-          goBackButton
-          @goBackButtonClicked="goBackButtonClicked"
-        />
-      </div>
-      <v-divider class="my-3"></v-divider>
-    </v-card>
+    <div class="find-people-record-header">
+      <TitleWithButton
+        titleText="게스트 참가 요청 기록"
+        goBackButton
+        @goBackButtonClicked="goBackButtonClicked"
+      />
+    </div>
+    <v-divider class="my-3"></v-divider>
 
-    <div class="result">
+    <div class="find-people-record-content">
       <FindPeopleCard
         v-for="(schedule, index) in schedules"
         :key="index"
@@ -107,8 +105,8 @@ export default {
 <style lang="scss" scoped>
 .find-people-record-container {
   height: calc(100vh - 48px);
-  .result {
-    height: calc(100vh - 140px);
+  .find-people-record-content {
+    height: calc(100vh - 133px);
     overflow: scroll;
   }
 }
