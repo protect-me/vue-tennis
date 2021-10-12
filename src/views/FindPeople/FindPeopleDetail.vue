@@ -8,7 +8,8 @@
         titleText="게스트 모집 상세"
         goBackButton
         :editButton="
-          fireUser.uid === schedule.organizer && subscribedSchedule.status !== 3
+          fireUser.uid === subscribedSchedule.organizer &&
+          subscribedSchedule.status !== 3
         "
         :icon="titleIcon"
         @editButtonClicked="editButtonClicked"
@@ -87,7 +88,11 @@ export default {
     FindPeopleRegist,
   },
   mounted() {
+    this.schedule = this.$store.state.schedule
     this.$nextTick(function () {
+      if (this.schedule.scheduleId) {
+        this.schedule.scheduleId = this.scheduleId
+      }
       this.ref = this.$firebase
         .firestore()
         .collection('findPeople')
@@ -106,8 +111,26 @@ export default {
       this.unsubscribe()
     }
   },
+  computed: {
+    ...mapState(['fireUser', 'user']),
+    scheduleId() {
+      return this.$route.params.scheduleId
+    },
+    scheduleDate() {
+      const week = ['일', '월', '화', '수', '목', '금', '토']
+      const dayOfWeek = week[new Date(this.schedule.date).getDay()]
+      const spread = this.schedule.date.split('-')
+      return {
+        year: spread[0],
+        month: spread[1],
+        date: spread[2],
+        dayOfWeek: dayOfWeek,
+      }
+    },
+  },
   data() {
     return {
+      schedule: {},
       unsubscribe: null,
       subscribedSchedule: {},
       titleIcon: '',
@@ -127,20 +150,6 @@ export default {
       ref: null,
       refUser: this.$firebase.firestore().collection('users'),
     }
-  },
-  computed: {
-    ...mapState(['fireUser', 'user', 'schedule']),
-    scheduleDate() {
-      const week = ['일', '월', '화', '수', '목', '금', '토']
-      const dayOfWeek = week[new Date(this.schedule.date).getDay()]
-      const spread = this.schedule.date.split('-')
-      return {
-        year: spread[0],
-        month: spread[1],
-        date: spread[2],
-        dayOfWeek: dayOfWeek,
-      }
-    },
   },
   methods: {
     closeEditDialog() {

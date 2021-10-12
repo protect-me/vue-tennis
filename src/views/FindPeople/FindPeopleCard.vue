@@ -167,7 +167,7 @@ export default {
     async goToDetail() {
       if (this.mode === 'detail') return
       await this.$store.dispatch('setSchedule', this.schedule)
-      this.$router.push({ name: 'FindPeopleDetail' })
+      this.$router.push(`/findpeopledetail/${this.schedule.scheduleId}`)
     },
   },
 }

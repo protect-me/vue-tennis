@@ -119,7 +119,7 @@ export default {
           .get()
         this.court = courtInfo.data()
       } catch (err) {
-        alert('에러 발생', err)
+        alert('court 정보 확인 실패', err)
         console.log(err)
       }
     },
@@ -160,7 +160,7 @@ export default {
             }
           })
       } catch (err) {
-        alert('에러 발생', err)
+        alert('schedule 정보 확인 실패', err)
         console.log(err)
       }
     },

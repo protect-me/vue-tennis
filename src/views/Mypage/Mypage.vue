@@ -143,13 +143,13 @@ export default {
           text: '게스트 모집 기록',
           icon: 'mdi-account-search-outline',
           type: '',
-          to: 'FindPeopleRecord',
+          to: '/findpeoplerecord',
         },
         {
           text: '참가 요청/취소 알림',
           icon: 'mdi-account-search-outline',
           type: 'alert',
-          to: 'FindPeopleAlert',
+          to: '/findpeoplealert',
         },
       ],
       applyRecordGroup: [
@@ -157,30 +157,30 @@ export default {
           text: '게스트 참가 요청 기록',
           icon: 'mdi-account-heart-outline',
           type: '',
-          to: 'FindCourtRecord',
+          to: '/findcourtrecord',
         },
         {
           text: '영입/방출 알림',
           icon: 'mdi-account-check-outline',
           type: 'alert',
-          to: 'FindCourtAlert',
+          to: '/findcourtalert',
         },
       ],
       items: [
         {
           text: '회원 정보 수정',
           icon: 'mdi-badge-account-horizontal-outline',
-          to: 'EditUserInfo',
+          to: '/edituserinfo',
         },
         {
           text: '약관 및 정책',
           icon: 'mdi-laptop',
-          to: 'OperationPolicy',
+          to: '/operationpolicy',
         },
         {
           text: '피드백',
           icon: 'mdi-bullhorn-outline',
-          to: 'CourtReport',
+          to: '/report',
         },
       ],
     }

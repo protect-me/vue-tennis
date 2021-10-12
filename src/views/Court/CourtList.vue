@@ -170,7 +170,7 @@ export default {
     reportBtnClicked() {
       const answer = window.confirm('수정 요청을 하시겠습니까?')
       if (answer) {
-        this.$router.push({ name: 'CourtReport' })
+        this.$router.push({ name: 'Report' })
       }
     },
   },
