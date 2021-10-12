@@ -17,6 +17,7 @@
       <v-divider class="mt-3" />
       <div class="mx-3">양도인</div>
       <v-divider class="mt-3" />
+      <v-divider class="mt-3" />
       <div class="mx-3">양수인</div>
       <v-divider class="mt-3" />
     </div>
@@ -201,7 +202,7 @@ export default {
   },
   methods: {
     async selectParticipant(participant) {
-      if (this.subscribedSchedule.status === 3) return
+      if (this.subscribedSchedule.status !== 1) return
       if (this.subscribedSchedule.organizer !== this.fireUser.uid) return
       if (this.subscribedSchedule.organizer === participant.userId) return
       if (participant.userId === 'Ghost') return
@@ -241,7 +242,7 @@ export default {
     },
 
     async selectApplicant(applicant) {
-      if (this.subscribedSchedule.status === 3) return
+      if (this.subscribedSchedule.status !== 1) return
       if (this.subscribedSchedule.organizer !== this.fireUser.uid) return
       if (this.subscribedSchedule.participants.includes(applicant.userId)) {
         alert('이미 참여한 게스트입니다!')

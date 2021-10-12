@@ -28,6 +28,7 @@
                 type="text"
                 outlined
                 :rules="[rules.counter20]"
+                @keydown.enter.prevent="registApplicant"
               />
             </v-form>
           </v-card-text>
@@ -113,7 +114,7 @@ export default {
           return 'openSchedule'
         }
       } else if (this.subscribedSchedule.organizer !== this.fireUser.uid) {
-        const disalbedStatus = [2, 3]
+        const disalbedStatus = [2, 3, 9]
         if (disalbedStatus.includes(this.subscribedSchedule.status)) {
           this.btnColor = 'gray'
           this.btnText = '-'

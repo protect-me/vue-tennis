@@ -9,7 +9,7 @@
         goBackButton
         :editButton="
           fireUser.uid === subscribedSchedule.organizer &&
-          subscribedSchedule.status !== 3
+          subscribedSchedule.status === 1
         "
         :icon="titleIcon"
         @editButtonClicked="editButtonClicked"
@@ -19,6 +19,11 @@
     </div>
 
     <div class="find-people-detail-content">
+      <v-card flat v-if="subscribedSchedule.status === 9">
+        <v-card-text class="text--black py-2" style="color: #f44336;">
+          Notice. 삭제된 모집입니다 🎾
+        </v-card-text>
+      </v-card>
       <FindPeopleCard :schedule="subscribedSchedule" mode="detail" />
       <v-card v-if="subscribedSchedule.status !== 3">
         <v-card-text>
@@ -163,7 +168,7 @@ export default {
       this.editDialogToggle = true
     },
     setTitleIcon() {
-      // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
+      // 모집(1) / 마감(2) / 완료(3) / 기간만료(4) / 삭제(9)
       switch (this.subscribedSchedule.status) {
         case 1:
           this.titleIcon = 'mdi-door-open'
@@ -171,8 +176,11 @@ export default {
         case 2:
           this.titleIcon = 'mdi-door-closed'
           break
-        default:
+        case 3:
           this.titleIcon = 'mdi-door-closed-lock'
+          break
+        case 9:
+          this.titleIcon = 'mdi-delete-empty-outline'
           break
       }
     },

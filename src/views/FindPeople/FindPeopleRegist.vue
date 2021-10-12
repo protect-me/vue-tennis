@@ -21,7 +21,7 @@
     </div>
     <v-divider class="my-3"></v-divider>
     <v-card flat class="find-people-regist-content">
-      <v-card class="mb-3">
+      <v-card class="mb-3" flat>
         <v-card-text class="pa-2">
           <div>Notice.</div>
           <div>1. 시간 오전/오후 필수 확인 🎾</div>
@@ -249,18 +249,27 @@
       </v-form>
     </v-card>
     <v-spacer></v-spacer>
-    <v-btn
-      class="compelete-btn"
-      style="width: 65%;"
-      color="primary"
-      block
-      @click="apply"
-      :disabled="isProcessing"
-      :loading="isProcessing"
-    >
-      <span v-if="mode === 'regist'">신규 등록</span>
-      <span v-else-if="mode === 'edit'">수정 내용 저장</span>
-    </v-btn>
+    <div v-if="mode === 'regist'">
+      <v-btn
+        class="compelete-btn"
+        style="width: 65%;"
+        color="primary"
+        block
+        @click="apply"
+        :disabled="isProcessing"
+        :loading="isProcessing"
+      >
+        신규 등록
+      </v-btn>
+    </div>
+    <div v-else-if="mode === 'edit'" style="display: flex;">
+      <div class="mr-1" style="flex-grow: 1;">
+        <v-btn block color="error" @click="deleteBtnClicked">모집 삭제</v-btn>
+      </div>
+      <div class="ml-1" style="flex-grow: 2;">
+        <v-btn block color="primary" @click="apply">수정 내용 저장</v-btn>
+      </div>
+    </div>
 
     <v-dialog v-if="courtDialogToggle" v-model="courtDialogToggle" fullscreen>
       <v-card>
@@ -370,7 +379,7 @@ export default {
         memo: '',
         createdAt: '',
         updatedAt: '',
-        status: 1, // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
+        status: 1, // 모집(1) / 마감(2) / 완료(3) / 기간만료(4) / 삭제(9)
       },
       dateMenu: false,
       startTimeMenu: false,
@@ -427,7 +436,7 @@ export default {
         memo: this.subscribedSchedule.memo,
         createdAt: this.subscribedSchedule.createdAt,
         updatedAt: this.subscribedSchedule.updatedAt,
-        status: this.subscribedSchedule.status, // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
+        status: this.subscribedSchedule.status, // 모집(1) / 마감(2) / 완료(3) / 기간만료(4) / 삭제(9)
       }
       this.$forceUpdate()
     },
@@ -527,6 +536,30 @@ export default {
           this.$router.push({ name: 'FindPeopleHome' })
         } else if (this.mode === 'edit') {
           this.closeButtonClicked()
+        }
+      }
+    },
+    async deleteBtnClicked() {
+      if (this.subscribedSchedule.participants.length > 0) {
+        alert('참여자가 있을 경우 모집을 삭제할 수 없습니다 🎾')
+        return
+      }
+      const answer = window.confirm(
+        '모집을 삭제할 경우 복구할 수 없습니다. 그래도 삭제하시겠어요?',
+      )
+      if (answer) {
+        try {
+          const ref = this.$firebase
+            .firestore()
+            .collection('findPeople')
+            .doc(this.subscribedSchedule.scheduleId)
+          await ref.update({ status: 9 })
+          alert('성공적으로 삭제되었습니다 🎾')
+          console.log('삭제 성공')
+        } catch (err) {
+          console.log('삭제 실패')
+        } finally {
+          this.$router.push({ name: 'FindPeopleHome' })
         }
       }
     },
