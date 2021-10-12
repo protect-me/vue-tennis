@@ -177,7 +177,7 @@ export default {
   },
   methods: {
     goBackButtonClicked() {
-      this.this.$router.push({ name: 'Mypage' })
+      this.$router.push({ name: 'Mypage' })
     },
     async apply() {
       if (this.isProcessing) {
@@ -236,7 +236,7 @@ export default {
       }
     },
     moveToMypage() {
-      this.this.$router.push({ name: 'Mypage' })
+      this.$router.push({ name: 'Mypage' })
     },
     openNtrpHelp() {
       this.helpNtrpToggle = true

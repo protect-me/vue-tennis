@@ -154,7 +154,7 @@ export default {
         this.$router.push({ name: 'CourtRegist' })
       } else {
         alert('회원 정보를 확인해주세요!')
-        this.this.$router.push({ name: 'Mypage' })
+        this.$router.push({ name: 'Mypage' })
       }
     },
     async goToDetail(item) {
