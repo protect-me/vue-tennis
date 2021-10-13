@@ -1,29 +1,63 @@
 <template>
   <v-container class="find-people-record-container">
-    <v-card flat>
-      <div class="find-people-record-header">
-        <TitleWithButton
-          titleText="게스트 모집 기록"
-          goBackButton
-          @goBackButtonClicked="goBackButtonClicked"
-        />
-      </div>
-      <v-divider class="my-3"></v-divider>
-    </v-card>
-
-    <div class="result">
-      <FindPeopleCard
-        v-for="(schedule, index) in schedules"
-        :key="index"
-        :schedule="schedule"
-      ></FindPeopleCard>
-
-      <v-card v-if="schedules && schedules.length === 0" flat>
-        <v-card-text class="mt-12" align="center">
-          게스트를 모집한 기록이 없습니다 🎾
-        </v-card-text>
-      </v-card>
+    <div class="find-people-record-header">
+      <TitleWithButton
+        titleText="게스트 모집 기록"
+        goBackButton
+        @goBackButtonClicked="goBackButtonClicked"
+        sortButton
+        :sortASC="orderByASC"
+        @sortButtonClicked="sortButtonClicked"
+      />
     </div>
+    <v-divider class="my-3"></v-divider>
+
+    <v-tabs v-model="tab" grow>
+      <v-tab v-for="item in items" :key="item.tab">
+        <span class="mr-2">{{ item.tab }}</span>
+        <v-icon>{{ item.icon }}</v-icon>
+      </v-tab>
+    </v-tabs>
+    <v-tabs-items class="tabs-item" v-model="tab" v-if="schedules">
+      <v-tab-item class="tab-item" v-if="scheduleOpen">
+        <FindPeopleCard
+          v-for="(schedule, index) in scheduleOpen"
+          :key="index"
+          :schedule="schedule"
+        ></FindPeopleCard>
+        <v-card v-if="scheduleOpen.length === 0" flat>
+          <v-card-text class="mt-12" align="center">
+            모집 중인 기록이 없습니다 🎾
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
+
+      <v-tab-item class="tab-item" v-if="scheduleClose">
+        <FindPeopleCard
+          v-for="(schedule, index) in scheduleClose"
+          :key="index"
+          :schedule="schedule"
+        ></FindPeopleCard>
+        <v-card v-if="scheduleClose.length === 0" flat>
+          <v-card-text class="mt-12" align="center">
+            마감된 기록이 없습니다 🎾
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
+
+      <v-tab-item class="tab-item" v-if="scheduleComplete">
+        <FindPeopleCard
+          v-for="(schedule, index) in scheduleComplete"
+          :key="index"
+          :schedule="schedule"
+        ></FindPeopleCard>
+        <v-card v-if="scheduleComplete.length === 0" flat>
+          <v-card-text class="mt-12" align="center">
+            마감된 기록이 없습니다 🎾
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
+    </v-tabs-items>
   </v-container>
 </template>
 
@@ -50,12 +84,26 @@ export default {
   },
   data() {
     return {
+      tab: null,
+      items: [
+        { tab: '모집', icon: 'mdi-door-open', content: 'FindPeopleOpen' },
+        { tab: '마감', icon: 'mdi-door-closed', content: 'FindPeopleClose' },
+        {
+          tab: '완료',
+          icon: 'mdi-door-closed-lock',
+          content: 'FindPeopleComplete',
+        },
+      ],
       schedules: [],
+      orderByASC: true,
+      scheduleOpen: [],
+      scheduleClose: [],
+      scheduleComplete: [],
     }
   },
   methods: {
     goBackButtonClicked() {
-      this.$router.push('Mypage')
+      this.$router.push({ name: 'Mypage' })
     },
     async initData() {
       if (this.user.findPeopleList.length === 0) return
@@ -93,10 +141,44 @@ export default {
               status: item.status,
             }
           })
+        await this.filteringSchedules()
       } catch (err) {
         alert('데이터를 가져오는데 실패했습니다.', err)
         console.log(err)
       }
+    },
+    filteringSchedules() {
+      const schedulesLength = this.schedules.length
+      for (let i = 0; i < schedulesLength; i++) {
+        switch (this.schedules[i].status) {
+          case 1:
+            this.scheduleOpen.push(this.schedules[i])
+            break
+          case 2:
+            this.scheduleClose.push(this.schedules[i])
+            break
+          case 3:
+            this.scheduleComplete.push(this.schedules[i])
+            break
+        }
+      }
+    },
+    sortButtonClicked() {
+      this.orderByASC = !this.orderByASC
+      let flag = 1
+      if (!this.orderByASC) flag = -1
+      const arr = [this.scheduleOpen, this.scheduleClose, this.scheduleComplete]
+
+      arr.forEach((item) =>
+        item.sort((a, b) => {
+          if (a.date > b.date) return 1 * flag
+          else if (a.date < b.date) return -1 * flag
+          else if (a.date === b.date) {
+            if (a.startTime > b.startTime) return 1 * flag
+            else if (a.startTime <= b.startTime) return -1 * flag
+          }
+        }),
+      )
     },
   },
 }
@@ -105,9 +187,13 @@ export default {
 <style lang="scss" scoped>
 .find-people-record-container {
   height: calc(100vh - 48px);
-  .result {
-    height: calc(100vh - 140px);
+  .v-tabs-items {
+    padding: 0px 2px;
+    height: calc(100vh - 180px);
     overflow: scroll;
+    .tab-item {
+      margin-top: 10px;
+    }
   }
 }
 </style>

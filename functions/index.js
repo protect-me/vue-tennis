@@ -191,7 +191,7 @@ exports.updateParticipants = functions.firestore
     }
   })
 
-// 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
+// 모집(1) / 마감(2) / 완료(3) / 기간만료(4) / 삭제(9)
 exports.scheduledFunction = functions.pubsub
   .schedule('every 10 minutes')
   .onRun(async (context) => {

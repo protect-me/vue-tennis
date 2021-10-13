@@ -46,6 +46,24 @@
     >
       <v-icon>mdi-close</v-icon>
     </v-btn>
+    <v-btn
+      v-if="filterButton"
+      @click="$emit('filterButtonClicked')"
+      color="primary"
+      icon
+    >
+      <v-icon v-if="filtering">mdi-handshake</v-icon>
+      <v-icon v-else-if="!filtering">mdi-handshake-outline</v-icon>
+    </v-btn>
+    <v-btn
+      v-if="sortButton"
+      @click="$emit('sortButtonClicked')"
+      color="primary"
+      icon
+    >
+      <v-icon v-if="sortASC">mdi-sort-numeric-ascending</v-icon>
+      <v-icon v-else-if="!sortASC">mdi-sort-alphabetical-descending</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -79,6 +97,22 @@ export default {
     icon: {
       type: String,
       default: '',
+    },
+    sortButton: {
+      type: Boolean,
+      default: false,
+    },
+    sortASC: {
+      type: Boolean,
+      default: false,
+    },
+    filterButton: {
+      type: Boolean,
+      default: false,
+    },
+    filtering: {
+      type: Boolean,
+      default: false,
     },
   },
 }

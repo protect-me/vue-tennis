@@ -5,123 +5,123 @@
       'edit-mode': mode === 'edit',
     }"
   >
+    <div class="find-people-regist-header">
+      <TitleWithButton
+        v-if="mode === 'regist'"
+        titleText="게스트 모집 등록"
+        goBackButton
+        @goBackButtonClicked="goBackButtonClicked"
+      />
+      <TitleWithButton
+        v-else-if="mode === 'edit'"
+        titleText="게스트 모집 수정"
+        closeButton
+        @closeButtonClicked="closeButtonClicked"
+      />
+    </div>
+    <v-divider class="my-3"></v-divider>
     <v-card flat class="find-people-regist-content">
-      <div class="find-people-regist-header">
-        <TitleWithButton
-          v-if="mode === 'regist'"
-          titleText="게스트 모집 등록"
-          goBackButton
-          @goBackButtonClicked="goBackButtonClicked"
-        />
-        <TitleWithButton
-          v-else-if="mode === 'edit'"
-          titleText="게스트 모집 수정"
-          closeButton
-          @closeButtonClicked="closeButtonClicked"
-        />
-      </div>
-      <v-divider class="my-3"></v-divider>
-      <v-card class="mb-3">
+      <v-card class="mb-3" flat>
         <v-card-text class="pa-2">
           <div>Notice.</div>
           <div>1. 시간 오전/오후 필수 확인 🎾</div>
           <div>2. 분 단위 '내림' 처리(e.g. 47분 ⇒ 40분)</div>
-          <div>3. 구하는 인원과 총 인원이 같을 경우 '양도' 🎾</div>
+          <div>3. 전화번호 등 민감한 정보 기입 지양</div>
         </v-card-text>
       </v-card>
 
-      <div class="divide-column">
-        <v-menu
-          v-model="dateMenu"
-          :close-on-content-click="false"
-          offset-y
-          transition="scale-transition"
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              bottom
-              left
-              class="mb-3 mr-3"
-              outlined
-              v-model="form.date"
-              label="일시"
-              readonly
-              hide-details
-              v-bind="attrs"
-              v-on="on"
-              :rules="[rules.required, rules.beforeToday]"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            locale="ko-KR"
-            v-model="form.date"
-            @input="dateMenu = false"
-            full-width
-          ></v-date-picker>
-        </v-menu>
-
-        <v-menu
-          bottom
-          :nudge-left="startTimeNudgeLeft"
-          v-model="startTimeMenu"
-          :close-on-content-click="false"
-          offset-y
-          transition="scale-transition"
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              class="mb-3 mr-3"
-              outlined
-              v-model="form.startTime"
-              label="시작"
-              readonly
-              hide-details
-              v-bind="attrs"
-              v-on="on"
-              :rules="[rules.required]"
-            ></v-text-field>
-          </template>
-          <v-time-picker
-            ampm-in-title
-            v-model="form.startTime"
-            :max="form.endTime"
-            @input="startTimeMenu = false"
-          ></v-time-picker>
-        </v-menu>
-        <v-menu
-          bottom
-          left
-          v-model="endTimeMenu"
-          :close-on-content-click="false"
-          offset-y
-          transition="scale-transition"
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              class="mb-3"
-              outlined
-              v-model="form.endTime"
-              label="종료"
-              readonly
-              hide-details
-              v-bind="attrs"
-              v-on="on"
-              :rules="[rules.required]"
-            ></v-text-field>
-          </template>
-          <v-time-picker
-            ampm-in-title
-            v-model="form.endTime"
-            :min="form.startTime"
-            @input="endTimeMenu = false"
-          ></v-time-picker>
-        </v-menu>
-      </div>
-
       <v-form ref="form" v-model="valid" lazy-validation>
+        <div class="divide-column">
+          <v-menu
+            v-model="dateMenu"
+            :close-on-content-click="false"
+            offset-y
+            transition="scale-transition"
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                bottom
+                left
+                class="mb-3 mr-3"
+                outlined
+                v-model="form.date"
+                label="일시"
+                readonly
+                hide-details
+                v-bind="attrs"
+                v-on="on"
+                :rules="[rules.required, rules.beforeToday]"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              locale="ko-KR"
+              v-model="form.date"
+              @input="dateMenu = false"
+              full-width
+            ></v-date-picker>
+          </v-menu>
+
+          <v-menu
+            bottom
+            :nudge-left="startTimeNudgeLeft"
+            v-model="startTimeMenu"
+            :close-on-content-click="false"
+            offset-y
+            transition="scale-transition"
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                class="mb-3 mr-3"
+                outlined
+                v-model="form.startTime"
+                label="시작"
+                readonly
+                hide-details
+                v-bind="attrs"
+                v-on="on"
+                :rules="[rules.required]"
+              ></v-text-field>
+            </template>
+            <v-time-picker
+              ampm-in-title
+              v-model="form.startTime"
+              :max="form.endTime"
+              @input="startTimeMenu = false"
+            ></v-time-picker>
+          </v-menu>
+          <v-menu
+            bottom
+            left
+            v-model="endTimeMenu"
+            :close-on-content-click="false"
+            offset-y
+            transition="scale-transition"
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                class="mb-3"
+                outlined
+                v-model="form.endTime"
+                label="종료"
+                readonly
+                hide-details
+                v-bind="attrs"
+                v-on="on"
+                :rules="[rules.required]"
+              ></v-text-field>
+            </template>
+            <v-time-picker
+              ampm-in-title
+              v-model="form.endTime"
+              :min="form.startTime"
+              @input="endTimeMenu = false"
+            ></v-time-picker>
+          </v-menu>
+        </div>
+
         <div class="divide-column">
           <v-text-field
             style="width: 60%;"
@@ -173,6 +173,24 @@
         </div>
 
         <div class="divide-column">
+          <div
+            class="mr-3 mb-3"
+            align="center"
+            style="border: 1px solid rgb(182, 182, 182); border-radius: 4px;"
+          >
+            <div style="color: rgb(117, 117, 117);" class="mx-auto">
+              양도
+            </div>
+            <v-switch
+              class="mt-0 ml-2"
+              x-small
+              color="primary"
+              hide-details
+              dense
+              v-model="form.assignment"
+            ></v-switch>
+          </div>
+
           <v-text-field
             class="mb-3 mr-3"
             label="구하는 인원(명)"
@@ -180,7 +198,7 @@
             type="number"
             hide-details
             outlined
-            :rules="[rules.required, rules.vacantCount]"
+            :disabled="form.assignment"
           />
           <v-text-field
             class="mb-3"
@@ -189,7 +207,7 @@
             type="number"
             outlined
             hide-details
-            :rules="[rules.required, rules.totalCount]"
+            :disabled="form.assignment"
           />
         </div>
 
@@ -232,18 +250,27 @@
       </v-form>
     </v-card>
     <v-spacer></v-spacer>
-    <v-btn
-      class="compelete-btn"
-      style="width: 65%;"
-      color="primary"
-      block
-      @click="completeBtnClicked"
-      :disabled="isProcessing"
-      :loading="isProcessing"
-    >
-      <span v-if="mode === 'regist'">신규 등록</span>
-      <span v-else-if="mode === 'edit'">수정 내용 저장</span>
-    </v-btn>
+    <div v-if="mode === 'regist'">
+      <v-btn
+        class="compelete-btn"
+        style="width: 65%;"
+        color="primary"
+        block
+        @click="apply"
+        :disabled="isProcessing"
+        :loading="isProcessing"
+      >
+        신규 등록
+      </v-btn>
+    </div>
+    <div v-else-if="mode === 'edit'" style="display: flex;">
+      <div class="mr-1" style="flex-grow: 1;">
+        <v-btn block color="error" @click="deleteBtnClicked">모집 삭제</v-btn>
+      </div>
+      <div class="ml-1" style="flex-grow: 2;">
+        <v-btn block color="primary" @click="apply">수정 내용 저장</v-btn>
+      </div>
+    </div>
 
     <v-dialog v-if="courtDialogToggle" v-model="courtDialogToggle" fullscreen>
       <v-card>
@@ -319,11 +346,6 @@ export default {
       rules: {
         required: (value) => !!value || value === 0 || '필수 기입',
         counter: (value) => value.length <= 300 || '300자 이하로 입력해주세요',
-        vacantCount: (value) =>
-          (value <= 10 && value >= 0) || '0~10 사이의 숫자를 입력해주세요',
-        totalCount: (value) =>
-          (value <= 10 && value >= 2 && value >= Number(this.form.vacant)) ||
-          '2~10 사이의 숫자를 입력해주세요',
         beforeToday: (value) => {
           const inputDate = new Date(value)
           const today = new Date().setHours(0)
@@ -351,13 +373,14 @@ export default {
         ntrp: '',
         vacant: '',
         total: '',
+        assignment: false,
         openChatLink: '',
         contact: '',
         cost: '',
         memo: '',
         createdAt: '',
         updatedAt: '',
-        status: 1, // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
+        status: 1, // 모집(1) / 마감(2) / 완료(3) / 기간만료(4) / 삭제(9)
       },
       dateMenu: false,
       startTimeMenu: false,
@@ -373,7 +396,7 @@ export default {
       this.closeButtonClicked()
     },
     goBackButtonClicked() {
-      this.$router.push('FindPeopleHome')
+      this.$router.push({ name: 'FindPeopleHome' })
     },
     openCourtDialog() {
       this.courtDialogToggle = true
@@ -405,6 +428,7 @@ export default {
         date: this.subscribedSchedule.date,
         startTime: this.subscribedSchedule.startTime,
         endTime: this.subscribedSchedule.endTime,
+        assignment: this.subscribedSchedule.assignment,
         vacant: this.subscribedSchedule.vacant,
         total: this.subscribedSchedule.total,
         contact: this.subscribedSchedule.contact,
@@ -413,7 +437,7 @@ export default {
         memo: this.subscribedSchedule.memo,
         createdAt: this.subscribedSchedule.createdAt,
         updatedAt: this.subscribedSchedule.updatedAt,
-        status: this.subscribedSchedule.status, // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
+        status: this.subscribedSchedule.status, // 모집(1) / 마감(2) / 완료(3) / 기간만료(4) / 삭제(9)
       }
       this.$forceUpdate()
     },
@@ -424,17 +448,33 @@ export default {
       this.courtTypes = item.courtTypes
       if (this.selectedCourt) this.closeCourtDialog()
     },
-    async completeBtnClicked() {
+    async apply() {
       if (this.isProcessing) {
         console.log('is processing!')
         return
       }
       this.isProcessing = true
       await this.$refs.form.validate()
+
       if (!this.valid) {
         console.log('please check validation!')
         this.isProcessing = false
         return
+      }
+      if (!this.form.assignment) {
+        if (
+          this.form.vacant > 10 ||
+          this.form.vacant < 0 ||
+          this.form.total > 10 ||
+          this.form.total < 0 ||
+          this.form.total < this.form.vacant
+        ) {
+          alert('입력한 인원을 확인해주세요!')
+          return
+        }
+      } else {
+        this.form.vacant = 1
+        this.form.total = 2
       }
       if (!this.form.contact && !this.form.openChatLink) {
         alert('연락처 혹은 오픈채팅방 링크를 입력해주세요!')
@@ -494,9 +534,33 @@ export default {
         this.isProcessing = false
         this.isComplete = true
         if (this.mode === 'regist') {
-          this.$router.push('FindPeopleHome')
+          this.$router.push({ name: 'FindPeopleHome' })
         } else if (this.mode === 'edit') {
           this.closeButtonClicked()
+        }
+      }
+    },
+    async deleteBtnClicked() {
+      if (this.subscribedSchedule.participants.length > 0) {
+        alert('참여자가 있을 경우 모집을 삭제할 수 없습니다 🎾')
+        return
+      }
+      const answer = window.confirm(
+        '모집을 삭제할 경우 복구할 수 없습니다. 그래도 삭제하시겠어요?',
+      )
+      if (answer) {
+        try {
+          const ref = this.$firebase
+            .firestore()
+            .collection('findPeople')
+            .doc(this.subscribedSchedule.scheduleId)
+          await ref.update({ status: 9 })
+          alert('성공적으로 삭제되었습니다 🎾')
+          console.log('삭제 성공')
+        } catch (err) {
+          console.log('삭제 실패')
+        } finally {
+          this.$router.push({ name: 'FindPeopleHome' })
         }
       }
     },
@@ -531,9 +595,8 @@ export default {
   height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-
   .find-people-regist-content {
-    height: calc(100vh - 120px);
+    height: calc(100vh - 133px);
     overflow: scroll;
   }
   .compelete-btn {

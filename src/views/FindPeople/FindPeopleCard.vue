@@ -1,8 +1,11 @@
 <template>
   <div class="pb-2">
     <v-card v-if="alertStatus !== 0" flat>
-      <v-card-text style="display: flex;" class="pl-2 py-2">
-        <div class="mr-7">
+      <v-card-text
+        style="display: flex; justify-content: space-between;"
+        class="pl-2 py-2"
+      >
+        <div>
           <v-chip
             v-if="[1, 3].includes(alertStatus)"
             dark
@@ -38,8 +41,8 @@
           :class="{
             'ma-0': true,
             'font-weight-medium': true,
-            sat: scheduleDate.dayOfWeek === '토',
-            sun: scheduleDate.dayOfWeek === '일',
+            fontBlue: scheduleDate.dayOfWeek === '토',
+            fontRed: scheduleDate.dayOfWeek === '일',
           }"
         >
           {{ scheduleDate.dayOfWeek }}요일
@@ -54,14 +57,34 @@
               <span>{{ schedule.courtName }}</span>
               <span>-{{ schedule.courtType }}</span>
             </div>
-            <div v-if="schedule && schedule.total !== schedule.vacant">
-              <v-icon class="mr-1 mb-1" small>mdi-sofa-single-outline</v-icon>
+            <div
+              v-if="schedule && !schedule.assignment"
+              class="font-weight-medium"
+              :class="{
+                fontBlue: schedule.total > schedule.vacant,
+                fontRed: schedule.total <= schedule.vacant,
+              }"
+            >
+              <v-icon
+                :class="{
+                  fontBlue: schedule.total > schedule.vacant,
+                  fontRed: schedule.total <= schedule.vacant,
+                }"
+                class="mr-1 mb-1"
+                small
+              >
+                mdi-sofa-single-outline
+              </v-icon>
               <span>{{ schedule.total - schedule.vacant + ' / ' }}</span>
               <span>{{ schedule.total }}</span>
             </div>
-            <div v-else-if="schedule && schedule.total === schedule.vacant">
-              <v-icon class="mr-1 mb-1" small>mdi-hands-pray</v-icon>
-              <span>양도</span>
+            <div v-else-if="schedule && schedule.assignment">
+              <v-icon class="mr-1 mb-1 fontRed" x-small>
+                mdi-hands-pray
+              </v-icon>
+              <span class="font-weight-medium fontRed">
+                양도
+              </span>
             </div>
           </div>
 
@@ -147,7 +170,7 @@ export default {
     async goToDetail() {
       if (this.mode === 'detail') return
       await this.$store.dispatch('setSchedule', this.schedule)
-      this.$router.push('FindPeopleDetail')
+      this.$router.push(`/findpeopledetail/${this.schedule.scheduleId}`)
     },
   },
 }
@@ -171,12 +194,6 @@ export default {
           margin-top: -10px;
         }
       }
-    }
-    .sat {
-      color: #3f51b5;
-    }
-    .sun {
-      color: #f44336;
     }
   }
   .right {
@@ -204,5 +221,11 @@ export default {
       }
     }
   }
+}
+.fontBlue {
+  color: #3f51b5;
+}
+.fontRed {
+  color: #f44336;
 }
 </style>

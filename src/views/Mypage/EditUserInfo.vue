@@ -1,15 +1,14 @@
 <template>
   <v-container class="edit-user-info-container">
-    <v-card flat>
-      <div class="edit-user-info-header">
-        <TitleWithButton
-          titleText="회원 정보 수정"
-          goBackButton
-          @goBackButtonClicked="goBackButtonClicked"
-        />
-      </div>
-      <v-divider class="my-3"></v-divider>
-      <div></div>
+    <div class="edit-user-info-header">
+      <TitleWithButton
+        titleText="회원 정보 수정"
+        goBackButton
+        @goBackButtonClicked="goBackButtonClicked"
+      />
+    </div>
+    <v-divider class="my-3"></v-divider>
+    <v-card flat class="edit-user-info-content">
       <v-form v-if="user" ref="form" v-model="valid" lazy-validation>
         <div class="divide-column">
           <v-card flat class="mb-3">
@@ -177,7 +176,7 @@ export default {
   },
   methods: {
     goBackButtonClicked() {
-      this.$router.push('Mypage')
+      this.$router.push({ name: 'Mypage' })
     },
     async apply() {
       if (this.isProcessing) {
@@ -236,7 +235,7 @@ export default {
       }
     },
     moveToMypage() {
-      this.$router.push('Mypage')
+      this.$router.push({ name: 'Mypage' })
     },
     openNtrpHelp() {
       this.helpNtrpToggle = true
@@ -268,6 +267,10 @@ export default {
   height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
+  .edit-user-info-content {
+    height: calc(100vh - 133px);
+    overflow: scroll;
+  }
   .compelete-btn {
     max-height: 36px;
   }

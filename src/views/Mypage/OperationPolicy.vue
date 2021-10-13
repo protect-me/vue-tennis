@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     goBackButtonClicked() {
-      this.$router.push('Mypage')
+      this.$router.push({ name: 'Mypage' })
     },
   },
 }

@@ -8,7 +8,8 @@
         titleText="게스트 모집 상세"
         goBackButton
         :editButton="
-          fireUser.uid === schedule.organizer && subscribedSchedule.status !== 3
+          fireUser.uid === subscribedSchedule.organizer &&
+          subscribedSchedule.status === 1
         "
         :icon="titleIcon"
         @editButtonClicked="editButtonClicked"
@@ -18,6 +19,11 @@
     </div>
 
     <div class="find-people-detail-content">
+      <v-card flat v-if="subscribedSchedule.status === 9">
+        <v-card-text class="text--black py-2" style="color: #f44336;">
+          Notice. 삭제된 모집입니다 🎾
+        </v-card-text>
+      </v-card>
       <FindPeopleCard :schedule="subscribedSchedule" mode="detail" />
       <v-card v-if="subscribedSchedule.status !== 3">
         <v-card-text>
@@ -52,6 +58,7 @@
       :subscribedSchedule="subscribedSchedule"
       :applicants="applicants"
       :applicantsUserIdList="applicantsUserIdList"
+      ref="findPeopleActions"
     />
 
     <v-bottom-sheet
@@ -87,7 +94,11 @@ export default {
     FindPeopleRegist,
   },
   mounted() {
+    this.schedule = this.$store.state.schedule
     this.$nextTick(function () {
+      if (this.schedule.scheduleId) {
+        this.schedule.scheduleId = this.scheduleId
+      }
       this.ref = this.$firebase
         .firestore()
         .collection('findPeople')
@@ -106,8 +117,26 @@ export default {
       this.unsubscribe()
     }
   },
+  computed: {
+    ...mapState(['fireUser', 'user']),
+    scheduleId() {
+      return this.$route.params.scheduleId
+    },
+    scheduleDate() {
+      const week = ['일', '월', '화', '수', '목', '금', '토']
+      const dayOfWeek = week[new Date(this.schedule.date).getDay()]
+      const spread = this.schedule.date.split('-')
+      return {
+        year: spread[0],
+        month: spread[1],
+        date: spread[2],
+        dayOfWeek: dayOfWeek,
+      }
+    },
+  },
   data() {
     return {
+      schedule: {},
       unsubscribe: null,
       subscribedSchedule: {},
       titleIcon: '',
@@ -128,34 +157,19 @@ export default {
       refUser: this.$firebase.firestore().collection('users'),
     }
   },
-  computed: {
-    ...mapState(['fireUser', 'user', 'schedule']),
-    scheduleDate() {
-      const week = ['일', '월', '화', '수', '목', '금', '토']
-      const dayOfWeek = week[new Date(this.schedule.date).getDay()]
-      const spread = this.schedule.date.split('-')
-      return {
-        year: spread[0],
-        month: spread[1],
-        date: spread[2],
-        dayOfWeek: dayOfWeek,
-      }
-    },
-  },
   methods: {
     closeEditDialog() {
       this.editDialogToggle = false
     },
     goBackButtonClicked() {
       this.$router.go(-1)
-      // this.$router.push('FindPeopleHome')
     },
     editButtonClicked() {
       if (this.subscribedSchedule.status === 3) return
       this.editDialogToggle = true
     },
     setTitleIcon() {
-      // 모집(1) / 마감(2) / 완료(3) / 기간만료(-)
+      // 모집(1) / 마감(2) / 완료(3) / 기간만료(4) / 삭제(9)
       switch (this.subscribedSchedule.status) {
         case 1:
           this.titleIcon = 'mdi-door-open'
@@ -163,8 +177,11 @@ export default {
         case 2:
           this.titleIcon = 'mdi-door-closed'
           break
-        default:
+        case 3:
           this.titleIcon = 'mdi-door-closed-lock'
+          break
+        case 9:
+          this.titleIcon = 'mdi-delete-empty-outline'
           break
       }
     },
@@ -262,10 +279,14 @@ export default {
         this.applicants.sort((a, b) => {
           return a.createdAt - b.createdAt
         })
-        if (this.subscribedSchedule.vacant === 0) {
+        if (
+          this.subscribedSchedule.vacant === 0 &&
+          this.subscribedSchedule.status === 1 &&
+          this.subscribedSchedule.organizer === this.fireUser.uid
+        ) {
           this.$nextTick().then(() => {
             setTimeout(() => {
-              this.confirmStatusClose()
+              this.$refs.findPeopleActions.closeSchedule()
             }, 500)
           })
         }

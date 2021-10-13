@@ -14,13 +14,13 @@ const onlyAuthUser = (to, from, next) => {
   }
 }
 
-const onlyAuthUserForMypage = (to, from, next) => {
-  if (store.state.fireUser) {
-    next()
-  } else {
-    alert('로그인을 해주세요 🎾')
-  }
-}
+// const onlyAuthUserForMypage = (to, from, next) => {
+//   if (store.state.fireUser) {
+//     next()
+//   } else {
+//     alert('로그인을 해주세요 🎾')
+//   }
+// }
 
 const routes = [
   {
@@ -39,7 +39,7 @@ const routes = [
     component: () => import('../views/Court/CourtList.vue'),
   },
   {
-    path: '/courtdetail',
+    path: '/courtdetail/:courtId',
     name: 'CourtDetail',
     component: () => import('../views/Court/CourtDetail.vue'),
   },
@@ -50,10 +50,9 @@ const routes = [
     component: () => import('../views/Court/CourtRegist.vue'),
   },
   {
-    path: '/courtreport',
-    name: 'CourtReport',
-    beforeEnter: onlyAuthUser,
-    component: () => import('../views/Court/CourtReport.vue'),
+    path: '/report',
+    name: 'Report',
+    component: () => import('../views/Mypage/Report.vue'),
   },
   {
     path: '/findpeoplehome',
@@ -67,7 +66,7 @@ const routes = [
     component: () => import('../views/FindPeople/FindPeopleRegist.vue'),
   },
   {
-    path: '/findpeopledetail',
+    path: '/findpeopledetail/:scheduleId',
     name: 'FindPeopleDetail',
     beforeEnter: onlyAuthUser,
     component: () => import('../views/FindPeople/FindPeopleDetail.vue'),
@@ -85,31 +84,31 @@ const routes = [
   {
     path: '/edituserinfo',
     name: 'EditUserInfo',
-    beforeEnter: onlyAuthUserForMypage,
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/EditUserInfo.vue'),
   },
   {
     path: '/findpeoplerecord',
     name: 'FindPeopleRecord',
-    beforeEnter: onlyAuthUserForMypage,
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/FindPeopleRecord.vue'),
   },
   {
     path: '/findpeoplealert',
     name: 'FindPeopleAlert',
-    beforeEnter: onlyAuthUserForMypage,
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/FindPeopleAlert.vue'),
   },
   {
     path: '/findcourtrecord',
     name: 'FindCourtRecord',
-    beforeEnter: onlyAuthUserForMypage,
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/FindCourtRecord.vue'),
   },
   {
     path: '/findcourtalert',
     name: 'FindCourtAlert',
-    beforeEnter: onlyAuthUserForMypage,
+    beforeEnter: onlyAuthUser,
     component: () => import('../views/Mypage/FindCourtAlert.vue'),
   },
   {
