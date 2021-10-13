@@ -17,7 +17,7 @@
         :key="index"
         :schedule="schedule"
         :alertStatus="schedule.alertStatus"
-        :createdAt="schedule.createdAt"
+        :createdAt="schedule.alertCreatedAt"
       ></FindPeopleCard>
       <v-card v-if="schedules && schedules.length === 0" flat>
         <v-card-text class="mt-12" align="center">
@@ -65,7 +65,7 @@ export default {
           .collection('users')
           .doc(this.fireUser.uid)
           .collection('FindCourtAlert')
-          .orderBy('createdAt')
+          .orderBy('createdAt', 'desc')
           .get()
         const alertScheduleIdList = alertList.docs.map(
           (value) => value.data().scheduleId,
@@ -73,8 +73,6 @@ export default {
         const snapshot = await this.$firebase
           .firestore()
           .collection('findPeople')
-          .orderBy('date')
-          .orderBy('startTime')
           .get()
         const scheduleList = {}
         snapshot.docs
@@ -92,6 +90,7 @@ export default {
               startTime: item.startTime,
               endTime: item.endTime,
               ntrp: item.ntrp,
+              assignment: item.assignment,
               vacant: item.vacant,
               total: item.total,
               contact: item.contact,
@@ -109,8 +108,7 @@ export default {
           return {
             id: id,
             applicantsId: item.applicantsId,
-            scheduleId: item.scheduleId,
-            createdAt: item.createdAt,
+            alertCreatedAt: item.createdAt,
             alertStatus: item.alertStatus,
             ...scheduleList[item.scheduleId],
           }

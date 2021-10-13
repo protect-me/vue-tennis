@@ -1,8 +1,11 @@
 <template>
   <div class="pb-2">
     <v-card v-if="alertStatus !== 0" flat>
-      <v-card-text style="display: flex;" class="pl-2 py-2">
-        <div class="mr-7">
+      <v-card-text
+        style="display: flex; justify-content: space-between;"
+        class="pl-2 py-2"
+      >
+        <div>
           <v-chip
             v-if="[1, 3].includes(alertStatus)"
             dark
